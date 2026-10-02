@@ -508,6 +508,18 @@ body::before {
   background: var(--ink);
   color: var(--stone);
 }
+/* фон карточки: «Ribbon Glow» (WebGL2) — светящиеся ленты с минимальной яркостью */
+.guarantee { position: relative; overflow: hidden; isolation: isolate; }
+.guarantee > *:not(.guarantee__bg) { position: relative; z-index: 1; }
+.guarantee__bg {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease);
+}
+.guarantee.has-ribbon .guarantee__bg { opacity: 1; }
 .guarantee__title { font-weight: 300; font-size: 3.2rem; line-height: 1.21; margin-bottom: 4.2rem; }
 
 /* «Crystal Glow» (по мотивам Originkit): молочный текст с объёмным оранжевым краем,
