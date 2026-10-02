@@ -309,20 +309,23 @@
     }, { threshold: 0.3 }).observe($('.tags'));
   }
 
-  /* ---------------- «Crystal Glow» на заголовке карточки гарантий ---------------- */
-  const glow = $('.guarantee .glow');
-  if (glow && !reduced) {
+  /* ---------------- «Crystal Glow»: заголовок карточки гарантий и ссылка «мои работы» ----------------
+     На телефоне наведения нет, поэтому эффект сам проигрывается, пока карточка на экране:
+     сначала заголовок, следом ссылка. */
+  const glows = $$('.guarantee .glow');
+  if (glows.length && !reduced) {
     let glowTimer = 0;
-    const play = () => {
-      glow.classList.remove('is-play');
-      void glow.offsetWidth;                 // перезапуск искорок
-      glow.classList.add('is-play');
-      setTimeout(() => glow.classList.remove('is-play'), 1600);
+    const playOne = (el) => {
+      el.classList.remove('is-play');
+      void el.offsetWidth;                   // перезапуск искорок
+      el.classList.add('is-play');
+      setTimeout(() => el.classList.remove('is-play'), 1600);
     };
+    const play = () => glows.forEach((el, i) => setTimeout(() => playOne(el), i * 900));
     new IntersectionObserver(([e]) => {
       clearInterval(glowTimer);
       if (e.isIntersecting) { setTimeout(play, 600); glowTimer = setInterval(play, 6500); }
-    }, { threshold: 0.5 }).observe(glow);
+    }, { threshold: 0.5 }).observe($('.guarantee'));
   }
 
   /* ---------------- services ---------------- */
