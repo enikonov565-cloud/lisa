@@ -540,6 +540,13 @@ body::before {
 /* вариант для ссылки «мои работы»: строчный, свой размер шрифта */
 .glow--link { display: inline-block; --fs: max(2rem, 13px); --shadow: transparent; } /* без оранжевого объёма — только блик */
 .glow--link .glow__base { display: inline-block; white-space: nowrap; }
+/* при наведении буквы плавно «толстеют»: обводка того же цвета, без скачка ширины строки */
+.glow--link .glow__face {
+  -webkit-text-stroke: 0 var(--color);
+  transition: -webkit-text-stroke-width .35s var(--ease);
+}
+.guarantee__link:hover .glow--link .glow__face,
+.guarantee__link:focus-visible .glow--link .glow__face { -webkit-text-stroke-width: .045em; }
 .glow__base {
   display: block;
   color: transparent;
