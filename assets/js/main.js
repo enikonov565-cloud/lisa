@@ -309,6 +309,22 @@
     }, { threshold: 0.3 }).observe($('.tags'));
   }
 
+  /* ---------------- «Crystal Glow» на заголовке карточки гарантий ---------------- */
+  const glow = $('.guarantee .glow');
+  if (glow && !reduced) {
+    let glowTimer = 0;
+    const play = () => {
+      glow.classList.remove('is-play');
+      void glow.offsetWidth;                 // перезапуск искорок
+      glow.classList.add('is-play');
+      setTimeout(() => glow.classList.remove('is-play'), 1600);
+    };
+    new IntersectionObserver(([e]) => {
+      clearInterval(glowTimer);
+      if (e.isIntersecting) { setTimeout(play, 600); glowTimer = setInterval(play, 6500); }
+    }, { threshold: 0.5 }).observe(glow);
+  }
+
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
   const card = {

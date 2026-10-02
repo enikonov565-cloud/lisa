@@ -509,6 +509,75 @@ body::before {
   color: var(--stone);
 }
 .guarantee__title { font-weight: 300; font-size: 3.2rem; line-height: 1.21; margin-bottom: 4.2rem; }
+
+/* «Crystal Glow» (по мотивам Originkit): молочный текст с объёмным оранжевым краем,
+   блик пробегает справа налево, вспыхивают искорки. Наведение на карточку — эффект
+   во всю силу; пока карточка на экране, он сам проигрывается раз в несколько секунд. */
+@property --hover { syntax: '<number>'; inherits: true; initial-value: 0.4; }
+@property --pos   { syntax: '<number>'; inherits: true; initial-value: 1; }
+.glow {
+  --hover: 0.4;
+  --pos: 1;
+  --fs: 3.2rem;
+  --color: var(--milk);
+  --shadow: var(--orange);
+  --glare: rgba(255, 255, 255, .75);
+  position: relative;
+  display: block;
+  transition: --hover .6s cubic-bezier(.34, 1.56, .64, 1), --pos 0s;
+}
+.guarantee:hover .glow,
+.glow.is-play {
+  --hover: 1;
+  --pos: 0;
+  transition: --hover .6s cubic-bezier(.34, 1.56, .64, 1), --pos .45s linear;
+}
+.guarantee:active .glow { --hover: 0; }
+.glow__base {
+  display: block;
+  color: transparent;
+  text-shadow:
+    0 0 var(--shadow),
+    calc(var(--hover) * var(--fs) * -0.02) calc(var(--hover) * var(--fs) * 0.02) var(--shadow),
+    calc(var(--hover) * var(--fs) * -0.04) calc(var(--hover) * var(--fs) * 0.04) var(--shadow),
+    calc(var(--hover) * var(--fs) * -0.06) calc(var(--hover) * var(--fs) * 0.06) var(--shadow),
+    calc(var(--hover) * var(--fs) * -0.08) calc(var(--hover) * var(--fs) * 0.08) var(--shadow),
+    calc(var(--hover) * var(--fs) * -0.10) calc(var(--hover) * var(--fs) * 0.10) var(--shadow);
+  transform: translate(calc(var(--hover) * var(--fs) * 0.10), calc(var(--hover) * var(--fs) * -0.10));
+}
+.glow__face {
+  position: absolute; inset: 0; z-index: 2;
+  display: block;
+  color: transparent;
+  background:
+    linear-gradient(108deg, transparent 0 55%, var(--glare) 55% 60%, transparent 60% 70%, var(--glare) 70% 85%, transparent 85%)
+      calc(var(--pos) * -200%) 0% / 200% 100%,
+    var(--color);
+  -webkit-background-clip: text;
+          background-clip: text;
+}
+.glow svg {
+  position: absolute; z-index: 3;
+  width: calc(var(--fs) * 0.6);
+  aspect-ratio: 1;
+  pointer-events: none;
+  top: calc(var(--y, 50) * 1%);
+  left: calc(var(--x, 0) * 1%);
+  transform: translate(-50%, -50%) scale(0);
+}
+.glow svg path { fill: var(--glare); }
+.guarantee:hover .glow svg,
+.glow.is-play svg { animation: sparkle .75s calc(var(--d) * .15s) both; }
+@keyframes sparkle { 50% { transform: translate(-50%, -50%) scale(var(--s, 1)); } }
+.glow svg:nth-of-type(1) { --x: 0;   --y: 20; --s: 1.1;  --d: 1; }
+.glow svg:nth-of-type(2) { --x: 15;  --y: 80; --s: 1.25; --d: 2; }
+.glow svg:nth-of-type(3) { --x: 45;  --y: 40; --s: 1.1;  --d: 3; }
+.glow svg:nth-of-type(4) { --x: 75;  --y: 60; --s: 0.9;  --d: 2; }
+.glow svg:nth-of-type(5) { --x: 100; --y: 30; --s: 0.8;  --d: 4; }
+@media (prefers-reduced-motion: reduce) {
+  .glow, .guarantee:hover .glow, .glow.is-play { transition: none; }
+  .glow svg { display: none; }
+}
 .guarantee__list { display: flex; flex-direction: column; gap: 1.5rem; }
 .guarantee__list li {
   display: flex; align-items: flex-start; gap: .4rem;
