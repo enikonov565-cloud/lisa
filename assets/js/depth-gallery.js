@@ -135,6 +135,21 @@ function webglAvailable() {
   }
 }
 
+/* При открытии index.html двойным щелчком (file://) браузер не даёт WebGL читать
+   локальные картинки. На этот случай фото подгружаются встроенными (data URI)
+   из depth-images.js; на хостинге используются обычные файлы. */
+function imageSources() {
+  const direct = PHOTOS.map((p) => p.src);
+  if (location.protocol !== 'file:') return Promise.resolve(direct);
+  return new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = 'assets/js/depth-images.js';
+    s.onload = () => resolve(direct.map((src) => (window.__DEPTH_IMAGES || {})[src] || src));
+    s.onerror = () => resolve(direct);
+    document.head.appendChild(s);
+  });
+}
+
 /* ---------------- галерея ---------------- */
 async function init() {
   const host = document.querySelector('.hero__photo');   // место портрета в вёрстке
@@ -193,7 +208,8 @@ async function init() {
   const loader = new THREE.TextureLoader();
   let textures;
   try {
-    textures = await Promise.all(PHOTOS.map((p) => loader.loadAsync(p.src)));
+    const sources = await imageSources();
+    textures = await Promise.all(sources.map((src) => loader.loadAsync(src)));
   } catch (e) {
     canvas.remove();
     return;
