@@ -7,12 +7,14 @@ const CFG = {
   background: '#4c4343',  // графитовый фон карточки
   color1: '#7a3a12',      // глубокий тон фирменного оранжевого
   color2: '#dea988',      // персиковый
-  intensity: 0.32,        // минимальная яркость лент (1 — как в оригинале)
+  intensity: 0.4,         // мягкая яркость лент (1 — как в оригинале)
   speed: 1,
   size: 1,
   angle: -Math.PI,
   hover: 1,
   reach: 160,             // радиус «закрутки» вокруг курсора, px
+  shiftX: -0.3,           // сдвиг узора: ленты постоянно проходят через узкую высокую карточку
+  shiftY: 0.15,
 };
 
 const MAX_DPR = 2;
@@ -35,6 +37,7 @@ uniform float uOn;
 uniform float uReach;
 uniform vec2 uVel;
 uniform float uIntensity;
+uniform vec2 uShift;
 out vec4 o;
 
 const float LAYERS = 84.0;
@@ -68,7 +71,7 @@ void main() {
   float w = uOn * exp(-dot(d, d) / (uReach * uReach));
   if (w > 1e-4) pos = uMouse + rot(w * TWIST) * d * (1.0 - 0.3 * min(w, 1.0)) - uVel * min(w, 1.0) * DRAG;
 
-  pos = rot(uAngle) * pos / uSize;
+  pos = rot(uAngle) * pos / uSize + uShift;
   float t = uTime * 0.49 + PHASE;
   float breath = (-sin(uTime * 0.735) + sin(uTime * 0.49 + 1.0)) * 0.25 + 0.5;
   vec2 u = rot(TILT) * ((pos - CENTRE) * (ZOOM - breath * 0.085));
@@ -149,13 +152,21 @@ function init() {
   canvas.setAttribute('aria-hidden', 'true');
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, depth: false, stencil: false });
   if (!gl) return;
+  card.querySelector('.guarantee__bg')?.remove();
   card.prepend(canvas);
+  // если браузер сбросил видеоконтекст (сон, смена GPU, долгий фон) — пересоздаём холст, а не оставляем пустым
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    dead = true;
+    stop();
+    setTimeout(init, 400);
+  }, { once: true });
 
   const field = program(gl, FIELD);
   const finish = program(gl, FINISH);
   if (!field || !finish) { canvas.remove(); return; }
   const loc = (p, names) => Object.fromEntries(names.map((n) => [n, gl.getUniformLocation(p, n)]));
-  const uf = loc(field, ['uRes', 'uTime', 'uC1', 'uC2', 'uSize', 'uAngle', 'uMouse', 'uOn', 'uReach', 'uVel', 'uIntensity']);
+  const uf = loc(field, ['uRes', 'uTime', 'uC1', 'uC2', 'uSize', 'uAngle', 'uMouse', 'uOn', 'uReach', 'uVel', 'uIntensity', 'uShift']);
   const un = loc(finish, ['uField', 'uRes', 'uTime', 'uBg', 'uPaper']);
   gl.bindVertexArray(gl.createVertexArray());
 
@@ -198,6 +209,7 @@ function init() {
   const c1 = hex(CFG.color1), c2 = hex(CFG.color2), bg = hex(CFG.background);
   const bgLum = 0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2];
 
+  let dead = false;
   let mx = 0, my = 0, vx = 0, vy = 0, on = 0, raf = 0, last = -1, clock = 0, running = false;
 
   const render = (now) => {
@@ -243,6 +255,7 @@ function init() {
     gl.uniform1f(uf.uReach, CFG.reach / ch);
     gl.uniform2f(uf.uVel, (vx / ch) * vCap, (-vy / ch) * vCap);
     gl.uniform1f(uf.uIntensity, CFG.intensity);
+    gl.uniform2f(uf.uShift, CFG.shiftX, CFG.shiftY);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -258,7 +271,7 @@ function init() {
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
 
-  const start = () => { if (running) return; running = true; last = -1; raf = requestAnimationFrame(render); };
+  const start = () => { if (running || dead) return; running = true; last = -1; raf = requestAnimationFrame(render); };
   const stop = () => { running = false; cancelAnimationFrame(raf); };
 
   // рисуем только пока карточка на экране
