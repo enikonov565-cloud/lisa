@@ -334,7 +334,7 @@
   const guarantee = $('.guarantee');
   if (guarantee) {
     if ('IntersectionObserver' in window && !reduced) {
-      const LIST = { appear: 3800, hold: 3200, vanish: 1400, pause: 700 };   // мс
+      const LIST = { appear: 6200, hold: 3200, vanish: 2900, pause: 1000 };   // мс, согласовано с CSS
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       let listVisible = false;
       let listRunning = false;
@@ -342,9 +342,10 @@
         if (listRunning) return;
         listRunning = true;
         while (listVisible) {
+          guarantee.classList.remove('list-out');
           guarantee.classList.add('list-in');
           await wait(LIST.appear + LIST.hold);
-          guarantee.classList.remove('list-in');
+          guarantee.classList.replace('list-in', 'list-out');
           await wait(LIST.vanish + LIST.pause);
         }
         listRunning = false;
