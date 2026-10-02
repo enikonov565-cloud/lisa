@@ -359,6 +359,31 @@
     }
   }
 
+  /* ---------------- бегущая строка: переворот плашки в центре экрана ----------------
+     Каждый кадр смотрим, какая плашка проходит через середину окна, и переворачиваем её.
+     Работает, только пока строка на экране. */
+  const marquee = $('.marquee');
+  const mflips = $$('.marquee .mflip');
+  if (marquee && mflips.length && !reduced) {
+    let mRaf = 0;
+    const tick = () => {
+      mRaf = requestAnimationFrame(tick);
+      const mid = window.innerWidth / 2;
+      // ближайшая к центру плашка (так перевёрнута всегда одна, даже когда центр в промежутке)
+      let best = null, bestD = Infinity;
+      mflips.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < bestD) { bestD = d; best = el; }
+      });
+      mflips.forEach((el) => el.classList.toggle('is-center', el === best));
+    };
+    new IntersectionObserver(([e]) => {
+      cancelAnimationFrame(mRaf);
+      if (e.isIntersecting) mRaf = requestAnimationFrame(tick);
+    }).observe(marquee);
+  }
+
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
   const card = {
