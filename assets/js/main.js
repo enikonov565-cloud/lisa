@@ -328,6 +328,36 @@
     }, { threshold: 0.5 }).observe($('.guarantee'));
   }
 
+  /* ---------------- пункты гарантий: поочерёдное появление по кругу ----------------
+     Пункты по одному проявляются, держатся, вместе плавно растворяются — и снова.
+     Цикл крутится, только пока карточка на экране. */
+  const guarantee = $('.guarantee');
+  if (guarantee) {
+    if ('IntersectionObserver' in window && !reduced) {
+      const LIST = { appear: 3800, hold: 3200, vanish: 1400, pause: 700 };   // мс
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      let listVisible = false;
+      let listRunning = false;
+      const listLoop = async () => {
+        if (listRunning) return;
+        listRunning = true;
+        while (listVisible) {
+          guarantee.classList.add('list-in');
+          await wait(LIST.appear + LIST.hold);
+          guarantee.classList.remove('list-in');
+          await wait(LIST.vanish + LIST.pause);
+        }
+        listRunning = false;
+      };
+      new IntersectionObserver(([e]) => {
+        listVisible = e.isIntersecting;
+        if (listVisible) listLoop();
+      }, { threshold: 0.35 }).observe(guarantee);
+    } else {
+      guarantee.classList.add('list-in');
+    }
+  }
+
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
   const card = {
