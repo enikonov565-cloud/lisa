@@ -538,7 +538,7 @@ body::before {
 .guarantee__link:active .glow { --hover: 0; }
 
 /* вариант для ссылки «мои работы»: строчный, свой размер шрифта */
-.glow--link { display: inline-block; --fs: max(2rem, 13px); }
+.glow--link { display: inline-block; --fs: max(2rem, 13px); --shadow: transparent; } /* без оранжевого объёма — только блик */
 .glow--link .glow__base { display: inline-block; white-space: nowrap; }
 .glow__base {
   display: block;
