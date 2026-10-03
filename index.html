@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610031642">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610031644">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -387,39 +387,6 @@
       </div>
     </section>
 
-    <!-- ============ PROCESS ============ -->
-    <section class="process" id="process" aria-labelledby="process-title">
-      <div class="wrap">
-        <div class="sec-head">
-          <h2 class="h1 rv" id="process-title">Как проходит съёмка</h2>
-          <p class="note rv" style="--d:.1s">От первого сообщения до готовых кадров — без лишней переписки и долгих ожиданий.</p>
-        </div>
-
-        <ol class="steps">
-          <li class="step rv">
-            <span class="step__num">01</span>
-            <h3 class="step__title">Заявка и бриф</h3>
-            <p>Вы оставляете заявку, я задаю несколько вопросов о задаче, настроении и сроках.</p>
-          </li>
-          <li class="step rv" style="--d:.08s">
-            <span class="step__num">02</span>
-            <h3 class="step__title">Подготовка</h3>
-            <p>Подбираем локацию или студию, образы и референсы. Собираю мудборд, чтобы мы видели одно и то же.</p>
-          </li>
-          <li class="step rv" style="--d:.16s">
-            <span class="step__num">03</span>
-            <h3 class="step__title">Съёмка</h3>
-            <p>Тихая режиссура: подсказываю, но не командую. Вы просто остаётесь собой.</p>
-          </li>
-          <li class="step step--dark rv" style="--d:.24s">
-            <span class="step__num">04</span>
-            <h3 class="step__title">Личная галерея</h3>
-            <p>Присылаю закрытую ссылку на онлайн-галерею: вы выбираете кадры, а готовые файлы скачиваете в полном разрешении.</p>
-          </li>
-        </ol>
-      </div>
-    </section>
-
     <!-- ============ CONTACT ============ -->
     <section class="contact" id="contact" aria-labelledby="contact-title">
       <div class="wrap">
@@ -428,6 +395,9 @@
             <h2 class="h1 contact__title rv" id="contact-title">Давайте снимем вашу историю</h2>
             <p class="contact__text rv" style="--d:.08s">Расскажите коротко о задаче — я отвечу в течение дня и предложу идеи для съёмки.</p>
             <ul class="contact__links rv" style="--d:.16s" id="contact-links"></ul>
+            <button class="extras-btn process-btn rv" style="--d:.2s" type="button" aria-haspopup="dialog" aria-controls="process-dialog">
+              как проходит съёмка <span class="extras-btn__plus" aria-hidden="true">+</span>
+            </button>
           </div>
 
           <form class="form rv" style="--d:.12s" id="form" novalidate>
@@ -483,6 +453,34 @@
     </div>
   </footer>
 
+  <!-- ============ «как проходит съёмка»: всплывающее окно ============ -->
+  <dialog class="extras-dialog process-dialog" id="process-dialog" aria-labelledby="pdlg-title">
+    <div class="extras-dialog__card pdlg">
+      <button class="extras-dialog__close" type="button" aria-label="Закрыть">×</button>
+      <p class="extras-dialog__title" id="pdlg-title">Как проходит съёмка</p>
+      <p class="pdlg__text">От первого сообщения до готовых кадров —<br class="br-d"> без лишней переписки и долгих ожиданий.</p>
+      <ol class="pdlg__steps">
+        <li class="pdlg__step">
+          <p class="pdlg__name">Знакомимся</p>
+          <p>Вы оставляете заявку, я задаю несколько вопросов о задаче, настроении и сроках.</p>
+        </li>
+        <li class="pdlg__step">
+          <p class="pdlg__name">Готовимся</p>
+          <p>Подбираем локацию или студию, образы и референсы. Собираю мудборд, чтобы мы видели одно и то же.</p>
+        </li>
+        <li class="pdlg__step">
+          <p class="pdlg__name">Снимаем</p>
+          <p>Тихая режиссура: подсказываю, но не командую. Вы просто остаётесь собой.</p>
+        </li>
+        <li class="pdlg__step">
+          <p class="pdlg__name">Получаете кадры</p>
+          <p>Присылаю закрытую ссылку на онлайн-галерею: вы выбираете кадры, а готовые файлы скачиваете в полном разрешении.</p>
+        </li>
+      </ol>
+      <a class="btn-cta btn-cta--wide extras-dialog__cta" href="#contact"><span>оставить заявку</span> <span class="extras-dialog__arrow" aria-hidden="true">→</span></a>
+    </div>
+  </dialog>
+
   <!-- ============ «связаться с фотографом»: всплывающее окно ============ -->
   <dialog class="extras-dialog contact-dialog" id="contact-dialog" aria-labelledby="cdlg-title">
     <div class="extras-dialog__card cdlg">
@@ -529,9 +527,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610031642" defer></script>
+  <script src="assets/js/main.js?v=202610031644" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610031642" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610031642" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610031644" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610031644" defer></script>
 </body>
 </html>

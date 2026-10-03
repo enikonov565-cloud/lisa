@@ -1029,6 +1029,45 @@ body::before {
 .cdlg__consent.is-invalid { color: var(--brick); }
 .cdlg .extras-dialog__cta { margin-top: .8rem; }
 .cdlg__status { min-height: 1.2em; font-size: max(1.8rem, 13px); color: var(--brick); }
+/* кнопка «как проходит съёмка» на тёмной карточке контактов */
+.process-btn {
+  margin-top: 4.8rem;
+  background-color: rgba(255, 255, 255, .08);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, .03) 60%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 .9rem 1.8rem -.8rem rgba(0, 0, 0, .4);
+  color: var(--milk);
+}
+
+/* окно «как проходит съёмка»: шаги — линия времени, появляются по очереди */
+.process-dialog { width: min(64rem, calc(100vw - 2 * var(--pad))); }
+.pdlg { max-height: calc(100dvh - 4rem); overflow-y: auto; }
+.pdlg .extras-dialog__title { margin-bottom: 1.2rem; }
+.pdlg__text { font-size: max(2rem, 14px); line-height: 1.35; color: rgba(76, 67, 67, .8); }
+.pdlg__steps { position: relative; display: flex; flex-direction: column; gap: 2.4rem; margin: 3.2rem 0 1.2rem; padding-left: 3.6rem; }
+.pdlg__step:not(:last-child)::after {   /* отрезок линии до следующей точки */
+  content: ""; position: absolute; left: -2.95rem; top: 2.6rem; bottom: -2.2rem; width: 1.5px;
+  background: linear-gradient(180deg, var(--orange), rgba(180, 83, 42, .35));
+  transform-origin: top;
+}
+.pdlg__step { position: relative; }
+.pdlg__step::before {
+  content: ""; position: absolute; left: -3.6rem; top: .6rem;
+  width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  background: var(--milk); box-shadow: inset 0 0 0 1.5px var(--orange), 0 0 0 .5rem var(--milk);
+}
+.pdlg__step:last-child::before { background: var(--brick); box-shadow: inset 0 0 0 1.5px var(--brick), 0 0 0 .5rem var(--milk); }
+.pdlg__name { font-family: var(--display); font-size: 3rem; line-height: 1.1; letter-spacing: .02em; margin-bottom: .6rem; }
+.pdlg__step p:not(.pdlg__name) { font-size: max(1.9rem, 14px); line-height: 1.4; color: rgba(76, 67, 67, .85); }
+.process-dialog[open] .pdlg__step::after { animation: pdlgLine .8s cubic-bezier(.22, 1, .36, 1) both; animation-delay: inherit; }
+.process-dialog[open] .pdlg__step { animation: pdlgStep .9s cubic-bezier(.22, 1, .36, 1) both; }
+.process-dialog[open] .pdlg__step:nth-child(1) { animation-delay: .25s; }
+.process-dialog[open] .pdlg__step:nth-child(2) { animation-delay: .5s; }
+.process-dialog[open] .pdlg__step:nth-child(3) { animation-delay: .75s; }
+.process-dialog[open] .pdlg__step:nth-child(4) { animation-delay: 1s; }
+@keyframes pdlgLine { 0%, 40% { transform: scaleY(0); } }
+@keyframes pdlgStep { from { opacity: 0; transform: translateY(1.6rem); filter: blur(3px); } }
+@media (prefers-reduced-motion: reduce) { .process-dialog[open] .pdlg__step::after, .process-dialog[open] .pdlg__step { animation: none; } }
+
 .extras__list li {
   display: flex; justify-content: space-between; gap: 2rem;
   padding: 1.2rem 0;
@@ -1083,20 +1122,6 @@ body::before {
 /* ==========================================================================
    PROCESS
    ========================================================================== */
-.process { padding-top: var(--sec); }
-.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
-.step {
-  display: flex; flex-direction: column; gap: 1.6rem;
-  min-height: 36rem;
-  padding: 2.8rem 2.8rem 3.2rem;
-  border-radius: var(--radius);
-  background: var(--veil);
-}
-.step__num { font-family: var(--display); font-size: 6.4rem; line-height: 1; margin-bottom: auto; }
-.step__title { font-weight: 300; font-size: 3.2rem; line-height: 1.21; }
-.step p { min-height: 5.2em; font-size: max(2rem, 14px); line-height: 1.3; letter-spacing: .02em; color: var(--ink-deep); }
-.step--dark { background: var(--ink); color: #fff; }
-.step--dark p { color: var(--stone); }
 
 /* ==========================================================================
    CONTACT
@@ -1262,8 +1287,6 @@ body::before {
   .gallery__item--wide { grid-column: 1 / -1; }
   .gallery__cap { opacity: 1; transform: none; }
 
-  .steps { grid-template-columns: 1fr 1fr; }
-  .step { min-height: 30rem; }
 
   .contact__card { grid-template-columns: 1fr; gap: 5rem; padding: 4rem 3rem; }
 
@@ -1292,13 +1315,10 @@ body::before {
   .hero__div img { width: 3rem; }
   .chip { font-size: 2.8rem; padding: .5rem 2.2rem; }
   .svc__item p { font-size: 2.4rem; }
-  .steps { grid-template-columns: 1fr; }
   .genres__grid { grid-template-columns: 1fr; }
   .note { font-size: 13px; }   /* подзаголовки и на телефоне в 2 строки */
   .genre__title { white-space: normal; }
   .genre .genre__img, .genre:last-child .genre__img { aspect-ratio: 4 / 3; }
-  .step { min-height: 0; }
-  .step__num { margin-bottom: 2rem; }
   .gallery { grid-template-columns: 1fr; grid-auto-rows: auto; }
   .gallery__item--tall { grid-row: auto; }
   .gallery__btn img { aspect-ratio: 4 / 5; height: auto; }

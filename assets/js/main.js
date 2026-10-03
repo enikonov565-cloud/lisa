@@ -795,6 +795,20 @@
   });
   $$('.field input', form).forEach((i) => i.addEventListener('input', () => i.closest('.field').classList.remove('is-invalid')));
 
+  /* ---------------- «как проходит съёмка» → всплывающее окно ---------------- */
+  const pDlg = $('#process-dialog');
+  if (pDlg && typeof pDlg.showModal === 'function') {
+    const openP = (e) => { if (e) e.preventDefault(); pDlg.showModal(); };
+    $$('.process-btn, a[href="#process"]').forEach((b) => b.addEventListener('click', openP));
+    $('.extras-dialog__close', pDlg).addEventListener('click', () => pDlg.close());
+    $('.extras-dialog__cta', pDlg).addEventListener('click', (e) => {
+      e.preventDefault();
+      pDlg.close();
+      $('#form').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+    });
+    pDlg.addEventListener('click', (e) => { if (e.target === pDlg) pDlg.close(); });
+  }
+
   /* ---------------- «связаться с фотографом» → всплывающее окно ---------------- */
   const cDlg = $('#contact-dialog');
   if (cta && cDlg && typeof cDlg.showModal === 'function') {
