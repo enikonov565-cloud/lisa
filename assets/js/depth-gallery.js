@@ -20,8 +20,8 @@ const BRAND = {
 // каждое фото задаёт свою «атмосферу» фона — всё в пределах фирменной палитры
 const PHOTOS = [
   { src: 'assets/img/depth-1.jpg', x: 0,     mood: { background: BRAND.copper, blob1: BRAND.peach, blob2: BRAND.orange } },
-  { src: 'assets/img/depth-2.jpg', x: 0.18,  mood: { background: BRAND.peach, blob1: BRAND.orange, blob2: BRAND.milk } },
-  { src: 'assets/img/depth-3.jpg', x: -0.18, mood: { background: BRAND.milk,  blob1: BRAND.peach,  blob2: BRAND.stone } },
+  { src: 'assets/img/depth-2.jpg', x: 0,     mood: { background: BRAND.peach, blob1: BRAND.orange, blob2: BRAND.milk } },
+  { src: 'assets/img/depth-3.jpg', x: 0,     mood: { background: BRAND.milk,  blob1: BRAND.peach,  blob2: BRAND.stone } },
 ];
 
 const CFG = {
@@ -394,8 +394,10 @@ async function init() {
       p.visible = o > 0.002;
 
       const depthInfluence = 1 + i * 0.05;
-      p.position.x = p.userData.x * baseHeight / 3 + pointer.x * CFG.parallaxX * o * depthInfluence;
-      p.position.y = pointer.y * CFG.parallaxY * o * depthInfluence;
+      // параллакс от курсора только в пролёте: в покое каждое фото стоит на одном и том же месте
+      const motion = clamp(breath * 1.5, 0, 1);
+      p.position.x = p.userData.x * baseHeight / 3 + pointer.x * CFG.parallaxX * o * depthInfluence * motion;
+      p.position.y = pointer.y * CFG.parallaxY * o * depthInfluence * motion;
       p.position.z = -i * CFG.gap;
 
       const b = breath * o;
