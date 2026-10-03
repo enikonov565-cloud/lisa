@@ -580,6 +580,8 @@ body::before {
   transform-style: preserve-3d;
   transform: scale(var(--gs)) rotateY(var(--gr));
   transition: transform .9s cubic-bezier(.34, 1.25, .5, 1);
+  will-change: transform;
+  -webkit-transform-style: preserve-3d;
 }
 .genre:hover .genre__inner { --gs: 1.03; }
 .genre.is-flipped .genre__inner { --gr: 180deg; }
@@ -593,7 +595,10 @@ body::before {
   overflow: hidden;
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
 }
-.genre__front { background: var(--veil); }
+.genre__front { background: var(--veil); transform: translateZ(1px); }   /* стороны чуть разнесены — Safari не «дрожит» на перевороте */
+/* значок скрытой стороны прячем явно: у него своё размытие, и iOS игнорирует для него backface */
+.genre__face .genre__icon { transition: transform .6s cubic-bezier(.34, 1.56, .64, 1), background-color .4s var(--ease), opacity .2s linear .2s; }
+.genre.is-flipped .genre__front .genre__icon, .genre:not(.is-flipped) .genre__back .genre__icon { opacity: 0; visibility: hidden; transition-delay: 0s; }
 .genre__img { aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius); }
 .genre__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .genre:hover .genre__img img { transform: scale(1.04); }
@@ -618,7 +623,7 @@ body::before {
 
 /* оборот */
 .genre__back {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(1px);
   justify-content: flex-end; gap: 1.6rem;
   padding: 3rem 2.6rem 3.2rem;
   background-color: var(--accent);
@@ -1507,4 +1512,13 @@ body::before {
   #footer-contacts { order: 1; }
   .footer__card > div.footer__col:not(#footer-contacts) { order: 2; }
   .footer__card > nav.footer__col { order: 3; }
+}
+
+/* телефоны и планшеты: переворот без пружины и без «залипшего» наведения — без дрожания */
+@media (hover: none) {
+  .genre__inner { transition: transform .8s cubic-bezier(.45, 0, .2, 1); }
+  .genre:hover .genre__inner { --gs: 1; }
+  .genre:hover .genre__img img { transform: none; }
+  .genre:hover .genre__icon { transform: none; }
+  .genre__icon { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(var(--peach-rgb), .8); }
 }
