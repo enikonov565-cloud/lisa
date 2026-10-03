@@ -796,7 +796,7 @@ body::before {
 
 /* карточка цены — светлое матовое стекло вместо тяжёлой тёмной подложки */
 .svc-card {
-  align-self: center;
+  align-self: stretch;          /* на всю высоту фото */
   display: flex; flex-direction: column; gap: 2rem;
   padding: 3.6rem 3.2rem;
   border-radius: var(--radius);
@@ -820,7 +820,7 @@ body::before {
   align-self: flex-start;
   display: flex; align-items: center; justify-content: flex-end;
   width: var(--h); height: var(--h);
-  margin-top: 1.2rem;
+  margin-top: auto;             /* кнопка прижата к низу карточки */
   border-radius: var(--btn-radius);
   background: var(--orange);
   background-image: linear-gradient(180deg, rgba(255, 255, 255, .26) 0%, rgba(255, 255, 255, .04) 60%, rgba(0, 0, 0, .05) 100%);
