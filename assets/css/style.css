@@ -1212,18 +1212,16 @@ body::before {
 /* «полароиды» */
 .invite__pic {
   position: absolute; z-index: 0;
-  padding: .8rem .8rem 2.4rem;
   border-radius: var(--radius);
-  background: var(--milk);
   box-shadow: 0 2rem 4rem -1.6rem rgba(76, 67, 67, .45);
   transform: rotate(var(--r));
   animation: picFloat var(--t, 7s) ease-in-out var(--dl, 0s) infinite;
 }
-.invite__pic img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: calc(var(--radius) - .8rem); }
-.invite__pic--1 { --r: -8deg; --t: 7s; width: 22rem; left: 7%; top: 12%; }
-.invite__pic--2 { --r: 6deg; --t: 8s; --dl: -2s; width: 15rem; left: 15%; bottom: 10%; }
-.invite__pic--3 { --r: 7deg; --t: 7.5s; --dl: -4s; width: 21rem; right: 7%; top: 14%; }
-.invite__pic--4 { --r: -5deg; --t: 8.5s; --dl: -1s; width: 15rem; right: 15%; bottom: 9%; }
+.invite__pic img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius); }
+.invite__pic--1 { --r: -8deg; --t: 7s; width: 27rem; left: 6%; top: 11%; }
+.invite__pic--2 { --r: 6deg; --t: 8s; --dl: -2s; width: 19rem; left: 14%; bottom: 9%; }
+.invite__pic--3 { --r: 7deg; --t: 7.5s; --dl: -4s; width: 26rem; right: 6%; top: 12%; }
+.invite__pic--4 { --r: -5deg; --t: 8.5s; --dl: -1s; width: 19rem; right: 14%; bottom: 8%; }
 @keyframes picFloat { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-1.4rem) rotate(calc(var(--r) * .8)); } }
 @media (prefers-reduced-motion: reduce) { .invite__btn, .invite__btn::after, .invite__pic { animation: none; } }
 
