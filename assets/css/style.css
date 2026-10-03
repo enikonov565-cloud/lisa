@@ -808,17 +808,15 @@ body::before {
   position: absolute; left: 0; top: 0; z-index: 3;
   display: grid; place-items: center;
   width: 60px; height: 60px;
-  border-radius: 50%;
-  background: rgba(var(--peach-rgb), .28);
-  border: 1px solid rgba(255, 255, 255, .6);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  /* только стрелка, без круга; лёгкая тень — чтобы читалась на светлых и тёмных кадрах */
   color: var(--milk);
+  filter: drop-shadow(0 1px 3px rgba(32, 26, 26, .55));
   pointer-events: none;
   opacity: 0;
   transform: translate(-50%, -50%) scale(.6);
   transition: opacity .25s var(--ease), transform .35s cubic-bezier(.34, 1.56, .64, 1);
 }
-.svc-cursor svg { width: 42%; height: 42%; transition: transform .3s var(--ease); }
+.svc-cursor svg { width: 70%; height: 70%; transition: transform .3s var(--ease); }
 .svc-photo.has-side .svc-cursor { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .svc-photo.side-left .svc-cursor svg { transform: scaleX(-1); }
 .svc-dots {

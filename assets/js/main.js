@@ -513,7 +513,27 @@
       box.classList.toggle('has-side', side !== 'none');
       box.classList.toggle('side-left', side === 'left');
     };
-    const go = (i) => {
+    const cardParts = () => $$('.svc-card__kicker, .svc-card__price, .svc-card__list');
+    const swapCard = (fill, dir) => {
+      // половина сдвига фото — старый текст уходит, вторая половина — новый въезжает с той же стороны
+      const parts = cardParts();
+      const half = DUR / 2;
+      Promise.all(parts.map((p) => p.animate(
+        [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 2) + 'rem)' }],
+        { duration: half, easing: 'cubic-bezier(0.42, 0, 1, 1)', fill: 'forwards' },
+      ).finished)).then(() => {
+        fill();
+        cardParts().forEach((p) => {
+          p.getAnimations().forEach((a) => a.cancel());
+          p.animate(
+            [{ opacity: 0, transform: 'translateX(' + (dir * 2) + 'rem)' }, { opacity: 1, transform: 'translateX(0)' }],
+            { duration: half, easing: 'cubic-bezier(0, 0, 0.58, 1)' },
+          );
+        });
+      });
+    };
+    let queuedFill = null;
+    const go = (i, fill) => {
       if (i === index || i < 0 || i >= count) return;
       dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
       box.setAttribute('aria-label', SERVICES[i].alt);
@@ -521,11 +541,13 @@
         if (layer) layer.remove();
         layer = make(i, '0%');
         index = i;
+        if (fill) fill();
         return;
       }
-      if (sliding) { queued = i; return; }
+      if (sliding) { queued = i; queuedFill = fill; return; }
       sliding = true;
       const dir = i > index ? 1 : -1;
+      if (fill) swapCard(fill, dir);
       const from = layer;
       const to = make(i, (dir * 100) + '%');
       void to.offsetWidth;
@@ -539,7 +561,7 @@
         layer = to;
         sliding = false;
         if (pointer) { side = sideFor(pointer.x, pointer.w); paintSide(); }
-        if (queued !== null && queued !== index) { const q = queued; queued = null; go(q); } else queued = null;
+        if (queued !== null && queued !== index) { const q = queued, f = queuedFill; queued = null; queuedFill = null; go(q, f); } else { queued = null; queuedFill = null; }
       }, DUR + 40);
     };
     box.addEventListener('pointermove', (e) => {
@@ -584,12 +606,14 @@
         f.classList.toggle('is-flipped', on);
       }
     });
-    card.kicker.textContent = s.title.toLowerCase();
-    card.price.textContent = s.price;
-    card.includes.innerHTML = s.includes.map((t) => `<li>${t}</li>`).join('');
-    if (window.siteTypograph) window.siteTypograph(card.includes);   // правило переносов и для новых строк
     card.order.dataset.type = s.title;
-    svcGallery.go(i);
+    const fill = () => {
+      card.kicker.textContent = s.title.toLowerCase();
+      card.price.textContent = s.price;
+      card.includes.innerHTML = s.includes.map((t) => `<li>${t}</li>`).join('');
+      if (window.siteTypograph) window.siteTypograph(card.includes);   // правило переносов и для новых строк
+    };
+    svcGallery.go(i, fill);   // фото и текст карточки меняются одновременно
   };
   $$('.svc__item', list).forEach((el) => {
     const i = Number(el.dataset.i);
