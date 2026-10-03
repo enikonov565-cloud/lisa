@@ -508,6 +508,7 @@ body::before {
 .about__side { display: flex; flex-direction: column; align-items: flex-end; gap: 4rem; }
 .about__side .lead {
   width: 100%; padding: 1rem 0;
+  font-size: 2.9rem;   /* на 3 pt меньше основного .lead */
   /* переносы строк расставлены вручную по макету — ровные блоки; на телефоне текст течёт свободно */
 }
 .about__divider { width: 100%; height: .57735rem; }
@@ -1192,7 +1193,7 @@ body::before {
   .about__note { width: auto; }
   .about__hello { font-size: 3.6rem; white-space: normal; }
   .about__side { gap: 2.4rem; }
-  .about__side .lead { padding: 0; }
+  .about__side .lead { padding: 0; font-size: 2.3rem; }
   .br-d { display: none; }
 
   .bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: auto; gap: 1.6rem; }   /* колонки не распираются текстом */
