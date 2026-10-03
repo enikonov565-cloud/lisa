@@ -300,6 +300,9 @@ async function init() {
     const visH = 2 * CFG.viewOffset * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     baseHeight = photoPx / (Fh / visH);
     planes.forEach((p) => p.material.uniforms.uSize.value.set(p.userData.aspect * baseHeight, baseHeight));
+    // скругление углов фото — 20px на экране, как у всех фото и плашек сайта
+    const radiusUnits = 20 / (Fh / visH);
+    planes.forEach((p) => { p.material.uniforms.uRadius.value = radiusUnits; });
 
     // фон-шейдер: пятна кружат вокруг фото
     const photoW = photoPx * maxAspect;
