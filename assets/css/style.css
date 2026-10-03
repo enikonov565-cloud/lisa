@@ -234,7 +234,7 @@ body::before {
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 5.8rem var(--pad) 2rem;   /* шапка на месте из макета (58px при 1920) */
+  padding: 2.8rem var(--pad) 1.6rem;   /* шапка ближе к верхнему краю — без пустой полосы */
   transition: padding .5s var(--ease), background-color .5s var(--ease), backdrop-filter .5s var(--ease);
 }
 .header.is-scrolled {
@@ -311,7 +311,7 @@ body::before {
   height: 100vh;        /* первый экран — ровно в окно */
   height: 100svh;
   min-height: 60rem;
-  padding: calc(var(--pad-y) + 7.7rem) var(--pad) var(--pad-y);
+  padding: 12rem var(--pad) 3.2rem;   /* первый экран без пустых полос сверху и снизу */
   display: flex; flex-direction: column;
 }
 .hero__grid {
@@ -351,7 +351,7 @@ body::before {
 .tags__row:last-child { justify-content: flex-start; } /* обе строки ровно по левому краю заголовка */
 
 .hero__photo {
-  width: min(78.9rem, calc(100svh - 2 * var(--pad-y) - 24rem));   /* рамка-заглушка не выталкивает экран за окно */
+  width: min(78.9rem, calc(100svh - 40rem));   /* рамка-заглушка не выталкивает экран за окно */
   aspect-ratio: 1 / 1;
   border-radius: var(--radius);
   overflow: hidden;

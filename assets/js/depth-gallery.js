@@ -274,11 +274,12 @@ async function init() {
       // десктоп: фото прижато к правому полю, по высоте — между шапкой и нижней строкой
       const header = document.querySelector('.header');
       const bar = document.querySelector('.hero__bar');
-      const top = (header ? header.offsetHeight : 0) + px(1.6);
-      const bottom = (bar ? bar.getBoundingClientRect().top - s.top : H) - px(3.2);
+      const top = (header ? header.offsetHeight : 0) + px(0.8);
+      const bottom = (bar ? bar.getBoundingClientRect().top - s.top : H) - px(2);
       const left = textRight + px(4);
       const right = W - pad;
-      photoPx = Math.min(want, bottom - top, (right - left) / (maxAspect + 2 * swing));
+      // десктоп: фото занимает всю высоту между шапкой и нижней строкой — без пустых полос
+      photoPx = Math.min(bottom - top, (right - left) / (maxAspect + 2 * swing));
       cx = right - photoPx * (maxAspect / 2 + swing);
       cy = (top + bottom) / 2;
     } else {
