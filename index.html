@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610031442">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610031445">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -52,11 +52,12 @@
     <nav class="menu__nav" aria-label="Основное меню">
       <a href="#top"><span>01</span>Главная</a>
       <a href="#about"><span>02</span>Обо мне</a>
-      <a href="#approach"><span>03</span>Подход</a>
-      <a href="#services"><span>04</span>Услуги и цены</a>
-      <a href="#works"><span>05</span>Работы</a>
-      <a href="#process"><span>06</span>Как проходит съёмка</a>
-      <a href="#contact"><span>07</span>Контакты</a>
+      <a href="#genres"><span>03</span>Что я создаю</a>
+      <a href="#approach"><span>04</span>Подход</a>
+      <a href="#services"><span>05</span>Услуги и цены</a>
+      <a href="#works"><span>06</span>Работы</a>
+      <a href="#process"><span>07</span>Как проходит съёмка</a>
+      <a href="#contact"><span>08</span>Контакты</a>
     </nav>
     <div class="menu__aside">
       <p>Москва и выезд</p>
@@ -146,6 +147,58 @@
             <img class="about__divider" src="assets/img/about-divider.svg" width="553.09" height="5.7735" alt="">
             <p class="lead">Я создаю спокойную, тёплую<br class="br-d"> атмосферу, в которой<br class="br-d"> вы раскрываетесь сами,<br class="br-d"> естественно и такими, какие есть.</p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GENRES: что я создаю ============ -->
+    <section class="genres" id="genres" aria-labelledby="genres-title">
+      <div class="wrap">
+        <div class="sec-head genres__head">
+          <h2 class="h1 rv" id="genres-title">Что я создаю</h2>
+          <p class="note rv" style="--d:.1s">Пять направлений, в которых я ищу живые эмоции и красоту обычных моментов.</p>
+        </div>
+        <div class="genres__grid">
+          <a class="genre rv" href="#services" data-svc="3" style="--accent:#c4643a;--accent-ink:var(--milk);--d:0.00s">
+            <figure class="genre__img"><img src="assets/img/depth-1.jpg" loading="lazy" alt="Студийный портрет женщины с рыжими волосами на тёмном фоне"></figure>
+            <div class="genre__body">
+              <span class="genre__num">01</span>
+              <h3 class="genre__title">Студийный портрет</h3>
+              <p class="genre__text">Свет, характер и настроение — портрет, в котором вы узнаёте себя.</p>
+            </div>
+          </a>
+          <a class="genre rv" href="#services" data-svc="4" style="--accent:var(--orange);--accent-ink:var(--milk);--d:0.08s">
+            <figure class="genre__img"><img src="assets/img/depth-3.jpg" loading="lazy" alt="Портрет женщины в светлом жакете при мягком дневном свете"></figure>
+            <div class="genre__body">
+              <span class="genre__num">02</span>
+              <h3 class="genre__title">Уличный портрет</h3>
+              <p class="genre__text">Естественный свет и живой город вокруг — лёгкие, тёплые кадры.</p>
+            </div>
+          </a>
+          <a class="genre rv" href="#services" data-svc="0" style="--accent:var(--milk);--accent-ink:var(--orange);--d:0.16s">
+            <figure class="genre__img"><img src="assets/img/approach-owl.jpg" loading="lazy" alt="Металлическая фигурка совы на фоне боке"></figure>
+            <div class="genre__body">
+              <span class="genre__num">03</span>
+              <h3 class="genre__title">Рекламная съёмка</h3>
+              <p class="genre__text">Предметы, образы и детали, которые рассказывают историю бренда.</p>
+            </div>
+          </a>
+          <a class="genre rv" href="#services" data-svc="1" style="--accent:#e8925a;--accent-ink:var(--ink-deep);--d:0.24s">
+            <figure class="genre__img"><img src="assets/img/about-arch.jpg" loading="lazy" alt="Тропинка, убегающая в осеннюю арку среди листвы"></figure>
+            <div class="genre__body">
+              <span class="genre__num">04</span>
+              <h3 class="genre__title">Пейзаж</h3>
+              <p class="genre__text">Горы, море и рассветы — фотоистории и принты для дома.</p>
+            </div>
+          </a>
+          <a class="genre rv" href="#services" data-svc="2" style="--accent:var(--olive, #8a8d3c);--accent-ink:var(--ink-deep);--d:0.32s">
+            <figure class="genre__img"><img src="assets/img/about-flower.jpg" loading="lazy" alt="Тёплый крупный план цветка"></figure>
+            <div class="genre__body">
+              <span class="genre__num">05</span>
+              <h3 class="genre__title">Стрит-фотография</h3>
+              <p class="genre__text">Случайные мгновения города, которые больше не повторятся.</p>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -376,9 +429,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610031442" defer></script>
+  <script src="assets/js/main.js?v=202610031445" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610031442" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610031442" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610031445" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610031445" defer></script>
 </body>
 </html>
