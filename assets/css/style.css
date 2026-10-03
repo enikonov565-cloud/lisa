@@ -234,7 +234,7 @@ body::before {
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  padding: var(--pad-y) var(--pad) 2rem;
+  padding: 5.8rem var(--pad) 2rem;   /* шапка на месте из макета (58px при 1920) */
   transition: padding .5s var(--ease), background-color .5s var(--ease), backdrop-filter .5s var(--ease);
 }
 .header.is-scrolled {
