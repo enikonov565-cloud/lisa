@@ -502,7 +502,10 @@ body::before {
 .about__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .about__photo:hover img { transform: scale(1.03); }
 .about__side { display: flex; flex-direction: column; align-items: flex-end; gap: 4rem; }
-.about__side .lead { width: 100%; padding: 1rem; }
+.about__side .lead {
+  width: 100%; padding: 1rem 0;
+  /* переносы строк расставлены вручную по макету — ровные блоки; на телефоне текст течёт свободно */
+}
 .about__divider { width: 100%; height: .57735rem; }
 .about__grid {
   display: grid;
@@ -939,6 +942,7 @@ body::before {
   .about__hello { font-size: 3.6rem; white-space: normal; }
   .about__side { gap: 2.4rem; }
   .about__side .lead { padding: 0; }
+  .br-d { display: none; }
 
   .bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: auto; gap: 1.6rem; }   /* колонки не распираются текстом */
   .bento__img--portrait { grid-column: 1 / -1; grid-row: 1; aspect-ratio: 4 / 5; }
