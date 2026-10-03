@@ -519,7 +519,9 @@
       const parts = cardParts();
       const half = DUR / 2;
       parts.forEach((p) => p.animate(
-        [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 2) + 'rem)' }],
+        p.classList.contains("svc-card__price")
+          ? [{ opacity: 1, transform: "translateY(0)", filter: "blur(0)" }, { opacity: 0, transform: "translateY(-.6rem)", filter: "blur(3px)" }]   // цена тихо растворяется
+          : [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 2) + 'rem)' }],
         { duration: half, easing: 'cubic-bezier(0.42, 0, 1, 1)', fill: 'forwards' },
       ));
       // по таймеру, а не по .finished: текст обновится, даже если анимации браузер приостановил
@@ -531,11 +533,11 @@
             // цена мягко выплывает снизу из лёгкой дымки
             p.animate(
               [
-                { opacity: 0, transform: "translateY(1.8rem) scale(.94)", filter: "blur(6px)" },
-                { opacity: 1, transform: "translateY(-.3rem) scale(1.01)", filter: "blur(0)", offset: .7 },
+                { opacity: 0, transform: "translateY(1.6rem) scale(.97)", filter: "blur(5px)" },
+                { opacity: .6, transform: "translateY(.6rem) scale(.99)", filter: "blur(1.5px)", offset: .45 },
                 { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
               ],
-              { duration: 1100, easing: "cubic-bezier(.22, 1, .36, 1)" },
+              { duration: 2000, easing: "cubic-bezier(.25, .1, .25, 1)" },
             );
             return;
           }
