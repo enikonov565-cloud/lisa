@@ -384,24 +384,59 @@
     }).observe(marquee);
   }
 
-  /* ---------------- карточки «О чём мои кадры»: переворот по нажатию ---------------- */
-  $$('.genre').forEach((card) => {
+  /* ---------------- карточки «О чём мои кадры»: переворот ----------------
+     Нажатие переворачивает карточку. Обратно в исходное положение она возвращается сама:
+     когда курсор уходит с карточки, через несколько секунд (для телефона),
+     когда переворачивают другую карточку или экран уходит из вида. */
+  const GENRE_BACK_DELAY = 6000;   // мс — сколько описание держится без взаимодействия
+  const genreCards = $$('.genre').map((card) => {
     const front = $('.genre__front', card);
     const back = $('.genre__back', card);
     const toFront = $('.genre__front .genre__toggle', card);
     const backBtns = $$('.genre__back .genre__toggle, .genre__back .genre__more', card);
-    const set = (flipped) => {
+    let timer = 0;
+    let mouseInside = false;   // пока мышь на карточке, описание не закрываем
+    const api = { card, flipped: false };
+    const arm = (ms) => { clearTimeout(timer); timer = setTimeout(() => (mouseInside ? arm(ms) : api.set(false, false)), ms); };
+    api.set = (flipped, moveFocus = true) => {
+      clearTimeout(timer);
+      if (api.flipped === flipped) return;
+      api.flipped = flipped;
       card.classList.toggle('is-flipped', flipped);
       toFront.setAttribute('aria-expanded', String(flipped));
       front.setAttribute('aria-hidden', String(flipped));
       back.setAttribute('aria-hidden', String(!flipped));
       toFront.tabIndex = flipped ? -1 : 0;
       backBtns.forEach((b) => { b.tabIndex = flipped ? 0 : -1; });
-      (flipped ? backBtns[0] : toFront).focus({ preventScroll: true });
+      if (moveFocus && card.contains(document.activeElement)) (flipped ? backBtns[0] : toFront).focus({ preventScroll: true });
+      if (flipped) arm(GENRE_BACK_DELAY);
     };
-    toFront.addEventListener('click', () => set(true));
-    $('.genre__back .genre__toggle', card).addEventListener('click', () => set(false));
+    toFront.addEventListener('click', () => {
+      genreCards.forEach((g) => { if (g !== api) g.set(false, false); });   // открыта всегда одна
+      api.set(true);
+    });
+    $('.genre__back .genre__toggle', card).addEventListener('click', () => api.set(false));
+    // курсор ушёл — через мгновение карточка возвращается; вернулся — ждём дальше
+    card.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      mouseInside = false;
+      if (api.flipped) arm(700);
+    });
+    card.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse') mouseInside = true;
+    });
+    // фокус ушёл с карточки (Tab дальше) — возвращаем
+    card.addEventListener('focusout', (e) => {
+      if (api.flipped && !card.contains(e.relatedTarget) && e.relatedTarget) api.set(false, false);
+    });
+    return api;
   });
+  const genresSection = $('.genres');
+  if (genresSection && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) genreCards.forEach((g) => g.set(false, false));
+    }, { threshold: 0 }).observe(genresSection);
+  }
 
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
