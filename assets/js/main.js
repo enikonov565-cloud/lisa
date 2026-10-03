@@ -124,6 +124,8 @@
     menu.setAttribute('aria-hidden', String(!open));
   };
   burger.addEventListener('click', () => setMenu(!document.documentElement.classList.contains('menu-open')));
+  $('#menu-veil').addEventListener('click', () => setMenu(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.documentElement.classList.contains('menu-open')) { setMenu(false); burger.focus(); } });
   $$('a', menu).forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
   /* ---------------- reveal on scroll ---------------- */
@@ -770,6 +772,10 @@
     <li><a href="tel:${tel}"><b>☏</b>позвонить</a></li>
     <li><a href="mailto:${CONTACTS.email}"><b>✉</b>почта</a></li>`;
   $('#contact-links').innerHTML = linksHTML;
+  $('#footer-contacts').insertAdjacentHTML('beforeend', `
+    <a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>@${CONTACTS.telegram}</a>
+    <a href="tel:${tel}"><b>☏</b>${CONTACTS.phone}</a>
+    <a href="mailto:${CONTACTS.email}"><b>✉</b>${CONTACTS.email}</a>`);
 
   /* ---------------- «как проходит съёмка» → всплывающее окно ---------------- */
   const pDlg = $('#process-dialog');

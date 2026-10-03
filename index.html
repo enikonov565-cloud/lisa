@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610031706">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610031712">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -48,20 +48,20 @@
   </header>
 
   <!-- ============ MENU ============ -->
-  <div class="menu" id="menu" aria-hidden="true">
+  <div class="menu-veil" id="menu-veil" aria-hidden="true"></div>
+  <div class="menu" id="menu" aria-hidden="true" role="dialog" aria-label="Меню">
     <nav class="menu__nav" aria-label="Основное меню">
-      <a href="#top"><span>01</span>Главная</a>
-      <a href="#about"><span>02</span>Обо мне</a>
-      <a href="#genres"><span>03</span>О чём мои кадры</a>
-      <a href="#approach"><span>04</span>Подход</a>
-      <a href="#services"><span>05</span>Форматы и цены</a>
-      <a href="#works"><span>06</span>Работы</a>
-      <a href="#process"><span>07</span>Как проходит съёмка</a>
-      <a href="#contact"><span>08</span>Контакты</a>
+      <a href="#top">Главная</a>
+      <a href="#about">Обо мне</a>
+      <a href="#genres">О чём мои кадры</a>
+      <a href="#approach">Подход</a>
+      <a href="#services">Форматы и цены</a>
+      <a href="#works">Работы</a>
+      <a href="#process">Как проходит съёмка</a>
+      <a href="#contact">Контакты</a>
     </nav>
     <div class="menu__aside">
-      <p>Москва и выезд</p>
-      <p>Реклама · Портрет · Пейзаж · Стрит</p>
+      <p>реклама · портрет · пейзаж · стрит</p>
       <a class="btn-cta js-contact" href="#contact">записаться на съёмку</a>
     </div>
   </div>
@@ -421,15 +421,47 @@
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
-    <div class="wrap footer__inner">
-      <p class="footer__name">Василиса Ёлкина</p>
-      <nav class="footer__nav" aria-label="Навигация в подвале">
-        <a href="#about">обо мне</a>
-        <a href="#services">услуги</a>
-        <a href="#works">работы</a>
-        <a href="#contact">контакты</a>
-      </nav>
-      <p class="footer__meta">фотограф · Москва и выезд · © <span id="year">2026</span></p>
+    <div class="wrap">
+      <div class="footer__card">
+        <div class="footer__brand">
+          <a class="logo footer__logo" href="#top" aria-label="Василиса Ёлкина — на главную">
+            <img class="logo__mark" src="assets/img/logo-mark.png" width="50" height="45" alt="">
+            <span class="logo__word" aria-hidden="true">
+              <img src="assets/img/logo-l1.svg" style="--w:18;--h:23" alt="">
+              <img src="assets/img/logo-l2.svg" style="--w:8.54;--h:10" alt="">
+              <img src="assets/img/logo-l3.svg" style="--w:8.84;--h:10.1" alt="">
+              <img src="assets/img/logo-l4.svg" style="--w:8.6;--h:10" alt="">
+              <img src="assets/img/logo-l5.svg" style="--w:7.784;--h:10.3" alt="">
+              <img src="assets/img/logo-l6.svg" style="--w:7.4;--h:10" alt="">
+              <img src="assets/img/logo-l7.svg" style="--w:8.58;--h:10.4" alt="">
+            </span>
+          </a>
+          <p class="footer__tag">Тёплые живые кадры<br> для людей и брендов.</p>
+        </div>
+        <nav class="footer__col" aria-label="Навигация в подвале">
+          <p class="footer__h">навигация</p>
+          <a href="#about">обо мне</a>
+          <a href="#genres">о чём мои кадры</a>
+          <a href="#approach">подход</a>
+          <a href="#works">работы</a>
+          <a href="#process">как проходит съёмка</a>
+        </nav>
+        <div class="footer__col">
+          <p class="footer__h">услуги</p>
+          <a href="#services" data-svc="0">рекламная съёмка</a>
+          <a href="#services" data-svc="3">студийный портрет</a>
+          <a href="#services" data-svc="4">уличный портрет</a>
+          <a href="#services" data-svc="1">пейзаж</a>
+          <a href="#services" data-svc="2">стрит-фотография</a>
+        </div>
+        <div class="footer__col" id="footer-contacts">
+          <p class="footer__h">на связи</p>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© <span id="year">2026</span> Василиса Ёлкина</span>
+        <a class="footer__up" href="#top">наверх <span aria-hidden="true">↑</span></a>
+      </div>
     </div>
   </footer>
 
@@ -509,9 +541,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610031706" defer></script>
+  <script src="assets/js/main.js?v=202610031712" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610031706" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610031706" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610031712" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610031712" defer></script>
 </body>
 </html>
