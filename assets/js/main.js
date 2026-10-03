@@ -767,14 +767,14 @@
   /* ---------------- contacts ---------------- */
   const tel = CONTACTS.phone.replace(/[^\d+]/g, '');
   const linksHTML = `
-    <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>telegram</a></li>
-    <li><a href="tel:${tel}"><b>☏</b>позвонить</a></li>
-    <li><a href="mailto:${CONTACTS.email}"><b>✉</b>почта</a></li>`;
+    <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener" aria-label="Написать в Telegram"><b>✈</b>telegram</a></li>
+    <li><a href="tel:${tel}" data-reach="phone"><b>☏</b>позвонить</a></li>
+    <li><a href="mailto:${CONTACTS.email}" data-reach="email"><b>✉</b>почта</a></li>`;
   $('#contact-links').innerHTML = linksHTML;
   $('#footer-contacts').insertAdjacentHTML('beforeend', `
     <a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>@${CONTACTS.telegram}</a>
-    <a href="tel:${tel}"><b>☏</b>${CONTACTS.phone}</a>
-    <a href="mailto:${CONTACTS.email}"><b>✉</b>${CONTACTS.email}</a>`);
+    <a href="tel:${tel}" data-reach="phone"><b>☏</b>${CONTACTS.phone}</a>
+    <a href="mailto:${CONTACTS.email}" data-reach="email"><b>✉</b>${CONTACTS.email}</a>`);
 
   /* ---------------- «как проходит съёмка» → всплывающее окно ---------------- */
   const pDlg = $('#process-dialog');
@@ -839,6 +839,58 @@
       cType.hidden = true;
     });
     $$('input', cForm).forEach((i) => i.addEventListener('input', () => { const f = i.closest('.cdlg__field'); if (f) f.classList.remove('is-invalid'); }));
+  }
+
+  /* ---------------- «позвонить» / «почта»: окно с номером или адресом ----------------
+     На телефоне «позвонить» сразу открывает звонилку. На компьютере tel: никуда не ведёт,
+     поэтому показываем номер с кнопками «скопировать» и «позвонить»; для почты — адрес
+     и «открыть почту» (если почтовой программы нет, адрес можно скопировать). */
+  const rDlg = $('#reach-dialog');
+  if (rDlg && typeof rDlg.showModal === 'function') {
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    const REACH = {
+      phone: { icon: '☏', title: 'Позвонить', text: 'Буду рада вашему звонку.', value: CONTACTS.phone, href: 'tel:' + tel, go: 'позвонить' },
+      email: { icon: '✉', title: 'Написать письмо', text: 'Отвечу в течение дня.', value: CONTACTS.email, href: 'mailto:' + CONTACTS.email, go: 'открыть почту' },
+    };
+    const copyBtn = $('.reach__copy', rDlg);
+    let opener = null;
+    const openReach = (kind, from) => {
+      const r = REACH[kind];
+      opener = from;
+      $('.reach__icon', rDlg).textContent = r.icon;
+      $('.reach__title', rDlg).textContent = r.title;
+      $('.reach__text', rDlg).textContent = r.text;
+      $('.reach__value', rDlg).textContent = r.value;
+      $('.reach__go', rDlg).href = r.href;
+      $('.reach__go-label', rDlg).textContent = r.go;
+      copyBtn.textContent = 'скопировать';
+      copyBtn.classList.remove('is-done');
+      copyBtn.dataset.value = r.value;
+      rDlg.showModal();
+    };
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-reach]');
+      if (!a) return;
+      if (a.dataset.reach === 'phone' && touch) return;   // на телефоне — сразу звонок
+      e.preventDefault();
+      openReach(a.dataset.reach, a);
+    });
+    copyBtn.addEventListener('click', async () => {
+      const v = copyBtn.dataset.value;
+      try {
+        await navigator.clipboard.writeText(v);
+      } catch (_) {
+        const t = document.createElement('textarea');
+        t.value = v; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); } catch (__) { /* остаётся ручное выделение */ }
+        t.remove();
+      }
+      copyBtn.textContent = 'скопировано ✓';
+      copyBtn.classList.add('is-done');
+    });
+    $('.extras-dialog__close', rDlg).addEventListener('click', () => rDlg.close());
+    rDlg.addEventListener('click', (e) => { if (e.target === rDlg) rDlg.close(); });
+    rDlg.addEventListener('close', () => { if (opener && opener.focus) opener.focus({ preventScroll: true }); });
   }
 
   $('#year').textContent = new Date().getFullYear();

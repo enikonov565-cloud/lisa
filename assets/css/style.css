@@ -1037,9 +1037,10 @@ body::before {
   font-size: max(2rem, 14px); color: var(--ink);
   transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), background-color .4s var(--ease), color .4s var(--ease);
 }
-.cdlg__links a b { font-weight: 400; color: var(--orange); transition: color .4s var(--ease); }
-.cdlg__links a:hover { transform: translateY(-.3rem); background-color: var(--brick); color: var(--milk); }
-.cdlg__links a:hover b { color: var(--milk); }
+.cdlg__links a b { display: inline-block; font-weight: 400; color: var(--orange); transition: color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1); }
+.cdlg__links a:hover, .invite .cdlg__links a:hover { transform: translateY(-.3rem); background-color: var(--milk); color: var(--brick); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1.4rem 2.4rem -1rem rgba(180, 83, 42, .35); }
+.cdlg__links a:hover b { color: var(--brick); transform: rotate(-12deg) scale(1.15); }
+.cdlg__links a:active { transform: translateY(0) scale(.97); }
 .cdlg__or { margin: 3.2rem 0 .8rem; font-size: max(1.6rem, 12px); letter-spacing: .14em; text-transform: uppercase; color: rgba(76, 67, 67, .6); }
 .cdlg__form { display: flex; flex-direction: column; gap: 1.6rem; }
 /* поле с «плавающей» подписью */
@@ -1107,6 +1108,38 @@ body::before {
 @keyframes pdlgLine { 0%, 40% { transform: scaleY(0); } }
 @keyframes pdlgStep { from { opacity: 0; transform: translateY(1.6rem); filter: blur(3px); } }
 @media (prefers-reduced-motion: reduce) { .process-dialog[open] .pdlg__step::after, .process-dialog[open] .pdlg__step { animation: none; } }
+
+/* окно «позвонить / почта» */
+.reach-dialog { width: min(48rem, calc(100vw - 2 * var(--pad))); }
+.reach { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.reach__icon {
+  display: grid; place-items: center;
+  width: 6.4rem; height: 6.4rem; min-width: 44px; min-height: 44px; margin-bottom: 1.6rem;
+  border-radius: var(--radius);
+  background: rgba(var(--peach-rgb), .8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 .9rem 1.8rem -.8rem rgba(180, 83, 42, .35);
+  font-size: max(2.8rem, 20px); color: var(--orange);
+}
+.reach-dialog[open] .reach__icon { animation: reachWave 1.4s cubic-bezier(.34, 1.56, .64, 1) .2s; }
+@keyframes reachWave { 20% { transform: rotate(-14deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(3deg); } }
+.reach .extras-dialog__title { padding-right: 0; margin-bottom: .8rem; }
+.reach__text { font-size: max(1.9rem, 14px); color: rgba(76, 67, 67, .75); }
+.reach__value { margin: 2rem 0 2.8rem; font-size: max(3rem, 20px); letter-spacing: .02em; color: var(--ink); user-select: all; word-break: break-word; }
+.reach__actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 1.2rem; width: 100%; }
+.reach__copy {
+  padding: 1rem 1.6rem;
+  border-radius: var(--btn-radius);
+  background-color: rgba(var(--peach-rgb), .7);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, .1) 60%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 .9rem 1.8rem -.8rem rgba(76, 67, 67, .3);
+  font-size: max(2rem, 14px); color: var(--ink);
+  transition: background-color .4s var(--ease), color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1);
+}
+.reach__copy:hover { transform: translateY(-.3rem); background-color: var(--milk); color: var(--brick); }
+.reach__copy.is-done { color: var(--olive); }
+.reach .extras-dialog__cta { margin-top: 0; }
+.reach-dialog[open] .extras-dialog__cta { animation: none; }
+@media (prefers-reduced-motion: reduce) { .reach-dialog[open] .reach__icon { animation: none; } }
 
 .extras__list li {
   display: flex; justify-content: space-between; gap: 2rem;
