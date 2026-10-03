@@ -1459,3 +1459,21 @@ body::before {
 
 @media (max-width: 1023px) { .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; } }
 @media (max-width: 599px)  { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .filters button { font-size: 14px; padding: .8rem .6rem; } }
+
+/* бегущая полоса при наведении: меню, направления, футер.
+   Полоса «прибегает» слева и «убегает» вправо при уходе курсора */
+.menu__nav a, .menu__svc a, .footer__col a, .footer__up { position: relative; }
+.menu__nav a::before, .menu__svc a::before, .footer__col a::before, .footer__up::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--brick));
+  transform: scaleX(0); transform-origin: right center;
+  transition: transform .6s cubic-bezier(.65, 0, .35, 1);
+  pointer-events: none;
+}
+.menu__nav a::before { bottom: .2rem; }
+.footer__col a::before, .footer__up::before { bottom: -.3rem; }
+.menu__svc a::before { left: 1.6rem; right: 1.6rem; bottom: .35rem; background: var(--milk); }
+.menu__nav a:hover::before, .menu__svc a:hover::before, .footer__col a:hover::before, .footer__up:hover::before,
+.menu__nav a:focus-visible::before, .footer__col a:focus-visible::before { transform: scaleX(1); transform-origin: left center; }
+@media (prefers-reduced-motion: reduce) { .menu__nav a::before, .menu__svc a::before, .footer__col a::before, .footer__up::before { transition: none; } }
