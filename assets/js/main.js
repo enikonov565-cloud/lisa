@@ -513,6 +513,28 @@
       box.classList.toggle('has-side', side !== 'none');
       box.classList.toggle('side-left', side === 'left');
     };
+    // «падающие буквы» (как «реклама · портрет · пейзаж · стрит» на главном экране)
+    const fallPrice = (el) => {
+      const text = el.textContent.trim();
+      el.setAttribute("aria-label", text);
+      el.innerHTML = "<span class=\"fall__word\" aria-hidden=\"true\">" +
+        Array.from(text).map((c) => (/\s/.test(c) ? "<span class=\"fall__sp\"></span>" : "<span class=\"fall__char\">" + c + "</span>")).join("") + "</span>";
+      if (reduced || !("animate" in Element.prototype)) return;
+      $$(".fall__char", el).forEach((c, i) => {
+        c.style.opacity = "0";
+        c.animate(
+          [{ transform: "translateY(" + FALL.startY + ")", opacity: 0, filter: "blur(3px)" },
+           { transform: "translateY(0)", opacity: 1, filter: "blur(0)" }],
+          { duration: FALL.inDur, delay: i * FALL.stagger * 1.6, easing: FALL.easeIn, fill: "forwards" },
+        );
+      });
+    };
+    // первый показ цены — когда плашка попадает на экран
+    const priceEl = $(".svc-card__price");
+    if (priceEl && "IntersectionObserver" in window) {
+      const pio = new IntersectionObserver(([e]) => { if (e.isIntersecting) { fallPrice(priceEl); pio.disconnect(); } }, { threshold: 0.6 });
+      pio.observe(priceEl);
+    }
     const cardParts = () => $$('.svc-card__kicker, .svc-card__price, .svc-card__list');
     const swapCard = (fill, dir) => {
       // половина сдвига фото — старый текст уходит, вторая половина — новый въезжает с той же стороны
@@ -520,7 +542,7 @@
       const half = DUR / 2;
       parts.forEach((p) => p.animate(
         p.classList.contains("svc-card__price")
-          ? [{ opacity: 1, transform: "translateY(0)", filter: "blur(0)" }, { opacity: 0, transform: "translateY(-.6rem)", filter: "blur(3px)" }]   // цена тихо растворяется
+          ? [{ opacity: 1, transform: "translateY(0)", filter: "blur(0)" }, { opacity: 0, transform: "translateY(.35em)", filter: "blur(3px)" }]   // цена растворяется, как жанры
           : [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 2) + 'rem)' }],
         { duration: half, easing: 'cubic-bezier(0.42, 0, 1, 1)', fill: 'forwards' },
       ));
@@ -529,18 +551,7 @@
         fill();
         cardParts().forEach((p) => {
           p.getAnimations().forEach((a) => a.cancel());
-          if (p.classList.contains("svc-card__price")) {
-            // цена мягко выплывает снизу из лёгкой дымки
-            p.animate(
-              [
-                { opacity: 0, transform: "translateY(1.6rem) scale(.97)", filter: "blur(5px)" },
-                { opacity: .6, transform: "translateY(.6rem) scale(.99)", filter: "blur(1.5px)", offset: .45 },
-                { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
-              ],
-              { duration: 2000, easing: "cubic-bezier(.25, .1, .25, 1)" },
-            );
-            return;
-          }
+          if (p.classList.contains("svc-card__price")) { fallPrice(p); return; }   // цена — буквами, как жанры на главном экране
           p.animate(
             [{ opacity: 0, transform: 'translateX(' + (dir * 2) + 'rem)' }, { opacity: 1, transform: 'translateX(0)' }],
             { duration: half, easing: 'cubic-bezier(0, 0, 0.58, 1)' },

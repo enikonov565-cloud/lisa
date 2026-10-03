@@ -631,6 +631,7 @@ body::before {
 .bento__box p { font-size: 3.2rem; line-height: 1.21; text-transform: lowercase; white-space: nowrap; }
 .fall__word { display: inline-block; white-space: nowrap; }
 .fall__char { display: inline-block; will-change: transform, opacity, filter; }
+.fall__sp { display: inline-block; width: .28em; }   /* пробел внутри цены: в шрифте неразрывный пробел нулевой ширины */
 
 .guarantee {
   margin-left: 0;              /* симметрично: тот же промежуток, что между остальными колонками */
