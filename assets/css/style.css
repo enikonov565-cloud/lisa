@@ -236,16 +236,16 @@ body::before {
   display: flex; align-items: center; justify-content: space-between;
   padding: 2.8rem var(--pad) 1.6rem;   /* шапка ближе к верхнему краю — без пустой полосы */
   /* матовое стекло: полупрозрачный фон + размытие того, что под шапкой */
-  background: rgba(var(--peach-rgb), .38);
-  backdrop-filter: blur(18px) saturate(1.25);
-  -webkit-backdrop-filter: blur(18px) saturate(1.25);
-  border-bottom: 1px solid rgba(255, 255, 255, .35);
+  background: rgba(var(--peach-rgb), .12);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom: 1px solid rgba(255, 255, 255, .25);
   box-shadow: 0 1px 0 rgba(76, 67, 67, .06);
   transition: padding .5s var(--ease), background-color .5s var(--ease);
 }
 .header.is-scrolled {
   padding-top: 1.6rem; padding-bottom: 1.6rem;
-  background: rgba(var(--peach-rgb), .55);
+  background: rgba(var(--peach-rgb), .28);
 }
 .header__left { display: flex; align-items: center; gap: 5rem; }
 
