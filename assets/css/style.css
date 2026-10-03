@@ -846,26 +846,22 @@ body::before {
 /* лёгкое «плавание» в стиле сайта: карточка мягко покачивается,
    внутри медленно дрейфует тёплое свечение (как облако на первом экране) */
 .svc-card { position: relative; overflow: hidden; isolation: isolate; animation: cardFloat 7s ease-in-out infinite; }
-.svc-card::before {
-  content: ""; position: absolute; z-index: -1;
-  width: 140%; aspect-ratio: 1; left: -20%; top: -30%;
-  background:
-    radial-gradient(closest-side, rgba(223, 96, 15, .16), transparent 70%) 30% 40% / 60% 60% no-repeat,
-    radial-gradient(closest-side, rgba(250, 245, 238, .55), transparent 70%) 70% 65% / 55% 55% no-repeat;
-  filter: blur(10px);
-  animation: cardGlow 14s ease-in-out infinite alternate;
+/* фон карточки — те же «ленты», что у карточки гарантий, в светлых тёплых тонах */
+.svc-card__bg {
+  position: absolute; inset: 0; z-index: -1;
+  width: 100%; height: 100%;
+  display: block;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease);
 }
+.svc-card.has-ribbon .svc-card__bg { opacity: .85; }
 @keyframes cardFloat {
   0%, 100% { transform: translateY(0); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 2.4rem 4.8rem -2.4rem rgba(76, 67, 67, .35); }
   50%      { transform: translateY(-.5rem); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 3.2rem 5.6rem -2.6rem rgba(76, 67, 67, .28); }
 }
-@keyframes cardGlow {
-  0%   { transform: translate(0, 0) rotate(0deg); }
-  50%  { transform: translate(6%, 8%) rotate(25deg); }
-  100% { transform: translate(-6%, 14%) rotate(-15deg); }
-}
-@media (prefers-reduced-motion: reduce) { .svc-card, .svc-card::before { animation: none; } }
+
+@media (prefers-reduced-motion: reduce) { .svc-card { animation: none; } }
 .svc-card__kicker { font-size: max(1.6rem, 12px); letter-spacing: .14em; text-transform: uppercase; color: rgba(76, 67, 67, .75); }
 .svc-card__price { font-family: var(--display); font-size: 4.6rem; line-height: 1; letter-spacing: .03em; color: var(--ink); }
 .svc-card__list { display: flex; flex-direction: column; gap: 1.2rem; font-size: max(2rem, 14px); letter-spacing: .02em; }

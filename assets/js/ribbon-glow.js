@@ -20,6 +20,15 @@ const CFG = {
   shiftY: 0.15,
 };
 
+// карточка цены (светлая): фон в тон карточки, ленты — кирпичный и абрикосовый, мягко
+const CFG_PRICE = {
+  ...CFG,
+  background: '#f3e1d4',  // светлый тон карточки
+  color1: '#b4532a',      // кирпичный
+  color2: '#e8925a',      // абрикосовый
+  intensity: 0.45,
+};
+
 const MAX_DPR = 2;
 
 const VERT = `#version 300 es
@@ -145,24 +154,24 @@ function program(gl, frag) {
   return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null;
 }
 
-function init() {
-  const card = document.querySelector('.guarantee');
+function init(selector, CFG, bgClass) {
+  const card = document.querySelector(selector);
   if (!card) return;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const canvas = document.createElement('canvas');
-  canvas.className = 'guarantee__bg';
+  canvas.className = bgClass;
   canvas.setAttribute('aria-hidden', 'true');
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, depth: false, stencil: false });
   if (!gl) return;
-  card.querySelector('.guarantee__bg')?.remove();
+  card.querySelector('.' + bgClass)?.remove();
   card.prepend(canvas);
   // если браузер сбросил видеоконтекст (сон, смена GPU, долгий фон) — пересоздаём холст, а не оставляем пустым
   canvas.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();
     dead = true;
     stop();
-    setTimeout(init, 400);
+    setTimeout(() => init(selector, CFG, bgClass), 400);
   }, { once: true });
 
   const field = program(gl, FIELD);
@@ -289,6 +298,9 @@ function init() {
   requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('has-ribbon')));
 }
 
-init();
+// тёмная карточка гарантий
+init('.guarantee', CFG, 'guarantee__bg');
+// светлая карточка цены — те же ленты, тёплые светлые цвета
+init('.svc-card', CFG_PRICE, 'svc-card__bg');
 
 })();
