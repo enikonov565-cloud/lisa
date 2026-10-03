@@ -907,7 +907,7 @@
     return s.replace(/[ \t\n]+([—–])/g, `${NBSP}$1`);                              // тире не с новой строки
   };
   // элементы, где текст разбит на буквы/слова для анимаций или стоит в одну строку
-  const SKIP = '.hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, .bento__box, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
+  const SKIP = '.glow, .hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, .bento__box, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
   const BLOCKS = 'p, li, h1, h2, h3, legend, figcaption, label > span, .step__title';
   const walkText = (root, fn) => {
     const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
