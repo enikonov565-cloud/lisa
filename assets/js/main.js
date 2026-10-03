@@ -384,6 +384,25 @@
     }).observe(marquee);
   }
 
+  /* ---------------- карточки «О чём мои кадры»: переворот по нажатию ---------------- */
+  $$('.genre').forEach((card) => {
+    const front = $('.genre__front', card);
+    const back = $('.genre__back', card);
+    const toFront = $('.genre__front .genre__toggle', card);
+    const backBtns = $$('.genre__back .genre__toggle, .genre__back .genre__more', card);
+    const set = (flipped) => {
+      card.classList.toggle('is-flipped', flipped);
+      toFront.setAttribute('aria-expanded', String(flipped));
+      front.setAttribute('aria-hidden', String(flipped));
+      back.setAttribute('aria-hidden', String(!flipped));
+      toFront.tabIndex = flipped ? -1 : 0;
+      backBtns.forEach((b) => { b.tabIndex = flipped ? 0 : -1; });
+      (flipped ? backBtns[0] : toFront).focus({ preventScroll: true });
+    };
+    toFront.addEventListener('click', () => set(true));
+    $('.genre__back .genre__toggle', card).addEventListener('click', () => set(false));
+  });
+
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
   const card = {
