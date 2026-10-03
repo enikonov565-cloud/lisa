@@ -544,6 +544,8 @@ body::before {
 }
 .genre:hover .genre__inner { --gs: 1.03; }
 .genre.is-flipped .genre__inner { --gr: 180deg; }
+/* скрытая сторона не перехватывает клики (иначе «цены и детали» не срабатывала) */
+.genre.is-flipped .genre__front, .genre:not(.is-flipped) .genre__back { pointer-events: none; }
 .genre__face {
   grid-area: 1 / 1;
   position: relative;

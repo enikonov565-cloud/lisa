@@ -518,10 +518,12 @@
       // половина сдвига фото — старый текст уходит, вторая половина — новый въезжает с той же стороны
       const parts = cardParts();
       const half = DUR / 2;
-      Promise.all(parts.map((p) => p.animate(
+      parts.forEach((p) => p.animate(
         [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 2) + 'rem)' }],
         { duration: half, easing: 'cubic-bezier(0.42, 0, 1, 1)', fill: 'forwards' },
-      ).finished)).then(() => {
+      ));
+      // по таймеру, а не по .finished: текст обновится, даже если анимации браузер приостановил
+      setTimeout(() => {
         fill();
         cardParts().forEach((p) => {
           p.getAnimations().forEach((a) => a.cancel());
@@ -530,7 +532,7 @@
             { duration: half, easing: 'cubic-bezier(0, 0, 0.58, 1)' },
           );
         });
-      });
+      }, half);
     };
     let queuedFill = null;
     const go = (i, fill) => {
