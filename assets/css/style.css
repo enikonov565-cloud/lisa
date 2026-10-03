@@ -772,24 +772,23 @@ body::before {
 .services { padding-top: var(--sec); }
 .services__grid {
   display: grid;
-  grid-template-columns: 1fr 56rem;
-  gap: 8rem;
+  grid-template-columns: 1fr 48rem;
+  gap: 12rem;                 /* больше воздуха между списком и карточкой цены */
   align-items: start;
 }
-.svc { display: flex; flex-direction: column; gap: 4rem; counter-reset: svc; }
+.svc { display: flex; flex-direction: column; gap: 3.2rem; counter-reset: svc; padding-top: .8rem; }
 .svc__item {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2rem;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1.2rem;
   cursor: pointer;
   outline: none;
 }
-.svc__item .chip { transition: background-color .45s var(--ease), color .45s var(--ease), padding .45s var(--ease); }
-.svc__item p { font-size: 3.2rem; line-height: 1.21; text-transform: lowercase; color: var(--ink-deep); }
+/* плашки услуг: компактнее, с объёмом; выбранная переворачивается на свой цвет */
+.svc__item .chip { font-size: 3rem; padding: .5rem 2.4rem; }
+.svc__item .flip:hover { transform: none; }
+.svc__item:hover .flip:not(.is-flipped) { transform: translateY(-.3rem); }
+.svc__item:focus-visible .flip { outline: 1.5px solid var(--orange); outline-offset: 4px; border-radius: var(--radius); }
+.svc__item p { font-size: 2.2rem; line-height: 1.3; letter-spacing: .01em; text-transform: lowercase; color: var(--ink); padding-left: .4rem; }
 .svc__item .svc__meta { display: none; }
-.svc__item.is-active .chip,
-.svc__item:hover .chip,
-.svc__item:focus-visible .chip { background: var(--ink); color: var(--peach); }
-.svc__item.is-active .chip { padding-right: 6rem; }
-
 .svc-card {
   position: sticky; top: 12rem;
   border-radius: var(--radius);
@@ -802,7 +801,7 @@ body::before {
 .svc-card__img img.is-swapping { opacity: 0; transform: scale(1.03); }
 .svc-card__body { padding: 3rem 3rem 3.4rem; display: flex; flex-direction: column; gap: 2rem; }
 .svc-card__kicker { font-size: max(1.8rem, 13px); letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .75); }
-.svc-card__price { font-family: var(--display); font-size: 5.6rem; line-height: 1; letter-spacing: .03em; color: #fff; }
+.svc-card__price { font-family: var(--display); font-size: 4.6rem; line-height: 1; letter-spacing: .03em; color: #fff; }
 .svc-card__list { display: flex; flex-direction: column; gap: 1.2rem; font-size: max(2rem, 14px); letter-spacing: .02em; }
 .svc-card__list li { display: flex; gap: .6rem; align-items: flex-start; }
 .svc-card__list li::before { content: ""; flex: none; width: 2.4rem; height: 2.4rem; margin-top: -.3rem; background: url("../img/check.svg") center / contain no-repeat; }

@@ -440,13 +440,21 @@
 
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
+  // цвет обратной стороны плашки у каждой услуги — как в бегущей строке и карточках
+  const SVC_COLORS = [
+    ['var(--milk)', 'var(--orange)'],          // рекламная съёмка
+    ['#e8925a', 'var(--ink-deep)'],             // пейзаж
+    ['var(--olive, #8a8d3c)', 'var(--ink-deep)'], // стрит
+    ['#c4643a', 'var(--milk)'],                 // студийный портрет
+    ['var(--orange)', 'var(--milk)'],           // уличный портрет
+  ];
   const card = {
     img: $('#svc-img'), kicker: $('#svc-kicker'), price: $('#svc-price'),
     includes: $('#svc-includes'), order: $('#svc-order'),
   };
   list.innerHTML = SERVICES.map((s, i) => `
     <li class="svc__item rv" style="--d:${i * 0.06}s" tabindex="0" data-i="${i}" aria-label="${s.title}, ${s.price}">
-      <span class="chip">${s.title}</span>
+      <span class="flip" style="--back:${SVC_COLORS[i][0]};--back-ink:${SVC_COLORS[i][1]}"><span class="flip__inner"><span class="chip flip__face flip__front">${s.title}</span><span class="chip flip__face flip__back" aria-hidden="true">${s.title}</span></span></span>
       <p>${s.text}</p>
     </li>`).join('');
 
@@ -455,7 +463,15 @@
     if (i === activeSvc) return;
     activeSvc = i;
     const s = SERVICES[i];
-    $$('.svc__item', list).forEach((el) => el.classList.toggle('is-active', Number(el.dataset.i) === i));
+    $$('.svc__item', list).forEach((el) => {
+      const on = Number(el.dataset.i) === i;
+      el.classList.toggle('is-active', on);
+      const f = $('.flip', el);
+      if (f) {
+        if (on && !reduced) f.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-0.6rem)', offset: 0.3 }, { transform: 'translateY(0)', offset: 0.6 }, { transform: 'translateY(-0.2rem)', offset: 0.8 }, { transform: 'translateY(0)' }], { duration: 800, easing: 'cubic-bezier(.33, 0, .3, 1)' });
+        f.classList.toggle('is-flipped', on);
+      }
+    });
     card.kicker.textContent = s.title.toLowerCase();
     card.price.textContent = s.price;
     card.includes.innerHTML = s.includes.map((t) => `<li>${t}</li>`).join('');
