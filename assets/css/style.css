@@ -27,14 +27,17 @@
   --sans: "Inter Local", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --ease: cubic-bezier(.16, 1, .3, 1);
-  --pad: 6rem;           /* поля страницы 60px */
+  --pad: 60px;           /* поля страницы слева и справа (десктоп) */
+  --pad-y: 80px;         /* поля сверху и снизу (десктоп) */
   --radius: 2rem;        /* скругление 20px */
   --btn-radius: 20px;    /* скругление всех кнопок — фиксированные 20 */
-  --sec: 14rem;          /* ритм между секциями */
+  --sec: var(--pad-y);   /* отступ сверху у каждого экрана */
 }
 
 /* масштаб: 1920 → 10px. Нижняя граница держит читаемость на ноутбуках */
-html { font-size: clamp(6.4px, calc(100vw / 192), 12px); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* десктоп: макет 1920×1080 вписывается в окно при масштабе браузера 100% —
+   1rem считается и от ширины, и от высоты окна (что меньше) */
+html { font-size: clamp(6px, min(calc(100vw / 192), calc(100vh / 96)), 12px); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 @media (max-width: 1023px) { html { font-size: 8px; } }
 @media (max-width: 599px)  { html { font-size: 7px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -231,7 +234,7 @@ body::before {
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 5.8rem var(--pad) 2rem;
+  padding: var(--pad-y) var(--pad) 2rem;
   transition: padding .5s var(--ease), background-color .5s var(--ease), backdrop-filter .5s var(--ease);
 }
 .header.is-scrolled {
@@ -305,14 +308,16 @@ body::before {
    ========================================================================== */
 .hero {
   position: relative;
-  min-height: 120rem;   /* выше макета: место под крупное квадратное фото */
-  padding: 15.7rem var(--pad) 4.4rem;
+  height: 100vh;        /* первый экран — ровно в окно */
+  height: 100svh;
+  min-height: 60rem;
+  padding: calc(var(--pad-y) + 7.7rem) var(--pad) var(--pad-y);
   display: flex; flex-direction: column;
 }
 .hero__grid {
   flex: 1;              /* сетка растягивается на высоту экрана, текст и строка — внизу */
   display: grid;
-  grid-template-columns: 1fr 78.9rem;
+  grid-template-columns: 1fr auto;
   align-items: end;
   gap: 4rem;
   margin-right: 10.1rem;   /* правый край фото: 1759px */
@@ -346,6 +351,7 @@ body::before {
 .tags__row:last-child { justify-content: flex-start; } /* обе строки ровно по левому краю заголовка */
 
 .hero__photo {
+  width: min(78.9rem, calc(100svh - 2 * var(--pad-y) - 24rem));   /* рамка-заглушка не выталкивает экран за окно */
   aspect-ratio: 1 / 1;
   border-radius: var(--radius);
   overflow: hidden;
@@ -775,7 +781,7 @@ body::before {
 /* ==========================================================================
    CONTACT
    ========================================================================== */
-.contact { padding: var(--sec) 0 8rem; }
+.contact { padding: var(--sec) 0 var(--pad-y); }
 .contact__card {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8rem;
   padding: 6rem;
@@ -835,7 +841,7 @@ body::before {
 /* ==========================================================================
    FOOTER
    ========================================================================== */
-.footer { padding: 4rem 0 5rem; }
+.footer { padding: 4rem 0 var(--pad-y); }
 .footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 3rem; flex-wrap: wrap; border-top: 1px solid var(--ink); padding-top: 3.2rem; }
 .footer__name { font-family: var(--display); font-size: 4rem; letter-spacing: .03em; }
 .footer__nav { display: flex; gap: 3.2rem; font-size: max(2rem, 14px); }
@@ -882,7 +888,7 @@ body::before {
 }
 
 @media (max-width: 1023px) {
-  :root { --pad: 2.4rem; --sec: 10rem; }
+  :root { --pad: 20px; --pad-y: 10rem; --sec: 10rem; }   /* мобильная версия: поля слева и справа 20px */
   .h1 { font-size: 5.2rem; }
   .lead { font-size: 2.6rem; }
   .sec-head { flex-direction: column; align-items: flex-start; gap: 1.6rem; margin-bottom: 4rem; }
@@ -893,7 +899,8 @@ body::before {
   .cta3d { font-size: 14px; }
   .cta3d__face, .cta3d__reveal { padding: .8rem 2.4rem; }
 
-  .hero { min-height: auto; padding-top: 11rem; }
+  .hero { height: auto; min-height: auto; padding-top: 11rem; }
+  .hero__photo { width: auto; }
   .hero__grid { grid-template-columns: 1fr; margin-right: 0; gap: 4rem; }
   .hero__photo { order: -1; aspect-ratio: 4 / 5; }
   .hero__text { padding-bottom: 0; }
@@ -908,7 +915,7 @@ body::before {
   .chip { font-size: 3.4rem; }
   .about__grid { grid-template-columns: 1fr; gap: 6rem; }
 
-  .bento { grid-template-columns: 1fr 1fr; height: auto; gap: 1.6rem; }
+  .bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: auto; gap: 1.6rem; }   /* колонки не распираются текстом */
   .bento__img--portrait { grid-column: 1 / -1; grid-row: 1; aspect-ratio: 4 / 5; }
   .bento__img--fox, .bento__img--owl { flex: none; aspect-ratio: 1; }
   .bento__box--b, .bento__box--t { flex: none; min-height: 18rem; }
