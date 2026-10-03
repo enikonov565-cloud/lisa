@@ -527,6 +527,18 @@
         fill();
         cardParts().forEach((p) => {
           p.getAnimations().forEach((a) => a.cancel());
+          if (p.classList.contains("svc-card__price")) {
+            // цена мягко выплывает снизу из лёгкой дымки
+            p.animate(
+              [
+                { opacity: 0, transform: "translateY(1.8rem) scale(.94)", filter: "blur(6px)" },
+                { opacity: 1, transform: "translateY(-.3rem) scale(1.01)", filter: "blur(0)", offset: .7 },
+                { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
+              ],
+              { duration: 1100, easing: "cubic-bezier(.22, 1, .36, 1)" },
+            );
+            return;
+          }
           p.animate(
             [{ opacity: 0, transform: 'translateX(' + (dir * 2) + 'rem)' }, { opacity: 1, transform: 'translateX(0)' }],
             { duration: half, easing: 'cubic-bezier(0, 0, 0.58, 1)' },
