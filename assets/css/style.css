@@ -981,6 +981,54 @@ body::before {
 .extras-dialog__cta:hover .extras-dialog__arrow { transform: translateX(.6rem); }
 .extras-dialog[open] .extras-dialog__cta:active { transform: translateY(0) scale(.97); }
 @media (prefers-reduced-motion: reduce) { .extras-dialog[open] .extras-dialog__card, .extras-dialog[open] .extras-dialog__cta { animation: none; } }
+/* окно «связаться с фотографом» */
+.contact-dialog { width: min(60rem, calc(100vw - 2 * var(--pad))); }
+.cdlg { max-height: calc(100dvh - 4rem); overflow-y: auto; }
+.cdlg .extras-dialog__title { margin-bottom: 1.2rem; }
+.cdlg__text { font-size: max(2.2rem, 15px); line-height: 1.35; color: rgba(76, 67, 67, .85); }
+.cdlg__links { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.4rem; }
+.cdlg__links a {
+  display: inline-flex; align-items: center; gap: .8rem;
+  padding: 1rem 2rem;
+  border-radius: var(--btn-radius);
+  background: rgba(var(--peach-rgb), .7);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, .1) 60%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 .9rem 1.8rem -.8rem rgba(76, 67, 67, .3);
+  font-size: max(2rem, 14px); color: var(--ink);
+  transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), background-color .4s var(--ease), color .4s var(--ease);
+}
+.cdlg__links a b { font-weight: 400; color: var(--orange); transition: color .4s var(--ease); }
+.cdlg__links a:hover { transform: translateY(-.3rem); background-color: var(--brick); color: var(--milk); }
+.cdlg__links a:hover b { color: var(--milk); }
+.cdlg__or { margin: 3.2rem 0 .8rem; font-size: max(1.6rem, 12px); letter-spacing: .14em; text-transform: uppercase; color: rgba(76, 67, 67, .6); }
+.cdlg__form { display: flex; flex-direction: column; gap: 1.6rem; }
+/* поле с «плавающей» подписью */
+.cdlg__field { position: relative; display: block; }
+.cdlg__field input, .cdlg__field textarea {
+  width: 100%;
+  padding: 2.4rem 1.6rem .8rem;
+  border: 0; border-radius: var(--radius);
+  background: rgba(var(--peach-rgb), .45);
+  box-shadow: inset 0 1px 2px rgba(76, 67, 67, .08);
+  color: var(--ink); font: inherit; font-size: max(2rem, 16px);
+  resize: none;
+  transition: background-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.cdlg__field span {
+  position: absolute; left: 1.6rem; top: 1.7rem;
+  font-size: max(2rem, 14px); color: rgba(76, 67, 67, .6);
+  pointer-events: none; transform-origin: left top;
+  transition: transform .35s var(--ease), color .3s var(--ease);
+}
+.cdlg__field input:focus, .cdlg__field textarea:focus { outline: none; background: rgba(var(--peach-rgb), .7); box-shadow: inset 0 0 0 1.5px rgba(223, 96, 15, .55); }
+.cdlg__field input:focus + span, .cdlg__field textarea:focus + span,
+.cdlg__field input:not(:placeholder-shown) + span, .cdlg__field textarea:not(:placeholder-shown) + span { transform: translateY(-1.1rem) scale(.72); color: var(--brick); }
+.cdlg__field.is-invalid input { box-shadow: inset 0 0 0 1.5px var(--brick); }
+.cdlg__consent { display: flex; gap: 1.2rem; align-items: flex-start; font-size: max(1.6rem, 12px); line-height: 1.35; color: rgba(76, 67, 67, .75); cursor: pointer; }
+.cdlg__consent input { flex: none; width: 1.8rem; height: 1.8rem; min-width: 14px; min-height: 14px; margin: .2rem 0 0; accent-color: var(--orange); }
+.cdlg__consent.is-invalid { color: var(--brick); }
+.cdlg .extras-dialog__cta { margin-top: .8rem; }
+.cdlg__status { min-height: 1.2em; font-size: max(1.8rem, 13px); color: var(--brick); }
 .extras__list li {
   display: flex; justify-content: space-between; gap: 2rem;
   padding: 1.2rem 0;

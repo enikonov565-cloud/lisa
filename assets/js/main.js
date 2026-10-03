@@ -795,6 +795,46 @@
   });
   $$('.field input', form).forEach((i) => i.addEventListener('input', () => i.closest('.field').classList.remove('is-invalid')));
 
+  /* ---------------- «связаться с фотографом» → всплывающее окно ---------------- */
+  const cDlg = $('#contact-dialog');
+  if (cta && cDlg && typeof cDlg.showModal === 'function') {
+    $('#cdlg-links').innerHTML = `
+      <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>telegram</a></li>
+      <li><a href="tel:${tel}"><b>☏</b>позвонить</a></li>
+      <li><a href="mailto:${CONTACTS.email}"><b>✉</b>почта</a></li>`;
+    const cForm = $('#cdlg-form');
+    const cStatus = $('.cdlg__status', cDlg);
+    const closeC = () => cDlg.close();
+    cta.addEventListener('click', (e) => {
+      e.preventDefault();
+      cStatus.textContent = '';
+      cDlg.showModal();
+    });
+    $('.extras-dialog__close', cDlg).addEventListener('click', closeC);
+    cDlg.addEventListener('click', (e) => { if (e.target === cDlg) closeC(); });
+    cDlg.addEventListener('close', () => cta.focus({ preventScroll: true }));
+    cForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let ok = true;
+      ['name', 'contact'].forEach((n) => {
+        const input = cForm.elements[n];
+        const bad = !input.value.trim();
+        input.closest('.cdlg__field').classList.toggle('is-invalid', bad);
+        if (bad && ok) { input.focus(); ok = false; }
+      });
+      const consent = cForm.elements.consent;
+      consent.closest('.cdlg__consent').classList.toggle('is-invalid', !consent.checked);
+      if (!consent.checked) ok = false;
+      if (!ok) { cStatus.textContent = 'Заполните имя, контакт и отметьте согласие'; return; }
+      const d = new FormData(cForm);
+      const body = `Имя: ${d.get('name')}\nКонтакт: ${d.get('contact')}\n\n${d.get('message') || ''}`;
+      window.location.href = `mailto:${CONTACTS.email}?subject=${encodeURIComponent('Заявка с сайта')}&body=${encodeURIComponent(body)}`;
+      cStatus.textContent = 'Спасибо! Письмо открыто в вашей почте — осталось нажать «Отправить».';
+      cForm.reset();
+    });
+    $$('input', cForm).forEach((i) => i.addEventListener('input', () => { const f = i.closest('.cdlg__field'); if (f) f.classList.remove('is-invalid'); }));
+  }
+
   $('#year').textContent = new Date().getFullYear();
 
   /* ---------------- типографика ----------------
