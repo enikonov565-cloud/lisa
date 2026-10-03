@@ -1202,7 +1202,7 @@ body::before {
 }
 @keyframes inviteShine { 0% { transform: translateX(-120%); } 35%, 100% { transform: translateX(120%); } }
 
-.invite__or { margin: 4.4rem 0 1.4rem; font-size: max(1.5rem, 12px); letter-spacing: .16em; text-transform: uppercase; color: rgba(76, 67, 67, .6); }
+.invite__or { margin: 4.4rem 0 1.4rem; font-size: max(2rem, 14px); letter-spacing: .02em; color: rgba(76, 67, 67, .7); }   /* строчными — тепло, без официоза */
 .invite__more { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1rem; }
 .invite__links { margin-top: 0; justify-content: center; }
 .invite .cdlg__links a { background-color: rgba(250, 245, 238, .55); }
