@@ -24,8 +24,8 @@ const CFG = {
 const CFG_PRICE = {
   ...CFG,
   background: '#efd6c6',  // светлый тон карточки
-  color1: '#b4532a',      // кирпичный
-  color2: '#e8925a',      // абрикосовый
+  color1: '#815c4c',      // кофейно-коричневый — тёмный оттенок вместо рыжего
+  color2: '#d4a088',      // приглушённый персиковый — меньше рыжины
   intensity: 0.8,             // на светлом фоне лентам нужна большая яркость, чтобы движение читалось
   speed: 1.8,                 // быстрее, чем на тёмной карточке
 };
@@ -223,6 +223,7 @@ function init(selector, CFG, bgClass) {
   const bgLum = 0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2];
 
   let dead = false;
+  let shown = false;
   let mx = 0, my = 0, vx = 0, vy = 0, on = 0, raf = 0, last = -1, clock = 0, running = false;
 
   const render = (now) => {
@@ -282,6 +283,7 @@ function init(selector, CFG, bgClass) {
     gl.uniform3f(un.uBg, bg[0], bg[1], bg[2]);
     gl.uniform1f(un.uPaper, clamp((bgLum - 0.35) / 0.3, 0, 1));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+    if (!shown) { shown = true; card.classList.add('has-ribbon'); }
   };
 
   const start = () => { if (running || dead) return; running = true; last = -1; raf = requestAnimationFrame(render); };
@@ -296,7 +298,7 @@ function init(selector, CFG, bgClass) {
       if (r.bottom > 0 && r.top < window.innerHeight) start();
     }
   });
-  requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('has-ribbon')));
+  // холст проявляется только после первого нарисованного кадра — без чёрной вспышки
 }
 
 // тёмная карточка гарантий
