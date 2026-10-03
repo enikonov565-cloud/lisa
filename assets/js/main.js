@@ -698,4 +698,22 @@
   };
   typograph();
   window.siteTypograph = typograph;   // для текстов, которые появятся позже
+
+  /* ---------------- подзаголовки: блок по ширине реального текста ----------------
+     Строки подзаголовка выровнены по длине и короче своего блока, поэтому правый край
+     текста «отставал» от линии карточек. Сужаем блок до самой длинной строки —
+     текст встаёт ровно к правому полю (60 на десктопе). */
+  const notes = $$('.sec-head .note');
+  const fitNotes = () => notes.forEach((n) => {
+    n.style.width = '';
+    const r = document.createRange();
+    r.selectNodeContents(n);
+    const rects = [...r.getClientRects()].filter((q) => q.width > 1);
+    if (!rects.length) return;
+    const w = Math.max(...rects.map((q) => q.right)) - Math.min(...rects.map((q) => q.left));
+    n.style.width = Math.ceil(w + 1) + 'px';
+  });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(fitNotes);
+  let fitT = 0;
+  window.addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(fitNotes, 120); });
 })();
