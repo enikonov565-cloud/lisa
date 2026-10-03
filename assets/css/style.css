@@ -20,6 +20,7 @@
   --orange: #df600f;     /* «василиса 4» */
   --stone: #cdcbc7;      /* «1» */
   --milk: #faf5ee;       /* белый-молочный */
+  --brick: #b4532a;      /* кирпичный — цвет нажатых/активных кнопок вместо серого */
   --olive: #8a8d3c;      /* оливковый — акцент */
   --veil: rgba(76, 67, 67, .14);
 
@@ -116,7 +117,7 @@ body::before {
   white-space: nowrap;
   transition: background-color .4s var(--ease), color .4s var(--ease), transform .25s var(--ease);
 }
-.btn-cta:hover { background: var(--ink); color: #fff; }
+.btn-cta:hover { background: var(--brick); color: var(--milk); }
 .btn-cta:active { transform: scale(.97); }
 .btn-cta--wide { width: 100%; padding: 1.4rem 4rem; }
 
@@ -184,7 +185,7 @@ body::before {
   white-space: nowrap;
   transition: background-color .4s var(--ease), color .4s var(--ease);
 }
-.pill:hover { background: var(--ink); color: var(--peach); }
+.pill:hover { background: var(--milk); color: var(--ink); }
 
 /* плашки-перевёртыши на главном: у каждой своя обратная сторона в фирменном цвете */
 .flip {
@@ -444,8 +445,8 @@ body::before {
   transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), background-color .4s var(--ease), color .4s var(--ease), border-color .4s;
 }
 .hero__scroll img { width: 5.05rem; height: .736rem; animation: scrollNudge 2.4s cubic-bezier(.45, 0, .2, 1) infinite; }
-.hero__scroll:hover { transform: translateY(-.3rem); background-color: var(--ink); border-color: var(--ink); color: var(--milk); }
-.hero__scroll:hover img { filter: brightness(0) invert(.96); }
+.hero__scroll:hover { transform: translateY(-.3rem); background-color: var(--milk); border-color: rgba(255, 255, 255, .9); color: var(--ink); }
+.hero__scroll:hover img { filter: none; }
 @keyframes scrollNudge {
   0%, 55%, 100% { transform: translateX(0); }
   25%           { transform: translateX(.9rem); }
@@ -467,7 +468,7 @@ body::before {
 .marquee:hover .marquee__track { animation-play-state: paused; }
 .marquee__list { display: flex; gap: 4rem; padding-right: 4rem; }
 .marquee .chip { transition: background-color .4s var(--ease), color .4s var(--ease); }
-.marquee .chip:hover { background: var(--ink); color: var(--peach); }
+.marquee .chip:hover { background: var(--milk); color: var(--ink); }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 /* бегущая строка: плашка в центре экрана переворачивается на свою цветную сторону */
@@ -596,7 +597,7 @@ body::before {
   font-size: max(1.8rem, 13px);
   transition: background-color .35s var(--ease), color .35s var(--ease);
 }
-.genre__more:hover { background: var(--accent-ink); color: var(--accent); }
+.genre__more:hover { background: var(--milk); border-color: var(--milk); color: var(--brick); }
 .genre__back .genre__icon { background: rgba(255, 255, 255, .22); color: var(--accent-ink); }
 @media (prefers-reduced-motion: reduce) { .genre__inner, .genre__img img, .genre__icon { transition: none; } }
 
@@ -898,7 +899,7 @@ body::before {
 }
 .svc-card:hover .svc-order, .svc-order:focus-visible, .svc-order.is-open { width: 100%; }
 .svc-card:hover .svc-order__label, .svc-order:focus-visible .svc-order__label, .svc-order.is-open .svc-order__label { opacity: 1; transform: none; transition-delay: .15s; }
-.svc-order:hover { background-color: var(--ink); }
+.svc-order:hover { background-color: var(--brick); }
 .svc-order:hover .svc-order__arrow { transform: translateX(.4rem); }
 .svc-order:focus-visible { outline: 1.5px solid var(--ink); outline-offset: 3px; }
 @media (hover: none) { .svc-order { width: 100%; } .svc-order__label { opacity: 1; transform: none; } }
@@ -924,7 +925,7 @@ body::before {
   font-size: 1.1em; line-height: 1;
   transition: transform .5s cubic-bezier(.34, 1.56, .64, 1);
 }
-.extras-btn:hover { transform: translateY(-.3rem); background-color: var(--ink); color: var(--milk); }
+.extras-btn:hover { transform: translateY(-.3rem); background-color: var(--milk); border-color: rgba(255, 255, 255, .9); color: var(--ink); }
 .extras-btn:hover .extras-btn__plus { transform: rotate(90deg); }
 
 /* всплывающее окно */
@@ -951,7 +952,7 @@ body::before {
   font-size: 3rem; line-height: 1; color: var(--ink);
   transition: background-color .3s var(--ease), transform .4s cubic-bezier(.34, 1.56, .64, 1);
 }
-.extras-dialog__close:hover { background: rgba(76, 67, 67, .08); transform: rotate(90deg); }
+.extras-dialog__close:hover { background: rgba(180, 83, 42, .1); transform: rotate(90deg); }
 .extras-dialog__cta { margin-top: 2.8rem; }
 @media (prefers-reduced-motion: reduce) { .extras-dialog[open] .extras-dialog__card { animation: none; } }
 .extras__list li {
@@ -975,8 +976,8 @@ body::before {
   transition: background-color .4s var(--ease), color .4s var(--ease);
 }
 .filters button sup { font-size: .6em; margin-left: .3em; }
-.filters button:hover { background: rgba(76, 67, 67, .12); }
-.filters button[aria-selected="true"] { background: var(--ink); color: var(--peach); }
+.filters button:hover { background: rgba(250, 245, 238, .7); }
+.filters button[aria-selected="true"] { background: var(--brick); border-color: var(--brick); color: var(--milk); }
 
 .gallery {
   display: grid;
@@ -1058,7 +1059,7 @@ body::before {
   transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s;
 }
 .form__types label:hover span { border-color: var(--stone); }
-.form__types input:checked + span { background: var(--stone); color: var(--ink); border-color: var(--stone); }
+.form__types input:checked + span { background: var(--brick); color: var(--milk); border-color: var(--brick); }
 .form__types input:focus-visible + span { outline: 1.5px solid var(--orange); outline-offset: 3px; }
 
 .field { display: flex; flex-direction: column; gap: .8rem; }
