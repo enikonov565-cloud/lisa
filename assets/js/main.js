@@ -48,7 +48,7 @@
       title: 'Уличный портрет',
       text: 'естественный свет и живой город вокруг героя',
       price: 'от 7 000 ₽',
-      img: 'assets/img/approach-portrait.jpg',
+      img: 'assets/img/depth-3.jpg',
       alt: 'Портрет при естественном свете у окна',
       includes: ['1 час съёмки на локации', '20 кадров в обработке', 'подбор локации и времени света'],
     },
@@ -59,7 +59,7 @@
     { src: 'assets/img/about-arch.jpg', cat: 'Пейзаж', title: 'Осенняя арка', alt: 'Каменная арка и тропинка среди осенней листвы', size: 'wide' },
     { src: 'assets/img/approach-fox.jpg', cat: 'Реклама', title: 'Лиса-оригами, предметная съёмка', alt: 'Фигурка лисы в технике оригами' },
     { src: 'assets/img/approach-owl.jpg', cat: 'Реклама', title: 'Сова, предметная съёмка', alt: 'Металлическая фигурка совы на фоне боке' },
-    { src: 'assets/img/approach-portrait.jpg', cat: 'Портрет', title: 'Деловой портрет', alt: 'Женщина в светлом жакете у окна' },
+    { src: 'assets/img/depth-3.jpg', cat: 'Портрет', title: 'Деловой портрет', alt: 'Женщина в светлом жакете у окна' },
     { src: 'assets/img/about-flower.jpg', cat: 'Пейзаж', title: 'Хризантема', alt: 'Крупный план цветка хризантемы' },
   ];
 
@@ -469,7 +469,7 @@
     ['var(--orange)', 'var(--milk)'],           // уличный портрет
   ];
   const card = {
-    img: $('#svc-img'), kicker: $('#svc-kicker'), price: $('#svc-price'),
+    kicker: $('#svc-kicker'), price: $('#svc-price'),
     includes: $('#svc-includes'), order: $('#svc-order'),
   };
   list.innerHTML = SERVICES.map((s, i) => `
@@ -477,6 +477,98 @@
       <span class="flip" style="--back:${SVC_COLORS[i][0]};--back-ink:${SVC_COLORS[i][1]}"><span class="flip__inner"><span class="chip flip__face flip__front">${s.title}</span><span class="chip flip__face flip__back" aria-hidden="true">${s.title}</span></span></span>
       <p>${s.text}</p>
     </li>`).join('');
+
+  /* фото услуги: «Cursor Image Gallery» — сдвиг кадров, стрелка-курсор, точки */
+  const svcGallery = (() => {
+    const box = $('.svc-photo');
+    const track = $('.svc-photo__track', box);
+    const cursor = $('.svc-cursor', box);
+    const dotsBox = $('.svc-dots', box);
+    const DUR = 600;
+    const EASE = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const count = SERVICES.length;
+    let index = -1;
+    let layer = null;
+    let sliding = false;
+    let queued = null;
+    let side = 'none';
+    let pointer = null;
+    dotsBox.innerHTML = SERVICES.map(() => '<span></span>').join('');
+    const dots = $$('span', dotsBox);
+    SERVICES.forEach((s) => { const im = new Image(); im.src = s.img; });   // заранее, чтобы сдвиг был без пустоты
+    const make = (i, x) => {
+      const el = document.createElement('div');
+      el.className = 'svc-photo__layer';
+      el.style.backgroundImage = 'url("' + SERVICES[i].img + '")';
+      el.style.transform = 'translateX(' + x + ')';
+      track.appendChild(el);
+      return el;
+    };
+    const sideFor = (relX, w) => {
+      if (w <= 0) return 'none';
+      if (relX < w / 2) return index > 0 ? 'left' : 'none';
+      return index < count - 1 ? 'right' : 'none';
+    };
+    const paintSide = () => {
+      box.classList.toggle('has-side', side !== 'none');
+      box.classList.toggle('side-left', side === 'left');
+    };
+    const go = (i) => {
+      if (i === index || i < 0 || i >= count) return;
+      dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
+      box.setAttribute('aria-label', SERVICES[i].alt);
+      if (!layer || reduced) {                       // первый кадр или без анимаций
+        if (layer) layer.remove();
+        layer = make(i, '0%');
+        index = i;
+        return;
+      }
+      if (sliding) { queued = i; return; }
+      sliding = true;
+      const dir = i > index ? 1 : -1;
+      const from = layer;
+      const to = make(i, (dir * 100) + '%');
+      void to.offsetWidth;
+      from.style.transition = to.style.transition = 'transform ' + DUR + 'ms ' + EASE;
+      from.style.transform = 'translateX(' + (-dir * 100) + '%)';
+      to.style.transform = 'translateX(0%)';
+      index = i;
+      setTimeout(() => {
+        from.remove();
+        to.style.transition = '';
+        layer = to;
+        sliding = false;
+        if (pointer) { side = sideFor(pointer.x, pointer.w); paintSide(); }
+        if (queued !== null && queued !== index) { const q = queued; queued = null; go(q); } else queued = null;
+      }, DUR + 40);
+    };
+    box.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const r = box.getBoundingClientRect();
+      pointer = { x: e.clientX - r.left, w: r.width };
+      cursor.style.left = (e.clientX - r.left) + 'px';
+      cursor.style.top = (e.clientY - r.top) + 'px';
+      side = sideFor(pointer.x, pointer.w);
+      paintSide();
+    });
+    box.addEventListener('pointerleave', () => { pointer = null; side = 'none'; paintSide(); });
+    box.addEventListener('click', (e) => {
+      const r = box.getBoundingClientRect();
+      const s = sideFor(e.clientX - r.left, r.width);
+      if (s === 'left') showService(index - 1);
+      else if (s === 'right') showService(index + 1);
+    });
+    // свайп на телефоне
+    let sx = null;
+    box.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    box.addEventListener('touchend', (e) => {
+      if (sx === null) return;
+      const dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 40) showService(Math.min(count - 1, Math.max(0, index + (dx < 0 ? 1 : -1))));
+      sx = null;
+    });
+    return { go };
+  })();
 
   let activeSvc = -1;
   const showService = (i) => {
@@ -497,14 +589,7 @@
     card.includes.innerHTML = s.includes.map((t) => `<li>${t}</li>`).join('');
     if (window.siteTypograph) window.siteTypograph(card.includes);   // правило переносов и для новых строк
     card.order.dataset.type = s.title;
-    card.img.classList.add('is-swapping');
-    const pre = new Image();
-    pre.onload = pre.onerror = () => {
-      card.img.src = s.img;
-      card.img.alt = s.alt;
-      requestAnimationFrame(() => card.img.classList.remove('is-swapping'));
-    };
-    pre.src = s.img;
+    svcGallery.go(i);
   };
   $$('.svc__item', list).forEach((el) => {
     const i = Number(el.dataset.i);
