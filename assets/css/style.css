@@ -89,8 +89,10 @@ body::before {
   letter-spacing: .03em;
 }
 .note {
-  width: 51rem; max-width: 100%;
-  font-size: max(2rem, 13px);
+  /* правило проекта: подзаголовок всегда в 2 строки (ширина и размер масштабируются вместе) */
+  width: 56rem; max-width: 100%;
+  font-size: 2rem;
+  text-wrap: balance;
   line-height: 1.2;
   letter-spacing: .02em;
 }
@@ -490,7 +492,6 @@ body::before {
 
 /* «Кто я» — фрейм 574:66 (обновлённый): привет · фото · два абзаца с линией */
 .about__head { margin-bottom: 3.6rem; }
-.about__note { width: 55.8rem; }
 .about__row {
   display: grid;
   /* привет · фото · текст: промежутки слева и справа от фото всегда равны */
@@ -953,7 +954,7 @@ body::before {
   .h1 { font-size: 5.2rem; }
   .lead { font-size: 2.6rem; }
   .sec-head { flex-direction: column; align-items: flex-start; gap: 1.6rem; margin-bottom: 4rem; }
-  .note { width: auto; max-width: 56rem; }
+  .note { width: auto; max-width: 56rem; letter-spacing: 0; }
 
   .header { padding-top: 2.4rem; }
   .header .btn-cta { padding: .7rem 2.4rem; font-size: 14px; }
@@ -1034,6 +1035,7 @@ body::before {
   .svc__item p { font-size: 2.4rem; }
   .steps { grid-template-columns: 1fr; }
   .genres__grid { grid-template-columns: 1fr; }
+  .note { font-size: 13px; }   /* подзаголовки и на телефоне в 2 строки */
   .genre__title { white-space: normal; }
   .genre .genre__img, .genre:last-child .genre__img { aspect-ratio: 4 / 3; }
   .step { min-height: 0; }
