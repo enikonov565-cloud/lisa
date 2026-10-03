@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610031546">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610031548">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -321,6 +321,7 @@
         </div>
 
         <div class="services__grid">
+          <div class="services__col">
           <ol class="svc" id="svc-list">
             <!-- заполняется из данных в main.js, ниже — базовая разметка для браузеров без JS -->
             <li class="svc__item"><span class="chip">Рекламная съёмка</span><p>кампании, предметка, lookbook, контент для брендов</p></li>
@@ -329,6 +330,10 @@
             <li class="svc__item"><span class="chip">Студийный портрет</span><p>свет, характер, персональный и деловой образ</p></li>
             <li class="svc__item"><span class="chip">Уличный портрет</span><p>естественный свет и живой город вокруг героя</p></li>
           </ol>
+            <button class="extras-btn" type="button" aria-haspopup="dialog" aria-controls="extras-dialog">
+              можно добавить <span class="extras-btn__plus" aria-hidden="true">+</span>
+            </button>
+          </div>
 
           <aside class="svc-card" aria-live="polite">
             <figure class="svc-card__img">
@@ -347,15 +352,19 @@
           </aside>
         </div>
 
-        <div class="extras rv">
-          <p class="extras__title">можно добавить</p>
-          <ul class="extras__list">
+        <dialog class="extras-dialog" id="extras-dialog" aria-labelledby="extras-title">
+          <div class="extras-dialog__card">
+            <button class="extras-dialog__close" type="button" aria-label="Закрыть">×</button>
+            <p class="extras-dialog__title" id="extras-title">Можно добавить</p>
+            <ul class="extras__list">
             <li><span>Срочная обработка за 48 часов</span><b>+30%</b></li>
             <li><span>Дополнительный кадр в ретуши</span><b>500 ₽</b></li>
             <li><span>Печать фото на хлопковой бумаге, А4</span><b>от 1 500 ₽</b></li>
             <li><span>Лицензия на коммерческое использование</span><b>по запросу</b></li>
           </ul>
-        </div>
+            <a class="btn-cta btn-cta--wide extras-dialog__cta" href="#contact">обсудить детали</a>
+          </div>
+        </dialog>
       </div>
     </section>
 
@@ -484,9 +493,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610031546" defer></script>
+  <script src="assets/js/main.js?v=202610031548" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610031546" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610031546" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610031548" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610031548" defer></script>
 </body>
 </html>

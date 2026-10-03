@@ -438,6 +438,26 @@
     }, { threshold: 0 }).observe(genresSection);
   }
 
+  /* ---------------- «можно добавить»: всплывающее окно ---------------- */
+  const extrasBtn = $('.extras-btn');
+  const extrasDlg = $('#extras-dialog');
+  if (extrasBtn && extrasDlg) {
+    const openDlg = () => {
+      if (typeof extrasDlg.showModal === 'function') extrasDlg.showModal();
+      else extrasDlg.setAttribute('open', '');
+    };
+    const closeDlg = () => {
+      if (typeof extrasDlg.close === 'function') extrasDlg.close();
+      else extrasDlg.removeAttribute('open');
+    };
+    extrasBtn.addEventListener('click', openDlg);
+    $('.extras-dialog__close', extrasDlg).addEventListener('click', closeDlg);
+    $('.extras-dialog__cta', extrasDlg).addEventListener('click', closeDlg);
+    // клик по затемнению вокруг окна закрывает его
+    extrasDlg.addEventListener('click', (e) => { if (e.target === extrasDlg) closeDlg(); });
+    extrasDlg.addEventListener('close', () => extrasBtn.focus({ preventScroll: true }));
+  }
+
   /* ---------------- services ---------------- */
   const list = $('#svc-list');
   // цвет обратной стороны плашки у каждой услуги — как в бегущей строке и карточках
