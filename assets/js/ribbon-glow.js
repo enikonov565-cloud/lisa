@@ -305,5 +305,7 @@ function init(selector, CFG, bgClass) {
 init('.guarantee', CFG, 'guarantee__bg');
 // светлая карточка цены — те же ленты, тёплые светлые цвета
 init('.svc-card', CFG_PRICE, 'svc-card__bg');
+// приглашение к записи — те же тёплые ленты
+init('.invite', CFG_PRICE, 'invite__bg');
 
 })();

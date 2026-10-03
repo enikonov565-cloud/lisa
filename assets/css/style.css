@@ -1127,61 +1127,94 @@ body::before {
    CONTACT
    ========================================================================== */
 .contact { padding: var(--sec) 0 var(--pad-y); }
-.contact__card {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8rem;
-  padding: 6rem;
+/* приглашение: светлая карточка с лентами, «полароиды» по краям, одна главная кнопка */
+.invite {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; place-items: center;
+  min-height: 64rem;
+  padding: 8rem 6rem;
   border-radius: var(--radius);
-  background: var(--ink);
-  color: var(--stone);
+  background: #efd6c6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 3rem 6rem -3rem rgba(129, 92, 76, .35);
+  text-align: center;
 }
-.contact__title { color: #fff; margin-bottom: 3rem; max-width: 70rem; }
-.contact__text { font-size: 3.2rem; line-height: 1.21; max-width: 62rem; margin-bottom: 6rem; }
-.contact__links { display: flex; flex-direction: column; gap: 1.2rem; }
-.contact__links a {
-  display: inline-flex; align-items: center; gap: 1.3rem;
-  font-size: max(2.4rem, 16px); color: #fff;
+.invite__bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s var(--ease); pointer-events: none; }
+.invite.has-ribbon .invite__bg { opacity: 1; }
+.invite__body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; max-width: 80rem; }
+.invite__kicker {
+  padding: .5rem 1.6rem; margin-bottom: 2.4rem;
+  border-radius: var(--radius);
+  background: rgba(250, 245, 238, .6);
+  font-size: max(1.5rem, 12px); letter-spacing: .16em; text-transform: uppercase; color: var(--brick);
 }
-.contact__links a span { color: var(--stone); font-size: .75em; letter-spacing: .1em; text-transform: uppercase; width: 12rem; }
-.contact__links a:hover { color: var(--orange); }
+.invite__title { color: var(--ink); margin-bottom: 2.4rem; }
+.invite__text { font-size: max(2.6rem, 16px); line-height: 1.35; color: rgba(76, 67, 67, .85); margin-bottom: 4.4rem; }
 
-.form { display: flex; flex-direction: column; gap: 3rem; }
-.form__types { border: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
-.form__types legend { width: 100%; margin-bottom: 1.4rem; font-size: max(1.8rem, 13px); letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .75); }
-.form__types label { position: relative; }
-.form__types input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-.form__types span {
-  display: inline-block; padding: .6rem 2.2rem;
-  border: 1px solid rgba(205, 203, 199, .6);
+/* главная кнопка: объём, тёплое свечение, блик пробегает по поверхности */
+.invite__btn {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 2.4rem;
+  padding: 1rem 1rem 1rem 4rem;
   border-radius: var(--btn-radius);
-  font-size: max(2rem, 14px);
-  transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s;
+  background: var(--orange);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .28) 0%, rgba(255, 255, 255, .04) 60%, rgba(0, 0, 0, .06) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 1.4rem 3rem -1.2rem rgba(223, 96, 15, .65), 0 0 0 0 rgba(223, 96, 15, .35);
+  color: var(--milk);
+  font-size: max(2.6rem, 17px); letter-spacing: .02em;
+  animation: inviteBreath 3.6s cubic-bezier(.45, 0, .55, 1) infinite;
+  transition: background-color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1);
 }
-.form__types label:hover span { border-color: var(--stone); }
-.form__types input:checked + span { background: var(--brick); color: var(--milk); border-color: var(--brick); }
-.form__types input:focus-visible + span { outline: 1.5px solid var(--orange); outline-offset: 3px; }
-
-.field { display: flex; flex-direction: column; gap: .8rem; }
-.field__label { font-size: max(1.8rem, 13px); letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .75); }
-.field input, .field textarea {
-  width: 100%;
-  padding: 1rem 0 1.2rem;
-  border: 0; border-bottom: 1px solid rgba(205, 203, 199, .6);
-  background: transparent;
-  color: #fff;
-  font-size: max(2.4rem, 16px);
-  resize: vertical;
-  transition: border-color .3s;
+.invite__btn::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .45) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: inviteShine 4.8s cubic-bezier(.4, 0, .2, 1) 1.2s infinite;
 }
-.field input:focus, .field textarea:focus { outline: none; border-color: #fff; }
-.field__err { display: none; font-size: max(1.6rem, 12px); color: #ffb48a; }
-.field.is-invalid input { border-color: #ffb48a; }
-.field.is-invalid .field__err { display: block; }
+.invite__btn-arrow {
+  display: grid; place-items: center;
+  width: 5.6rem; height: 5.6rem; min-width: 40px; min-height: 40px;
+  border-radius: var(--radius);
+  background: var(--milk); color: var(--orange);
+  font-size: 1.1em;
+  transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), color .4s var(--ease);
+}
+.invite__btn:hover { animation-play-state: paused; transform: translateY(-.5rem); background-color: var(--brick); }
+.invite__btn:hover .invite__btn-arrow { transform: translateX(.4rem) rotate(-8deg); color: var(--brick); }
+.invite__btn:active { transform: translateY(0) scale(.97); }
+.invite__btn:focus-visible { outline: 2px solid var(--brick); outline-offset: 4px; }
+@keyframes inviteBreath {
+  0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 1.4rem 3rem -1.2rem rgba(223, 96, 15, .65), 0 0 0 0 rgba(223, 96, 15, .3); }
+  50% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 1.8rem 3.6rem -1.2rem rgba(223, 96, 15, .7), 0 0 0 1.2rem rgba(223, 96, 15, 0); }
+}
+@keyframes inviteShine { 0% { transform: translateX(-120%); } 35%, 100% { transform: translateX(120%); } }
 
-.consent { display: flex; gap: 1.2rem; align-items: flex-start; font-size: max(1.6rem, 12px); line-height: 1.35; color: rgba(255, 255, 255, .75); cursor: pointer; }
-.consent input { flex: none; width: 1.8rem; height: 1.8rem; min-width: 14px; min-height: 14px; margin: .2rem 0 0; accent-color: var(--orange); }
-.consent.is-invalid { color: #ffb48a; }
-.form__submit { font-size: max(2.2rem, 15px); }
-.form__status { min-height: 1.2em; font-size: max(2rem, 14px); color: #fff; }
+.invite__or { margin: 4.4rem 0 1.4rem; font-size: max(1.5rem, 12px); letter-spacing: .16em; text-transform: uppercase; color: rgba(76, 67, 67, .6); }
+.invite__more { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1rem; }
+.invite__links { margin-top: 0; justify-content: center; }
+.invite .cdlg__links a { background-color: rgba(250, 245, 238, .55); }
+.invite .process-btn { margin-top: 0; padding-top: 1rem; padding-bottom: 1rem; background-color: rgba(250, 245, 238, .55); color: var(--ink); }
+.invite .process-btn:hover { background-color: var(--brick); color: var(--milk); }
+
+/* «полароиды» */
+.invite__pic {
+  position: absolute; z-index: 0;
+  padding: .8rem .8rem 2.4rem;
+  border-radius: var(--radius);
+  background: var(--milk);
+  box-shadow: 0 2rem 4rem -1.6rem rgba(76, 67, 67, .45);
+  transform: rotate(var(--r));
+  animation: picFloat var(--t, 7s) ease-in-out var(--dl, 0s) infinite;
+}
+.invite__pic img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: calc(var(--radius) - .8rem); }
+.invite__pic--1 { --r: -8deg; --t: 7s; width: 22rem; left: 7%; top: 12%; }
+.invite__pic--2 { --r: 6deg; --t: 8s; --dl: -2s; width: 15rem; left: 15%; bottom: 10%; }
+.invite__pic--3 { --r: 7deg; --t: 7.5s; --dl: -4s; width: 21rem; right: 7%; top: 14%; }
+.invite__pic--4 { --r: -5deg; --t: 8.5s; --dl: -1s; width: 15rem; right: 15%; bottom: 9%; }
+@keyframes picFloat { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-1.4rem) rotate(calc(var(--r) * .8)); } }
+@media (prefers-reduced-motion: reduce) { .invite__btn, .invite__btn::after, .invite__pic { animation: none; } }
+
+/* тема заявки в окне */
+.cdlg__type { margin-top: 1.6rem; display: inline-block; padding: .5rem 1.6rem; border-radius: var(--radius); background: rgba(var(--peach-rgb), .7); font-size: max(1.7rem, 13px); color: var(--brick); }
 
 /* ==========================================================================
    FOOTER
@@ -1288,7 +1321,8 @@ body::before {
   .gallery__cap { opacity: 1; transform: none; }
 
 
-  .contact__card { grid-template-columns: 1fr; gap: 5rem; padding: 4rem 3rem; }
+  .invite { min-height: 0; padding: 6rem 2.4rem; }
+  .invite__pic { display: none; }
 
   .menu { grid-template-columns: 1fr; align-items: end; padding-top: 12rem; }
   .lightbox { grid-template-columns: 1fr; padding: 8rem 1.6rem 12rem; }

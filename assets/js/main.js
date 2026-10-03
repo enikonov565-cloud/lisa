@@ -661,10 +661,12 @@
   // жанры в hero → открыть нужную услугу
   $$('[data-svc]').forEach((a) => a.addEventListener('click', () => showService(Number(a.dataset.svc))));
 
-  // «заказать съёмку» → выбрать тип в форме
-  card.order.addEventListener('click', () => {
-    const r = $(`.form__types input[value="${card.order.dataset.type}"]`);
-    if (r) r.checked = true;
+  // «заказать съёмку» → окно заявки с выбранной услугой
+  let openContact = null;
+  card.order.addEventListener('click', (e) => {
+    if (!openContact) return;
+    e.preventDefault();
+    openContact(card.order.dataset.type, card.order);
   });
 
   /* ---------------- gallery + filters ---------------- */
@@ -763,37 +765,11 @@
 
   /* ---------------- contacts ---------------- */
   const tel = CONTACTS.phone.replace(/[^\d+]/g, '');
-  $('#contact-links').innerHTML = `
-    <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><span>telegram</span>@${CONTACTS.telegram}</a></li>
-    <li><a href="tel:${tel}"><span>телефон</span>${CONTACTS.phone}</a></li>
-    <li><a href="mailto:${CONTACTS.email}"><span>почта</span>${CONTACTS.email}</a></li>`;
-
-  /* ---------------- form ---------------- */
-  // Сайт статичный: заявка собирается в письмо и открывается в почтовом клиенте.
-  // Для приёма заявок в Telegram подключите бота.
-  const form = $('#form');
-  const status = $('#form-status');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let ok = true;
-    ['name', 'contact'].forEach((n) => {
-      const input = form.elements[n];
-      const bad = !input.value.trim();
-      input.closest('.field').classList.toggle('is-invalid', bad);
-      if (bad && ok) { input.focus(); ok = false; }
-    });
-    const consent = form.elements.consent;
-    consent.closest('.consent').classList.toggle('is-invalid', !consent.checked);
-    if (!consent.checked) ok = false;
-    if (!ok) { status.textContent = 'Проверьте отмеченные поля'; return; }
-
-    const d = new FormData(form);
-    const body = `Тип съёмки: ${d.get('type')}\nИмя: ${d.get('name')}\nКонтакт: ${d.get('contact')}\n\n${d.get('message') || ''}`;
-    window.location.href = `mailto:${CONTACTS.email}?subject=${encodeURIComponent('Заявка на съёмку — ' + d.get('type'))}&body=${encodeURIComponent(body)}`;
-    status.textContent = 'Спасибо! Письмо с заявкой открыто в вашей почте — осталось нажать «Отправить».';
-    form.reset();
-  });
-  $$('.field input', form).forEach((i) => i.addEventListener('input', () => i.closest('.field').classList.remove('is-invalid')));
+  const linksHTML = `
+    <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>telegram</a></li>
+    <li><a href="tel:${tel}"><b>☏</b>позвонить</a></li>
+    <li><a href="mailto:${CONTACTS.email}"><b>✉</b>почта</a></li>`;
+  $('#contact-links').innerHTML = linksHTML;
 
   /* ---------------- «как проходит съёмка» → всплывающее окно ---------------- */
   const pDlg = $('#process-dialog');
@@ -804,7 +780,7 @@
     $('.extras-dialog__cta', pDlg).addEventListener('click', (e) => {
       e.preventDefault();
       pDlg.close();
-      $('#form').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      if (openContact) openContact();
     });
     pDlg.addEventListener('click', (e) => { if (e.target === pDlg) pDlg.close(); });
   }
@@ -812,21 +788,31 @@
   /* ---------------- «связаться с фотографом» → всплывающее окно ---------------- */
   const cDlg = $('#contact-dialog');
   if (cta && cDlg && typeof cDlg.showModal === 'function') {
-    $('#cdlg-links').innerHTML = `
-      <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>telegram</a></li>
-      <li><a href="tel:${tel}"><b>☏</b>позвонить</a></li>
-      <li><a href="mailto:${CONTACTS.email}"><b>✉</b>почта</a></li>`;
+    $('#cdlg-links').innerHTML = linksHTML;
     const cForm = $('#cdlg-form');
     const cStatus = $('.cdlg__status', cDlg);
+    const cType = $('.cdlg__type', cDlg);
+    let opener = cta;
     const closeC = () => cDlg.close();
-    cta.addEventListener('click', (e) => {
-      e.preventDefault();
+    openContact = (type, from) => {
+      opener = from || document.activeElement || cta;
       cStatus.textContent = '';
+      cForm.elements.type.value = type || '';
+      cType.hidden = !type;
+      cType.textContent = type ? 'тема: ' + type.toLowerCase() : '';
       cDlg.showModal();
-    });
+    };
+    cta.addEventListener('click', (e) => { e.preventDefault(); openContact('', cta); });
+    $$('.invite__btn, .js-contact').forEach((b) => b.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (b.classList.contains('js-contact')) document.documentElement.classList.remove('menu-open');
+      openContact('', b);
+    }));
+    const extrasCta = $('#extras-dialog .extras-dialog__cta');
+    if (extrasCta) extrasCta.addEventListener('click', (e) => { e.preventDefault(); openContact('', $('.extras-btn')); });
     $('.extras-dialog__close', cDlg).addEventListener('click', closeC);
     cDlg.addEventListener('click', (e) => { if (e.target === cDlg) closeC(); });
-    cDlg.addEventListener('close', () => cta.focus({ preventScroll: true }));
+    cDlg.addEventListener('close', () => { if (opener && opener.focus) opener.focus({ preventScroll: true }); });
     cForm.addEventListener('submit', (e) => {
       e.preventDefault();
       let ok = true;
@@ -841,10 +827,11 @@
       if (!consent.checked) ok = false;
       if (!ok) { cStatus.textContent = 'Заполните имя, контакт и отметьте согласие'; return; }
       const d = new FormData(cForm);
-      const body = `Имя: ${d.get('name')}\nКонтакт: ${d.get('contact')}\n\n${d.get('message') || ''}`;
-      window.location.href = `mailto:${CONTACTS.email}?subject=${encodeURIComponent('Заявка с сайта')}&body=${encodeURIComponent(body)}`;
+      const body = `${d.get('type') ? 'Тема: ' + d.get('type') + '\n' : ''}Имя: ${d.get('name')}\nКонтакт: ${d.get('contact')}\n\n${d.get('message') || ''}`;
+      window.location.href = `mailto:${CONTACTS.email}?subject=${encodeURIComponent('Заявка с сайта' + (d.get('type') ? ' — ' + d.get('type') : ''))}&body=${encodeURIComponent(body)}`;
       cStatus.textContent = 'Спасибо! Письмо открыто в вашей почте — осталось нажать «Отправить».';
       cForm.reset();
+      cType.hidden = true;
     });
     $$('input', cForm).forEach((i) => i.addEventListener('input', () => { const f = i.closest('.cdlg__field'); if (f) f.classList.remove('is-invalid'); }));
   }
