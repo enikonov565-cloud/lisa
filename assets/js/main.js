@@ -54,13 +54,15 @@
     },
   ];
 
+  // разделы галереи — те же, что в услугах
+  const WORK_CATS = ['Реклама', 'Студийный портрет', 'Уличный портрет', 'Пейзаж', 'Стрит'];
   const WORKS = [
-    { src: 'assets/img/hero-portrait.jpg', cat: 'Портрет', title: 'Студийный портрет', alt: 'Студийный портрет женщины с рыжими волосами на тёмном фоне', size: 'tall' },
+    { src: 'assets/img/hero-portrait.jpg', cat: 'Студийный портрет', title: 'Студийный портрет', alt: 'Студийный портрет женщины с рыжими волосами на тёмном фоне', size: 'tall' },
     { src: 'assets/img/about-arch.jpg', cat: 'Пейзаж', title: 'Осенняя арка', alt: 'Каменная арка и тропинка среди осенней листвы', size: 'wide' },
     { src: 'assets/img/approach-fox.jpg', cat: 'Реклама', title: 'Лиса-оригами, предметная съёмка', alt: 'Фигурка лисы в технике оригами' },
     { src: 'assets/img/approach-owl.jpg', cat: 'Реклама', title: 'Сова, предметная съёмка', alt: 'Металлическая фигурка совы на фоне боке' },
-    { src: 'assets/img/depth-3.jpg', cat: 'Портрет', title: 'Деловой портрет', alt: 'Женщина в светлом жакете у окна' },
-    { src: 'assets/img/about-flower.jpg', cat: 'Пейзаж', title: 'Хризантема', alt: 'Крупный план цветка хризантемы' },
+    { src: 'assets/img/depth-3.jpg', cat: 'Уличный портрет', title: 'Свет у окна', alt: 'Женщина в светлом жакете у окна' },
+    { src: 'assets/img/about-flower.jpg', cat: 'Стрит', title: 'Хризантема', alt: 'Крупный план цветка хризантемы' },
   ];
 
   const $ = (s, r = document) => r.querySelector(s);
@@ -674,12 +676,9 @@
   /* ---------------- gallery + filters ---------------- */
   const gallery = $('#gallery');
   const filters = $('#filters');
-  const cats = ['Все', ...new Set(WORKS.map((w) => w.cat))];
+  const cats = ['Все', ...WORK_CATS];
 
-  filters.innerHTML = cats.map((c, i) => {
-    const n = c === 'Все' ? WORKS.length : WORKS.filter((w) => w.cat === c).length;
-    return `<button type="button" role="tab" aria-selected="${i === 0}" data-cat="${c}">${c.toLowerCase()}<sup>${n}</sup></button>`;
-  }).join('');
+  filters.innerHTML = cats.map((c, i) => `<button type="button" role="tab" aria-selected="${i === 0}" data-cat="${c}">${c.toLowerCase()}</button>`).join('');
 
   gallery.innerHTML = WORKS.map((w, i) => `
     <li class="gallery__item${w.size ? ' gallery__item--' + w.size : ''}" data-cat="${w.cat}">
