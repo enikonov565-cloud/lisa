@@ -695,6 +695,8 @@ body::before {
 }
 .guarantee.has-ribbon .guarantee__bg { opacity: 1; }
 .guarantee__title { font-weight: 300; font-size: 3.2rem; line-height: 1.21; margin-bottom: 4.2rem; }
+/* отсвет заголовка — светлый персиковый оттенок, а не рыжий */
+.guarantee__title.glow { --shadow: rgba(238, 196, 168, .45); }
 
 /* «Crystal Glow» (по мотивам Originkit): молочный текст с объёмным оранжевым краем,
    блик пробегает справа налево, вспыхивают искорки. Наведение на карточку — эффект
