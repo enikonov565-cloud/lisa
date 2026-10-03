@@ -506,13 +506,13 @@ body::before {
 .about__photo { aspect-ratio: 652 / 631; border-radius: var(--radius); overflow: hidden; background: rgba(76, 67, 67, .12); }
 .about__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .about__photo:hover img { transform: scale(1.03); }
-.about__side { display: flex; flex-direction: column; align-items: flex-end; gap: 4rem; }
+.about__side { display: flex; flex-direction: column; align-items: stretch; gap: 4rem; width: max-content; max-width: 100%; justify-self: end; margin-left: auto; }   /* общий левый край абзацев, правый — по полю 60 */
 .about__side .lead {
-  width: 100%; padding: 1rem 0;
-  font-size: 2.9rem;   /* на 3 pt меньше основного .lead */
+  padding: 1rem 0;
+  font-size: 2.6rem;   /* на 6 pt меньше основного .lead */
   /* переносы строк расставлены вручную по макету — ровные блоки; на телефоне текст течёт свободно */
 }
-.about__divider { width: 100%; height: .57735rem; }
+.about__divider { width: 0; min-width: 100%; height: .57735rem; }   /* линия по ширине текста, не раздувает блок */
 .about__grid {
   display: grid;
   grid-template-columns: 95.5fr 73.8fr;
@@ -1299,8 +1299,8 @@ body::before {
   .genre:last-child .genre__img { aspect-ratio: 16 / 9; }
   .about__note { width: auto; }
   .about__hello { font-size: 3.6rem; white-space: normal; }
-  .about__side { gap: 2.4rem; }
-  .about__side .lead { padding: 0; font-size: 2.3rem; }
+  .about__side { gap: 2.4rem; width: auto; margin-left: 0; }
+  .about__side .lead { width: 100%; padding: 0; font-size: 2.2rem; }
   .br-d { display: none; }
 
   .bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: auto; gap: 1.6rem; }   /* колонки не распираются текстом */
