@@ -952,12 +952,31 @@ body::before {
   transition: background-color .3s var(--ease), transform .4s cubic-bezier(.34, 1.56, .64, 1);
 }
 .extras-dialog__close:hover { background: rgba(180, 83, 42, .1); transform: rotate(90deg); }
-.extras-dialog__cta { margin-top: 2.8rem; }
-@media (prefers-reduced-motion: reduce) { .extras-dialog[open] .extras-dialog__card { animation: none; } }
+/* «обсудить детали»: объём, лёгкое «дыхание» и подскок при наведении */
+.extras-dialog__cta {
+  margin-top: 2.8rem; gap: 1.2rem;
+  border: 0;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .26) 0%, rgba(255, 255, 255, .04) 60%, rgba(0, 0, 0, .05) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 1rem 2rem -1rem rgba(223, 96, 15, .6);
+  color: var(--milk);
+  transition: background-color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1), box-shadow .5s var(--ease);
+}
+.extras-dialog[open] .extras-dialog__cta { animation: ctaBreath 3.2s cubic-bezier(.45, 0, .55, 1) .8s infinite; }
+@keyframes ctaBreath {
+  0%, 100% { transform: translateY(0) scale(1); }
+  12% { transform: translateY(-.5rem) scale(1.015); }
+  24% { transform: translateY(0) scale(1); }
+  32% { transform: translateY(-.2rem) scale(1.005); }
+  40% { transform: translateY(0) scale(1); }
+}
+.extras-dialog__arrow { display: inline-block; transition: transform .5s cubic-bezier(.34, 1.56, .64, 1); }
+.extras-dialog[open] .extras-dialog__cta:hover { animation: none; transform: translateY(-.4rem); background-color: var(--brick); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 1.6rem 2.8rem -1.2rem rgba(180, 83, 42, .7); }
+.extras-dialog__cta:hover .extras-dialog__arrow { transform: translateX(.6rem); }
+.extras-dialog[open] .extras-dialog__cta:active { transform: translateY(0) scale(.97); }
+@media (prefers-reduced-motion: reduce) { .extras-dialog[open] .extras-dialog__card, .extras-dialog[open] .extras-dialog__cta { animation: none; } }
 .extras__list li {
   display: flex; justify-content: space-between; gap: 2rem;
-  padding: 1.6rem 0;
-  border-bottom: 1px solid rgba(76, 67, 67, .35);
+  padding: 1.2rem 0;
   font-size: max(2.2rem, 15px);
 }
 .extras__list b { font-weight: 400; white-space: nowrap; }
