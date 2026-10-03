@@ -178,7 +178,7 @@ body::before {
 .pill {
   display: inline-flex; align-items: center; justify-content: center;
   padding: .5rem 3rem;
-  border: 1px solid var(--ink);
+  border: 1px solid transparent;   /* без обводки — объём даёт блик и тень */
   border-radius: var(--btn-radius);
   font-size: 3.2rem; line-height: 1.21;
   text-transform: lowercase;
@@ -210,6 +210,7 @@ body::before {
     0 .9rem 1.8rem -.8rem rgba(76, 67, 67, .4);
 }
 .flip__face.pill:hover { background-color: transparent; color: inherit; }
+.flip__front.pill, .flip__front.pill:hover { background-color: rgba(250, 245, 238, .4); }   /* лёгкая молочная подложка вместо обводки */
 .flip__back {
   transform: rotateX(180deg);
   background-color: var(--back);
