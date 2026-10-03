@@ -405,6 +405,7 @@
     card.kicker.textContent = s.title.toLowerCase();
     card.price.textContent = s.price;
     card.includes.innerHTML = s.includes.map((t) => `<li>${t}</li>`).join('');
+    if (window.siteTypograph) window.siteTypograph(card.includes);   // правило переносов и для новых строк
     card.order.dataset.type = s.title;
     card.img.classList.add('is-swapping');
     const pre = new Image();
@@ -569,4 +570,42 @@
   $$('.field input', form).forEach((i) => i.addEventListener('input', () => i.closest('.field').classList.remove('is-invalid')));
 
   $('#year').textContent = new Date().getFullYear();
+
+  /* ---------------- типографика ----------------
+     Правило сайта: предлоги, союзы и другие короткие слова не висят в конце строки —
+     переносятся вместе со следующим словом; тире не начинает строку;
+     последнее слово абзаца не остаётся на строке одно. Делается неразрывным пробелом. */
+  const NBSP = ' ';
+  const SHORT = /(^|[\s («"„])([А-ЯЁа-яёA-Za-z]{1,3})[ \t\n]+(?=\S)/g;
+  const typo = (s) => {
+    let prev;
+    do { prev = s; s = s.replace(SHORT, `$1$2${NBSP}`); } while (s !== prev);   // цепочки: «и в доме»
+    return s.replace(/[ \t\n]+([—–])/g, `${NBSP}$1`);                              // тире не с новой строки
+  };
+  // элементы, где текст разбит на буквы/слова для анимаций или стоит в одну строку
+  const SKIP = '.hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
+  const BLOCKS = 'p, li, h1, h2, h3, legend, figcaption, label > span, .step__title';
+  const walkText = (root, fn) => {
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => (n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+    });
+    const nodes = [];
+    while (w.nextNode()) nodes.push(w.currentNode);
+    nodes.forEach(fn);
+    return nodes;
+  };
+  const typograph = (root = document.body) => {
+    walkText(root, (n) => { const t = typo(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; });
+    // висячие строки: последнее слово блока держится за предыдущее
+    const blocks = root.matches && root.matches(BLOCKS) ? [root, ...$$(BLOCKS, root)] : $$(BLOCKS, root);
+    blocks.forEach((el) => {
+      if (el.closest(SKIP)) return;
+      if (el.textContent.trim().split(/\s+/).length < 3) return;     // короткие подписи не трогаем
+      const nodes = walkText(el, () => {}).filter((n) => /\S/.test(n.nodeValue));
+      const last = nodes[nodes.length - 1];
+      if (last) last.nodeValue = last.nodeValue.replace(/[ \t\n]+(\S+\s*)$/, `${NBSP}$1`);
+    });
+  };
+  typograph();
+  window.siteTypograph = typograph;   // для текстов, которые появятся позже
 })();
