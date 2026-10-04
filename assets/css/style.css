@@ -1381,10 +1381,17 @@ body::before {
 .wpanel__cat {
   padding: .5rem 1.6rem;
   border-radius: var(--radius);
-  background: rgba(250, 245, 238, .6);
+  background-color: rgba(250, 245, 238, .7);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .7) 0%, rgba(255, 255, 255, .15) 60%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85), inset 0 -.2rem .4rem rgba(180, 83, 42, .08), 0 .8rem 1.6rem -.8rem rgba(180, 83, 42, .45);
   font-size: max(1.5rem, 12px); letter-spacing: .16em; text-transform: uppercase; color: var(--brick);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
 }
-.wpanel__title { font-family: var(--display); font-weight: 400; font-size: 6.4rem; line-height: 1.05; letter-spacing: .02em; color: var(--ink); }
+.wpanel__title {
+  font-family: var(--display); font-weight: 400; font-size: 6.4rem; line-height: 1.05; letter-spacing: .02em; color: var(--ink);
+  /* объём, как у цены: блик сверху, тёплая тень снизу */
+  text-shadow: 0 -1px 0 rgba(255, 255, 255, .6), 0 1px 0 rgba(129, 92, 76, .25), 0 .8rem 1.8rem rgba(129, 92, 76, .3);
+}
 .wpanel__desc { font-size: max(2.4rem, 16px); line-height: 1.4; color: rgba(76, 67, 67, .85); text-wrap: pretty; }
 .wpanel__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem; margin-top: 1.6rem; }
 .wpanel__order { gap: 1.2rem; padding: 1rem 3.2rem; color: var(--milk); }
