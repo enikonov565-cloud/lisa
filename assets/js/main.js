@@ -57,12 +57,12 @@
   // разделы галереи — те же, что в услугах
   const WORK_CATS = ['Реклама', 'Студийный портрет', 'Уличный портрет', 'Пейзаж', 'Стрит'];
   const WORKS = [
-    { src: 'assets/img/hero-portrait.jpg', cat: 'Студийный портрет', title: 'Студийный портрет', alt: 'Студийный портрет женщины с рыжими волосами на тёмном фоне', size: 'tall' },
-    { src: 'assets/img/about-arch.jpg', cat: 'Пейзаж', title: 'Осенняя арка', alt: 'Каменная арка и тропинка среди осенней листвы', size: 'wide' },
-    { src: 'assets/img/approach-fox.jpg', cat: 'Реклама', title: 'Лиса-оригами, предметная съёмка', alt: 'Фигурка лисы в технике оригами' },
-    { src: 'assets/img/approach-owl.jpg', cat: 'Реклама', title: 'Сова, предметная съёмка', alt: 'Металлическая фигурка совы на фоне боке' },
-    { src: 'assets/img/depth-3.jpg', cat: 'Уличный портрет', title: 'Свет у окна', alt: 'Женщина в светлом жакете у окна' },
-    { src: 'assets/img/about-flower.jpg', cat: 'Стрит', title: 'Хризантема', alt: 'Крупный план цветка хризантемы' },
+    { src: 'assets/img/hero-portrait.jpg', cat: 'Студийный портрет', title: 'Студийный портрет', desc: 'Мягкий свет и тёмный фон: в кадре остаются только взгляд и характер.', alt: 'Студийный портрет женщины с рыжими волосами на тёмном фоне', size: 'tall' },
+    { src: 'assets/img/about-arch.jpg', cat: 'Пейзаж', title: 'Осенняя арка', desc: 'Тропинка, листва и старый камень. Осень, в которую хочется шагнуть.', alt: 'Каменная арка и тропинка среди осенней листвы', size: 'wide' },
+    { src: 'assets/img/approach-fox.jpg', cat: 'Реклама', title: 'Лиса-оригами, предметная съёмка', desc: 'Бумажная лиса в мягком свете: предметная съёмка, где важна каждая грань.', alt: 'Фигурка лисы в технике оригами' },
+    { src: 'assets/img/approach-owl.jpg', cat: 'Реклама', title: 'Сова, предметная съёмка', desc: 'Металл, тёплые блики и боке. Деталь, которая становится историей бренда.', alt: 'Металлическая фигурка совы на фоне боке' },
+    { src: 'assets/img/depth-3.jpg', cat: 'Уличный портрет', title: 'Свет у окна', desc: 'Свет из окна и спокойная улыбка. Естественно, без поз и напряжения.', alt: 'Женщина в светлом жакете у окна' },
+    { src: 'assets/img/about-flower.jpg', cat: 'Стрит', title: 'Хризантема', desc: 'Хризантема крупным планом: красота, мимо которой легко пройти.', alt: 'Крупный план цветка хризантемы' },
   ];
 
   const $ = (s, r = document) => r.querySelector(s);
@@ -735,10 +735,150 @@
   };
   const step = (d) => { cur = (cur + d + visible.length) % visible.length; render(); };
 
+  /* ---------------- кадр → панель с описанием ----------------
+     По мотивам Codrops «Repeating Image Transition» (MIT): кадр «перелетает» к панели
+     серией отпечатков, каждый проявляется и гаснет через clip-path; остальные кадры
+     мягко уходят волной от нажатого. Сделано на Web Animations API, без GSAP. */
+  const wp = $('#wpanel');
+  const wpImg = $('.wpanel__img', wp);
+  const wpContent = $('.wpanel__content', wp);
+  const wpVeil = $('.wpanel__veil', wp);
+  const WT = { steps: 6, step: 420, interval: 55, pause: 140, panelFactor: 2, stagger: 300 };
+  const EZ = {
+    sineIn: 'cubic-bezier(0.12, 0, 0.39, 0)', sineOut: 'cubic-bezier(0.61, 1, 0.88, 1)',
+    sineInOut: 'cubic-bezier(0.37, 0, 0.63, 1)', expoOut: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  };
+  const CLIP = { from: 'inset(100% 0% 0% 0%)', reveal: 'inset(0% 0% 0% 0%)', hide: 'inset(0% 0% 100% 0%)' };
+  const ORDER_TYPE = { 'Реклама': 'Рекламная съёмка', 'Стрит': 'Стрит-фотография' };
+  let wBusy = false;
+  let wOpen = false;
+  let wItem = null;
+  let wIdx = 0;
+  const centerOf = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const shownItems = () => $$('.gallery__item:not(.is-hidden)', gallery);
+  const delaysFrom = (item, items) => {
+    const c0 = centerOf(item.getBoundingClientRect());
+    const d = items.map((el) => { const c = centerOf(el.getBoundingClientRect()); return Math.hypot(c.x - c0.x, c.y - c0.y); });
+    const max = Math.max(...d) || 1;
+    return d.map((v) => (v / max) * WT.stagger);
+  };
+  const fillPanel = (w) => {
+    $('.wpanel__cat', wp).textContent = w.cat.toLowerCase();
+    $('.wpanel__title', wp).textContent = w.title;
+    $('.wpanel__desc', wp).textContent = w.desc || '';
+    if (window.siteTypograph) window.siteTypograph(wpContent);
+    wpImg.style.backgroundImage = 'url("' + w.src + '")';
+    wpImg.setAttribute('aria-label', w.alt);
+  };
+  const openWork = (idx, li) => {
+    if (wBusy || wOpen) return;
+    wBusy = true;
+    wItem = li;
+    wIdx = idx;
+    const w = WORKS[idx];
+    const pic = $('img', li);
+    const startRect = pic.getBoundingClientRect();
+    const isLeft = centerOf(startRect).x < window.innerWidth / 2;
+    fillPanel(w);
+    wp.style.setProperty('--aspect', pic.naturalWidth && pic.naturalHeight ? pic.naturalWidth / pic.naturalHeight : 1);
+    wp.classList.toggle('wpanel--right', isLeft);
+    wp.hidden = false;
+    wpImg.style.clipPath = CLIP.hide;
+    wpContent.style.opacity = '0';
+    const endRect = wpImg.getBoundingClientRect();
+    document.documentElement.style.overflow = 'hidden';
+
+    if (reduced) {
+      wpImg.style.clipPath = '';
+      wpContent.style.opacity = '';
+      wp.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+      wBusy = false; wOpen = true;
+      $('.wpanel__close', wp).focus();
+      return;
+    }
+
+    // остальные кадры уходят волной, нажатый «сворачивается» вниз
+    const items = shownItems();
+    const delays = delaysFrom(li, items);
+    items.forEach((el, k) => {
+      el.getAnimations().forEach((a) => a.cancel());
+      el.animate(el === li
+        ? [{ opacity: 1, clipPath: CLIP.reveal }, { opacity: 0, clipPath: CLIP.from }]
+        : [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.8)' }],
+      { duration: el === li ? WT.step * 2 : 300, delay: delays[k], easing: 'ease-out', fill: 'forwards' });
+    });
+    wpVeil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, easing: EZ.sineInOut, fill: 'both' });
+
+    // отпечатки по пути от кадра к панели
+    const total = WT.step * 2 + WT.pause;
+    for (let s = 1; s <= WT.steps; s++) {
+      const t = s / (WT.steps + 1);
+      const wdt = lerp(startRect.width, endRect.width, t);
+      const hgt = lerp(startRect.height, endRect.height, t);
+      const cx = lerp(centerOf(startRect).x, centerOf(endRect).x, t);
+      const cy = lerp(centerOf(startRect).y, centerOf(endRect).y, t);
+      const m = document.createElement('div');
+      m.className = 'wmover';
+      Object.assign(m.style, {
+        left: (cx - wdt / 2) + 'px', top: (cy - hgt / 2) + 'px', width: wdt + 'px', height: hgt + 'px',
+        backgroundImage: 'url("' + w.src + '")', zIndex: String(61 + s), clipPath: CLIP.from,
+      });
+      document.body.appendChild(m);
+      m.animate([
+        { opacity: 0.4, clipPath: CLIP.hide, easing: EZ.sineIn },
+        { opacity: 1, clipPath: CLIP.reveal, offset: WT.step / total },
+        { opacity: 1, clipPath: CLIP.reveal, offset: (WT.step + WT.pause) / total, easing: EZ.sineOut },
+        { opacity: 1, clipPath: CLIP.from },
+      ], { duration: total, delay: (s - 1) * WT.interval, fill: 'both' }).finished.then(() => m.remove(), () => m.remove());
+    }
+
+    // проявление панели
+    const lead = WT.steps * WT.interval;
+    wpImg.animate([{ clipPath: CLIP.hide }, { clipPath: CLIP.reveal }],
+      { duration: WT.step * WT.panelFactor, delay: lead, easing: EZ.sineInOut, fill: 'both' });
+    wpImg.style.clipPath = '';
+    const contentIn = wpContent.animate([{ opacity: 0, transform: 'translateY(25px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 1000, delay: lead * 2, easing: EZ.expoOut, fill: 'both' });
+    wpContent.style.opacity = '';
+    setTimeout(() => { wBusy = false; wOpen = true; $('.wpanel__close', wp).focus({ preventScroll: true }); }, lead * 2 + 600);
+    contentIn.finished.catch(() => {});
+  };
+  const closeWork = (instant) => {
+    if (!wOpen || (wBusy && !instant)) return;
+    wBusy = true;
+    const items = shownItems();
+    const back = () => {
+      wp.hidden = true;
+      wp.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+      document.documentElement.style.overflow = '';
+      const delays = wItem ? delaysFrom(wItem, items) : items.map(() => 0);
+      items.forEach((el, k) => {
+        el.getAnimations().forEach((a) => a.cancel());
+        if (!instant && !reduced) {
+          el.animate([{ opacity: 0, transform: 'scale(.8)' }, { opacity: 1, transform: 'scale(1)' }],
+            { duration: WT.step * 1.6, delay: delays[k], easing: EZ.expoOut, fill: 'backwards' });
+        }
+      });
+      wBusy = false; wOpen = false;
+      if (!instant && wItem) $('.gallery__btn', wItem).focus({ preventScroll: true });
+    };
+    if (instant || reduced) { back(); return; }
+    wp.animate([{ opacity: 1 }, { opacity: 0 }], { duration: WT.step, easing: EZ.expoOut, fill: 'forwards' }).finished.then(back, back);
+  };
   gallery.addEventListener('click', (e) => {
     const b = e.target.closest('.gallery__btn');
-    if (b) openLb(Number(b.dataset.i));
+    if (b) openWork(Number(b.dataset.i), b.closest('.gallery__item'));
   });
+  $('.wpanel__close', wp).addEventListener('click', () => closeWork());
+  $('.wpanel__full', wp).addEventListener('click', () => { closeWork(true); openLb(wIdx); });
+  $('.wpanel__order', wp).addEventListener('click', (e) => {
+    e.preventDefault();
+    const type = ORDER_TYPE[WORKS[wIdx].cat] || WORKS[wIdx].cat;
+    closeWork(true);
+    if (openContact) openContact(type);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && wOpen && lb.hidden) closeWork(); });
   $('.lightbox__close', lb).addEventListener('click', closeLb);
   $('.lightbox__nav--prev', lb).addEventListener('click', () => step(-1));
   $('.lightbox__nav--next', lb).addEventListener('click', () => step(1));

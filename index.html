@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610032247">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610041146">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -549,6 +549,22 @@
   </dialog>
 
   <!-- ============ LIGHTBOX ============ -->
+  <!-- ============ «Любимые кадры»: панель с описанием (по мотивам Codrops «Repeating Image Transition», MIT) ============ -->
+  <div class="wpanel" id="wpanel" role="dialog" aria-modal="true" aria-labelledby="wpanel-title" hidden>
+    <div class="wpanel__veil" aria-hidden="true"></div>
+    <div class="wpanel__img" role="img"></div>
+    <div class="wpanel__content">
+      <p class="wpanel__cat"></p>
+      <h3 class="wpanel__title" id="wpanel-title"></h3>
+      <p class="wpanel__desc"></p>
+      <div class="wpanel__actions">
+        <a class="btn-cta wpanel__order" href="#contact"><span>хочу такую съёмку</span> <span class="wpanel__arrow" aria-hidden="true">→</span></a>
+        <button class="wpanel__btn wpanel__full" type="button">на весь экран</button>
+        <button class="wpanel__btn wpanel__close" type="button">закрыть <span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии" hidden>
     <button class="lightbox__close" type="button" aria-label="Закрыть">×</button>
     <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Предыдущее фото">
@@ -563,9 +579,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610032247" defer></script>
+  <script src="assets/js/main.js?v=202610041146" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610032247" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610032247" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610041146" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610041146" defer></script>
 </body>
 </html>
