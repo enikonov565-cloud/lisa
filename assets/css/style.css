@@ -1359,14 +1359,15 @@ body::before {
 .wpanel[hidden] { display: none; }
 .wpanel--right { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'content img'; }
 .wpanel__veil {
-  position: absolute; inset: 0; z-index: -1;
+  position: fixed; inset: 0; z-index: -1;   /* фон на весь экран и при прокрутке панели */
   background:
     radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, .45), transparent 60%),
     linear-gradient(180deg, #f3dccd 0%, var(--peach) 100%);
 }
 .wpanel__img {
   grid-area: img;
-  height: calc(100dvh - 16rem); max-width: 62vw;
+  /* кадр целиком: ширина по пропорции, но не выше экрана и не шире 62vw */
+  width: min(62vw, calc((100dvh - 16rem) * var(--aspect, 1)));
   aspect-ratio: var(--aspect, 1);
   border-radius: var(--radius);
   background-size: cover; background-position: center;
@@ -1407,20 +1408,42 @@ body::before {
   transition: background-color .4s var(--ease), color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1);
 }
 .wpanel__btn:hover { transform: translateY(-.3rem); background-color: var(--milk); color: var(--brick); }
+/* «закрыть» — в правом верхнем углу, как у остальных окон сайта */
+.wpanel__close { position: fixed; top: 2.4rem; right: var(--pad); z-index: 2; }
 .wmover {
   position: fixed; pointer-events: none;
   border-radius: var(--radius);
   background-size: cover; background-position: 50% 50%;
   will-change: clip-path, opacity;
 }
-@media (max-width: 1023px) {
+/* планшет: кадр и описание рядом, всё помещается в экран; кнопки одной высоты */
+@media (max-width: 1199px) {
+  .wpanel, .wpanel--right { gap: 4rem; padding: 9rem var(--pad) 6rem; align-items: center; }
+  .wpanel__img { width: min(50vw, calc((100dvh - 15rem) * var(--aspect, 1))); }
+  .wpanel__content { gap: 1.6rem; }
+  .wpanel__title { font-size: 5.2rem; }
+  .wpanel__desc { font-size: max(2.2rem, 15px); }
+  .wpanel__actions { gap: 1rem; margin-top: 1.2rem; }
+  .wpanel__order, .wpanel__btn { padding: .9rem 2.2rem; font-size: max(2rem, 14px); line-height: 1.2; }
+}
+/* планшет вертикально: кадр сверху по центру, описание и кнопки под ним одной колонкой той же ширины */
+@media (max-width: 1199px) and (min-width: 600px) and (orientation: portrait) {
+  .wpanel, .wpanel--right {
+    grid-template-columns: auto; grid-template-areas: 'img' 'content';
+    justify-content: center; align-content: center; align-items: start; gap: 3.2rem;
+  }
+  .wpanel__img { width: min(calc(100vw - 2 * var(--pad)), calc(56dvh * var(--aspect, 1))); }
+  .wpanel__content, .wpanel--right .wpanel__content { justify-self: stretch; max-width: none; }
+}
+/* телефон: кадр сверху, описание под ним, панель прокручивается */
+@media (max-width: 599px) {
   .wpanel, .wpanel--right {
     grid-template-columns: minmax(0, 1fr); grid-template-areas: 'img' 'content';
     align-items: start; align-content: start; gap: 3rem;
     padding: 8rem var(--pad) 4rem;
     overflow-y: auto;
   }
-  .wpanel__img { height: auto; width: 100%; max-width: none; max-height: 60dvh; }
+  .wpanel__img { width: min(100%, calc(58dvh * var(--aspect, 1))); }
   .wpanel--right .wpanel__content { justify-self: start; }
   .wpanel__title { font-size: 4.4rem; }
 }
