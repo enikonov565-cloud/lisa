@@ -19,6 +19,9 @@ const BRAND = {
 
 // каждое фото задаёт свою «атмосферу» фона — всё в пределах фирменной палитры
 const PHOTOS = [
+  { src: 'assets/img/hero-tweed.jpg', x: 0,      mood: { background: BRAND.copper, blob1: BRAND.orange, blob2: BRAND.peach } },
+  { src: 'assets/img/hero-blue.jpg', x: 0,       mood: { background: BRAND.milk,   blob1: BRAND.stone,  blob2: BRAND.peach } },
+  { src: 'assets/img/hero-silhouette.jpg', x: 0, mood: { background: BRAND.peach,  blob1: BRAND.stone,  blob2: BRAND.milk } },
   { src: 'assets/img/depth-1.jpg', x: 0,     mood: { background: BRAND.copper, blob1: BRAND.peach, blob2: BRAND.orange } },
   { src: 'assets/img/depth-2.jpg', x: 0,     mood: { background: BRAND.peach, blob1: BRAND.orange, blob2: BRAND.milk } },
   { src: 'assets/img/depth-3.jpg', x: 0,     mood: { background: BRAND.milk,  blob1: BRAND.peach,  blob2: BRAND.stone } },
