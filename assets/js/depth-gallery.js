@@ -275,7 +275,9 @@ async function init() {
       const header = document.querySelector('.header');
       const bar = document.querySelector('.hero__bar');
       const top = (header ? header.offsetHeight : 0) + px(0.8);
-      const bottom = (bar ? bar.getBoundingClientRect().top - s.top : H) - px(2);
+      // верх нижней строки — по самому высокому её элементу (плашка, кнопка «листать»), с воздухом
+      const barTop = bar ? Math.min(bar.getBoundingClientRect().top, ...[...bar.querySelectorAll('*')].map((el) => el.getBoundingClientRect().top)) : H + s.top;
+      const bottom = barTop - s.top - px(3.2);
       const left = textRight + px(4);
       const right = W - pad;
       // десктоп: фото занимает всю высоту между шапкой и нижней строкой — без пустых полос
