@@ -19,12 +19,15 @@ const BRAND = {
 
 // каждое фото задаёт свою «атмосферу» фона — всё в пределах фирменной палитры
 const PHOTOS = [
-  { src: 'assets/img/hero-tweed.jpg', x: 0,      mood: { background: BRAND.copper, blob1: BRAND.orange, blob2: BRAND.peach } },
-  { src: 'assets/img/hero-blue.jpg', x: 0,       mood: { background: BRAND.milk,   blob1: BRAND.stone,  blob2: BRAND.peach } },
-  { src: 'assets/img/hero-silhouette.jpg', x: 0, mood: { background: BRAND.peach,  blob1: BRAND.stone,  blob2: BRAND.milk } },
-  { src: 'assets/img/depth-1.jpg', x: 0,     mood: { background: BRAND.copper, blob1: BRAND.peach, blob2: BRAND.orange } },
-  { src: 'assets/img/depth-2.jpg', x: 0,     mood: { background: BRAND.peach, blob1: BRAND.orange, blob2: BRAND.milk } },
-  { src: 'assets/img/depth-3.jpg', x: 0,     mood: { background: BRAND.milk,  blob1: BRAND.peach,  blob2: BRAND.stone } },
+  // твид: тёплый персиково-медный отсвет, мягкая кофейная тень
+  { src: 'assets/img/hero-tweed.jpg', x: 0,
+    mood: { background: '#f1dccf', blob1: '#e2a98f', blob2: BRAND.peach, shadow: '#b07d66', lift: '#7a5a52' } },
+  // синий свет: молочно-дымчатый отсвет, пудровая тень
+  { src: 'assets/img/hero-blue.jpg', x: 0,
+    mood: { background: '#f0e2d9', blob1: '#d9cfcc', blob2: BRAND.stone, shadow: '#a58a80', lift: '#6f5f5d' } },
+  // силуэт: тёплый молочный отсвет, пудровая тень
+  { src: 'assets/img/hero-silhouette.jpg', x: 0,
+    mood: { background: '#f0dfd4', blob1: '#dcc5b8', blob2: BRAND.stone, shadow: '#a88a7c', lift: '#76625c' } },
 ];
 
 const CFG = {
@@ -47,7 +50,12 @@ const CFG = {
   blobRadius: 0.65,
   blobRadius2Ratio: 0.78,
   blobStrength: 0.9,
-  noise: 0.04,
+  noise: 0.03,
+  glowReach: 0.5,         // как далеко от края фото тянется отсвет (в высотах фото)
+  glowAlpha: 0.5,         // плотность отсвета у самого края фото
+  shadowDrop: 0.05,       // смещение тени вниз (в высотах фото)
+  shadowBlur: 0.16,       // мягкость тени
+  shadowAlpha: 0.3,       // плотность тени
 };
 
 /* ---------------- шейдеры ---------------- */
@@ -71,6 +79,21 @@ uniform float uTime;
 uniform float uVelocityIntensity;
 uniform vec2 uCenter;   // центр портрета в uv холста
 uniform vec2 uFrame;    // размер портрета в долях холста
+uniform vec2 uRes;      // размер холста, px
+uniform vec2 uHalf;     // половина размера фото, px
+uniform float uRadiusPx;
+uniform vec3 uShadowColor;
+uniform float uGlowReach;
+uniform float uGlowAlpha;
+uniform float uShadowDrop;
+uniform float uShadowBlur;
+uniform float uShadowAlpha;
+
+// расстояние до скруглённого прямоугольника (px)
+float sdRound(vec2 p, vec2 b, float r) {
+  vec2 q = abs(p) - b + r;
+  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
 
 float random(vec2 coord) {
   return fract(sin(dot(coord, vec2(12.9898, 78.233))) * 43758.5453123);
@@ -98,7 +121,19 @@ void main() {
   color += uVelocityIntensity * 0.10;
   float grain = random(vUv * vec2(1387.13, 947.91)) - 0.5;
   color += grain * uNoiseStrength;
-  gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+  color = clamp(color, 0.0, 1.0);
+
+  // отсвет: плотный под фото, мягко гаснет к странице
+  vec2 p = (vUv - uCenter) * uRes;
+  float h = uHalf.y * 2.0;
+  float d = sdRound(p, uHalf, uRadiusPx);
+  float glow = d <= 0.0 ? 1.0 : uGlowAlpha * pow(1.0 - smoothstep(0.0, uGlowReach * h, d), 1.8);
+  // тень: тот же прямоугольник чуть ниже, сильно размыта
+  float ds = sdRound(p + vec2(0.0, uShadowDrop * h), uHalf * vec2(0.97, 0.99), uRadiusPx);
+  float shadow = uShadowAlpha * (1.0 - smoothstep(-uShadowBlur * h * 0.35, uShadowBlur * h, ds));
+  vec3 col = mix(color, uShadowColor, shadow / max(glow + shadow, 0.001));
+  float a = clamp(shadow + glow * (1.0 - shadow), 0.0, 1.0);
+  gl_FragColor = vec4(col * a, a);   // премультиплицированная альфа: холст прозрачный вне отсвета
 }`;
 
 const planeVertex = /* glsl */ `
@@ -115,13 +150,20 @@ uniform sampler2D uMap;
 uniform float uOpacity;
 uniform vec2 uSize;
 uniform float uRadius;
+uniform vec3 uLift;      // во что превращается чёрный: тёплый мягкий тон
+uniform vec4 uClip;      // рамка на экране: центр (xy) и половина размера (zw), px устройства
+uniform float uClipR;    // скругление рамки, px устройства
 void main() {
+  vec2 cp = abs(gl_FragCoord.xy - uClip.xy) - uClip.zw + uClipR;
+  float cd = length(max(cp, 0.0)) + min(max(cp.x, cp.y), 0.0) - uClipR;
+  float inClip = 1.0 - smoothstep(-1.0, 1.0, cd);
   vec2 p = (vUv - 0.5) * uSize;
   vec2 q = abs(p) - (uSize * 0.5 - uRadius);
   float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - uRadius;
   float edge = 1.0 - smoothstep(-0.006, 0.006, d);
   vec4 tex = texture2D(uMap, vUv);
-  gl_FragColor = vec4(tex.rgb, edge * uOpacity);
+  vec3 soft = uLift + tex.rgb * (vec3(1.0) - uLift);   // чёрный → тёплый, белый остаётся белым
+  gl_FragColor = vec4(soft, edge * uOpacity * inClip);
 }`;
 
 /* ---------------- утилиты ---------------- */
@@ -170,7 +212,8 @@ async function init() {
   canvas.setAttribute('aria-hidden', 'true');
   stage.prepend(canvas);
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'low-power' });
+  renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
   renderer.autoClear = false;
@@ -183,6 +226,7 @@ async function init() {
     background: new THREE.Color(PHOTOS[0].mood.background),
     blob1: new THREE.Color(PHOTOS[0].mood.blob1),
     blob2: new THREE.Color(PHOTOS[0].mood.blob2),
+    shadow: new THREE.Color(PHOTOS[0].mood.shadow),
   };
   const tmp = { a: new THREE.Color(), b: new THREE.Color() };
   const bgMaterial = new THREE.ShaderMaterial({
@@ -202,6 +246,15 @@ async function init() {
       uVelocityIntensity: { value: 0 },
       uCenter: { value: new THREE.Vector2(0.5, 0.5) },
       uFrame: { value: new THREE.Vector2(1, 1) },
+      uRes: { value: new THREE.Vector2(1, 1) },
+      uHalf: { value: new THREE.Vector2(100, 100) },
+      uRadiusPx: { value: 20 },
+      uShadowColor: { value: bgColors.shadow },
+      uGlowReach: { value: CFG.glowReach },
+      uGlowAlpha: { value: CFG.glowAlpha },
+      uShadowDrop: { value: CFG.shadowDrop },
+      uShadowBlur: { value: CFG.shadowBlur },
+      uShadowAlpha: { value: CFG.shadowAlpha },
     },
   });
   const bgScene = new THREE.Scene();
@@ -226,6 +279,8 @@ async function init() {
   /* плоскости: 1 → 2 → 3 → копия 1, чтобы цикл замыкался бесшовно */
   const sequence = [...PHOTOS.keys(), 0];
   const geometry = new THREE.PlaneGeometry(1, 1);
+  const clipU = { value: new THREE.Vector4(0, 0, 1e5, 1e5) };
+  const clipR = { value: 0 };
   const planes = sequence.map((photoIndex, i) => {
     const tex = textures[photoIndex];
     const aspect = tex.image.width / tex.image.height;
@@ -240,6 +295,9 @@ async function init() {
         uOpacity: { value: i === 0 ? 1 : 0 },
         uSize: { value: new THREE.Vector2(aspect, 1) },
         uRadius: { value: CFG.cornerRadius },
+        uLift: { value: new THREE.Color(PHOTOS[photoIndex].mood.lift) },
+        uClip: clipU,
+        uClipR: clipR,
       },
     });
     const mesh = new THREE.Mesh(geometry, material);
@@ -312,6 +370,11 @@ async function init() {
     const photoW = photoPx * maxAspect;
     bgMaterial.uniforms.uCenter.value.set(cx / W, 1 - cy / H);
     bgMaterial.uniforms.uFrame.value.set((photoW * 1.3) / W, (photoPx * 1.05) / H);
+    bgMaterial.uniforms.uRes.value.set(W, H);
+    bgMaterial.uniforms.uHalf.value.set(photoW / 2, photoPx / 2);
+    const dpr = renderer.getPixelRatio();
+    clipU.value.set(cx * dpr, (H - cy) * dpr, (photoW / 2) * dpr, (photoPx / 2) * dpr);
+    clipR.value = 20 * dpr;
 
     // мягкая растушёвка: облако вокруг фото, гаснет к краям первого экрана и под надписями
     canvas.style.setProperty('--cx', cx + 'px');
@@ -377,6 +440,7 @@ async function init() {
     bgColors.background.set(m1.background).lerp(tmp.a.set(m2.background), blend);
     bgColors.blob1.set(m1.blob1).lerp(tmp.a.set(m2.blob1), blend);
     bgColors.blob2.set(m1.blob2).lerp(tmp.b.set(m2.blob2), blend);
+    bgColors.shadow.set(m1.shadow).lerp(tmp.a.set(m2.shadow), blend);
 
     // вне середины перелёта фон «дышит» от скорости, как в оригинале
     const stability = THREE.MathUtils.smoothstep(Math.abs(blend - 0.5) * 2, 0.35, 1);
