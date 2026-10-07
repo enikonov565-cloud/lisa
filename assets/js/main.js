@@ -770,6 +770,8 @@
     group.innerHTML = pics.map((w) => `<div class="wtile" style="background-image:url('${w.src}')"></div>`).join('');
     wtiles.appendChild(group);
     group.style.setProperty('--tw', 'clamp(30rem, 30vw, 54rem)');   /* вдвое крупнее */
+    const descEl = $('.wmenu__desc', el);
+    descEl.innerHTML = descEl.textContent.replace(/(^|\s)([А-Яа-яЁё]{1,3}) /g, '$1$2 ').split(' ').map((w) => '<span class="wdw">' + w + '</span>').join(' ');
     return { el, k, cat, chars, title: $('.wmenu__title', el), desc: $('.wmenu__desc', el), group, tiles: $$('.wtile', group) };
   });
   const canHover = window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
@@ -799,8 +801,62 @@
       t.style.width = w + 'px'; t.style.height = h + 'px';
     });
   };
+  /* ---- цвет текста подстраивается под то, что под ним ----
+     Для каждого кадра заранее считаем яркость участков (сетка 32×24, кадр вписан 4:3).
+     Над тёмным участком фото буква/слово становятся светлыми, над светлым — остаются своего цвета. */
+  const LUM = new Map();
+  const lumOf = (src) => {
+    if (LUM.has(src)) return LUM.get(src);
+    const rec = { grid: null };
+    LUM.set(src, rec);
+    const im = new Image();
+    im.onload = () => {
+      const W = 32, H = 24;
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const cx = cv.getContext('2d', { willReadFrequently: true });
+      const iar = im.naturalWidth / im.naturalHeight, BA = 4 / 3;
+      let sw = im.naturalWidth, sh = im.naturalHeight, sx = 0, sy = 0;
+      if (iar > BA) { sw = sh * BA; sx = (im.naturalWidth - sw) / 2; } else { sh = sw / BA; sy = (im.naturalHeight - sh) / 2; }
+      cx.drawImage(im, sx, sy, sw, sh, 0, 0, W, H);
+      const d = cx.getImageData(0, 0, W, H).data;
+      const g = new Float32Array(W * H);
+      for (let i = 0; i < W * H; i++) g[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
+      rec.grid = g;
+    };
+    im.src = src;
+    return rec;
+  };
+  items.forEach((m) => m.tiles.forEach((t) => lumOf(t.style.backgroundImage.slice(5, -2))));
+  const LIGHT = '#faf3ec';
+  const adaptText = (it) => {
+    const st = stage.getBoundingClientRect();
+    const boxes = it.tiles.filter((t) => t.style.display !== 'none').map((t) => {
+      const l = parseFloat(t.style.left), tp = parseFloat(t.style.top), w = parseFloat(t.style.width), h = parseFloat(t.style.height);
+      return { l: st.left + l, t: st.top + tp, w, h, rec: lumOf(t.style.backgroundImage.slice(5, -2)) };
+    });
+    const tone = (x, y) => {
+      for (let i = boxes.length - 1; i >= 0; i--) {   // верхний кадр — последний
+        const b = boxes[i];
+        if (x < b.l || x > b.l + b.w || y < b.t || y > b.t + b.h) continue;
+        if (!b.rec.grid) return null;
+        const gx = Math.min(31, Math.floor((x - b.l) / b.w * 32)), gy = Math.min(23, Math.floor((y - b.t) / b.h * 24));
+        return b.rec.grid[gy * 32 + gx];
+      }
+      return null;
+    };
+    const paint = (el) => {
+      const r = el.getBoundingClientRect();
+      const lum = tone(r.left + r.width / 2, r.top + r.height / 2);
+      el.style.color = lum != null && lum < 0.5 ? LIGHT : '';
+    };
+    items.forEach((m) => { m.chars.forEach(paint); $$('.wdw', m.desc).forEach(paint); });
+  };
+  const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; }); $$('.wdw', m.desc).forEach((w) => { w.style.color = ''; }); });
   const showTiles = (it) => {
     placeTiles(it);
+    adaptText(it);
+    clearTimeout(it.adaptT);
+    it.adaptT = setTimeout(() => adaptText(it), 950);   // после сдвига названия — уточняем
     stage.classList.add('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
@@ -808,6 +864,8 @@
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: i * 90, easing: EZ_SOFT, fill: 'both' }));
   };
   const hideTiles = (it) => {
+    clearTimeout(it.adaptT);
+    clearText();
     stage.classList.remove('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
@@ -981,6 +1039,7 @@
       m.desc.animate([{ opacity: getComputedStyle(m.desc).opacity }, { opacity: 0, transform: 'translateY(-60%)' }], { duration: D, easing: EZ_IO, fill: 'forwards' });
     });
     wmenu.classList.add('is-hidden');
+    clearTimeout(it.adaptT); clearText();
     tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 550 + i * 40, easing: EZ_EXPO, fill: 'backwards' }));
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'backwards' }));
     applyFilter(it.cat);
