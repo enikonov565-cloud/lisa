@@ -1178,26 +1178,16 @@ body::before {
   display: block; white-space: nowrap;
   font-family: var(--display); font-size: 4.8rem; line-height: 1.15; letter-spacing: .02em;
   color: #ad9890;   /* плотный приглушённый тон */
-  margin: 0 -1.6rem; padding: .2rem 1.6rem;
-  border-radius: var(--radius);
-  background-color: rgba(250, 245, 238, 0);
   transform: translateX(3rem);
   transition: color .9s var(--ease), background-color .9s var(--ease), backdrop-filter .9s var(--ease);
 }
 /* пока под меню видны кадры — у названий мягкая молочная подложка, текст читается на любом фото */
-.wstage.has-tiles .wmenu__title:not(:hover) { color: #8c7870; }
-.wstage.has-tiles .wmenu__title { background-color: rgba(250, 245, 238, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title { color: var(--cat, var(--brick)); }   /* всё название — в цвете направления */
 .wmenu__desc {
   grid-column: 3; justify-self: end;
   max-width: 34rem;
   font-size: max(1.5rem, 12px); line-height: 1.35; letter-spacing: .1em; text-transform: uppercase;
   color: var(--ink);
-  padding: 1rem 1.6rem;
-  border-radius: var(--radius);
-  background: rgba(250, 245, 238, .82);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 1rem 2.4rem -1.6rem rgba(76, 67, 67, .4);
   text-wrap: balance;
   opacity: 0;
 }
