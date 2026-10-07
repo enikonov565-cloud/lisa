@@ -705,7 +705,28 @@
 
   let visible = WORKS.map((_, i) => i);
   // показать в сетке все кадры или одно направление
+  // раскладка направления на компьютере: ряды высотой в две строки, без пустот —
+  // вертикальные кадры по 3 колонки, горизонтальные по 6; остаток ряда делят кадры этого ряда
+  const bandLayout = (lis) => {
+    let band = [], used = 0;
+    const close = () => {
+      let left = 12 - used, k = 0;
+      while (left > 0 && band.length) { const b = band[k % band.length]; b.span += 1; left -= 1; k += 1; }
+      band.forEach((b) => b.li.style.setProperty('--span', b.span));
+      band = []; used = 0;
+    };
+    lis.forEach((li) => {
+      const w = WORKS[+$('.gallery__btn', li).dataset.i];
+      const span = w.size === 'tall' ? 3 : 6;
+      if (used + span > 12) close();
+      band.push({ li, span }); used += span;
+    });
+    close();
+  };
   const applyFilter = (cat) => {
+    gallery.classList.toggle('is-filtered', cat !== 'Все');
+    $$('.gallery__item', gallery).forEach((li) => li.style.removeProperty('--span'));
+    if (cat !== 'Все') bandLayout($$('.gallery__item', gallery).filter((li) => li.dataset.cat === cat));
     visible = [];
     $$('.gallery__item', gallery).forEach((li, i) => {
       const show = cat === 'Все' || li.dataset.cat === cat;

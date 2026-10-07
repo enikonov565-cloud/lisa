@@ -1312,6 +1312,11 @@ body::before {
 .gallery__item--wide { grid-column: span 6; }
 .gallery__item--tall { grid-row: span 2; }
 .gallery__item.is-hidden { display: none; }
+/* открытое направление: ряды без пустот (только на компьютере) */
+@media (min-width: 1024px) {
+  .gallery.is-filtered { grid-auto-flow: row; }
+  .gallery.is-filtered .gallery__item { grid-column: span var(--span, 3); grid-row: span 2; }
+}
 .gallery__btn { position: relative; display: block; width: 100%; height: 100%; border-radius: var(--radius); overflow: hidden; text-align: left; }
 .gallery__btn img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 
