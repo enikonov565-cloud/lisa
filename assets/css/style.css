@@ -1244,7 +1244,8 @@ body::before {
 /* карусель: карточки ставятся покадрово из JS (позиция, ширина, высота, прозрачность) */
 .wcar { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity .6s var(--ease); }   /* своя стопка слоёв: карточки не перекрывают стрелки */
 .wcar.is-on { opacity: 1; }
-.wcard { position: absolute; left: 50%; top: 0; }
+.wcard { position: absolute; left: 50%; top: 0; cursor: pointer; }
+.wcard.current { cursor: zoom-in; }
 .wcard__title {
   position: absolute; left: 0; width: 100%;
   display: flex; gap: 3.2rem; align-items: center; justify-content: center;

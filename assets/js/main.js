@@ -869,7 +869,7 @@
     const PITCH = S.RW + S.GAP;
     const relOf = (i, pos) => { let r = ((i - pos) % n + n) % n; if (r > n / 2) r -= n; return r; };
     const xFor = (rel) => { const a = Math.abs(rel); const m = a <= 1 ? a * C1 : C1 + (a - 1) * PITCH; return (rel < 0 ? -1 : 1) * m; };
-    const state = { pos: 0, target: 0, raf: 0, last: null, acc: 0 };
+    const state = { pos: 0, target: 0, raf: 0, last: null, acc: 0, paused: false };
     const render = () => {
       cards.forEach((cd) => {
         const i = +cd.dataset.idx;
@@ -900,7 +900,7 @@
       if (reduced || Math.abs(diff) <= step) {
         state.pos = state.target;
         render();
-        state.acc += dt;
+        if (!state.paused) state.acc += dt;   // пока открыт кадр — лента стоит
         if (state.acc >= CAR.dwell && n > 1) { state.acc = 0; state.target -= CAR.dir; }
         state.raf = requestAnimationFrame(tick);
         return;
@@ -914,9 +914,25 @@
     car = {
       stop: () => cancelAnimationFrame(state.raf),
       go: (d) => { state.target += d; state.acc = 0; },
+      pause: (v) => { state.paused = v; state.acc = 0; },
+      relOf: (i) => relOf(i, state.target),
+      list,
     };
   };
   const stopCar = () => { if (car) { car.stop(); car = null; } };
+  // нажатие на фото ленты: центральное открывается панелью с описанием (как в сетке), боковое — подъезжает в центр
+  wcar.addEventListener('click', (e) => {
+    const cd = e.target.closest('.wcard');
+    if (!car || !cd) return;
+    const i = +cd.dataset.idx;
+    const rel = Math.round(car.relOf(i));
+    if (rel !== 0) { car.go(rel); return; }
+    const idx = WORKS.indexOf(car.list[i]);
+    if (idx < 0) return;
+    car.pause(true);
+    openWork(idx, null, $('img', cd));
+  });
+  document.addEventListener('wpanel:closed', () => { if (car) car.pause(false); });
   $('.wcar__arrow--prev', stage).addEventListener('click', () => car && car.go(-1));
   $('.wcar__arrow--next', stage).addEventListener('click', () => car && car.go(1));
 
@@ -1074,13 +1090,13 @@
     wpImg.style.backgroundImage = 'url("' + w.src + '")';
     wpImg.setAttribute('aria-label', w.alt);
   };
-  const openWork = (idx, li) => {
+  const openWork = (idx, li, fromImg) => {
     if (wBusy || wOpen) return;
     wBusy = true;
     wItem = li;
     wIdx = idx;
     const w = WORKS[idx];
-    const pic = $('img', li);
+    const pic = fromImg || $('img', li);
     const startRect = pic.getBoundingClientRect();
     const isLeft = centerOf(startRect).x < window.innerWidth / 2;
     fillPanel(w);
@@ -1103,7 +1119,7 @@
 
     // остальные кадры уходят волной, нажатый «сворачивается» вниз
     const items = shownItems();
-    const delays = delaysFrom(li, items);
+    const delays = delaysFrom(li || pic, items);
     items.forEach((el, k) => {
       el.getAnimations().forEach((a) => a.cancel());
       el.animate(el === li
@@ -1164,6 +1180,7 @@
         }
       });
       wBusy = false; wOpen = false;
+      document.dispatchEvent(new Event('wpanel:closed'));
       if (!instant && wItem) $('.gallery__btn', wItem).focus({ preventScroll: true });
     };
     if (instant || reduced) { back(); return; }
