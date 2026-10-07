@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610062203">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610071225">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -388,7 +388,20 @@
           <p class="note rv" style="--d:.1s">Выбирайте настроение и нажимайте на кадр, чтобы рассмотреть его поближе.</p>
         </div>
 
-        <div class="filters rv" role="tablist" aria-label="Разделы кадров" id="filters"></div>
+        <!-- направления: «Image Tiles Menu» (по мотивам Codrops, MIT) — при наведении обложка
+             рассыпается фрагментами, по нажатию фрагменты собираются в кадр -->
+        <div class="wstage rv" id="wstage">
+          <div class="wtiles" aria-hidden="true"></div>
+          <nav class="wmenu" aria-label="Направления кадров"></nav>
+          <div class="wcontent" aria-live="polite">
+            <div class="wcontent__text">
+              <h3 class="wcontent__title"></h3>
+              <p class="wcontent__desc"></p>
+              <button class="wcontent__back" type="button"><span aria-hidden="true">←</span> все направления</button>
+            </div>
+            <div class="wcontent__cover" aria-hidden="true"></div>
+          </div>
+        </div>
 
         <ul class="gallery" id="gallery"></ul>
       </div>
@@ -579,9 +592,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610062203" defer></script>
+  <script src="assets/js/main.js?v=202610071225" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610062203" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610062203" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610071225" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610071225" defer></script>
 </body>
 </html>

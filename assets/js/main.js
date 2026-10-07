@@ -694,10 +694,6 @@
 
   /* ---------------- gallery + filters ---------------- */
   const gallery = $('#gallery');
-  const filters = $('#filters');
-  const cats = ['Все', ...WORK_CATS];
-
-  filters.innerHTML = cats.map((c, i) => `<button type="button" role="tab" aria-selected="${i === 0}" data-cat="${c}">${c.toLowerCase()}</button>`).join('');
 
   gallery.innerHTML = WORKS.map((w, i) => `
     <li class="gallery__item${w.size ? ' gallery__item--' + w.size : ''}" data-cat="${w.cat}">
@@ -708,21 +704,167 @@
     </li>`).join('');
 
   let visible = WORKS.map((_, i) => i);
-  filters.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    const cat = btn.dataset.cat;
-    $$('button', filters).forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+  // показать в сетке все кадры или одно направление
+  const applyFilter = (cat) => {
     visible = [];
     $$('.gallery__item', gallery).forEach((li, i) => {
       const show = cat === 'Все' || li.dataset.cat === cat;
       li.classList.toggle('is-hidden', !show);
       if (show) {
         visible.push(i);
-        if (!reduced) li.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.16,1,.3,1)', delay: visible.length * 50, fill: 'backwards' });
+        if (!reduced) li.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.16,1,.3,1)', delay: 250 + visible.length * 50, fill: 'backwards' });
       }
     });
+  };
+
+  /* ---------------- направления: «Image Tiles Menu» ----------------
+     По мотивам Codrops «Image Tiles Menu» (MIT). Наведение на направление — обложка
+     рассыпается на четыре фрагмента вокруг; нажатие — фрагменты слетаются в цельный кадр
+     (FLIP), название проявляется по буквам, сетка ниже показывает кадры направления.
+     Сделано на Web Animations API, без GSAP/Flip/Splitting. */
+  const WCAT = {
+    'Репортаж': { cover: 'assets/img/w/report-wheel.jpg', desc: 'Живые моменты событий и детали, которые рассказывают историю.' },
+    'Студийный портрет': { cover: 'assets/img/w/studio-gaze.jpg', desc: 'Свет, характер и внимательный взгляд в спокойной студии.' },
+    'Уличный портрет': { cover: 'assets/img/w/street-lilac.jpg', desc: 'Город, природа и мягкий естественный свет вокруг героя.' },
+    'Архитектура': { cover: 'assets/img/w/arch-arcade.jpg', desc: 'Линии, ритм и свет: здания, которые ведут взгляд.' },
+    'Стрит': { cover: 'assets/img/w/city-road.jpg', desc: 'Случайные моменты улиц, которые больше не повторятся.' },
+  };
+  // куда разлетаются фрагменты (в % от сцены): правее списка, вразброс
+  const SCATTER = [
+    [[50, 0], [96, 18], [64, 86], [100, 100]],
+    [[92, 0], [52, 34], [100, 64], [70, 100]],
+    [[60, 4], [98, 8], [50, 80], [86, 100]],
+    [[100, 0], [56, 14], [90, 74], [54, 96]],
+    [[64, 0], [100, 40], [52, 56], [80, 100]],
+  ];
+  const EZ_IO = 'cubic-bezier(0.76, 0, 0.24, 1)';   // power4.inOut
+  const EZ_EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';  // expo.out
+  const stage = $('#wstage');
+  const wmenu = $('.wmenu', stage);
+  const wtiles = $('.wtiles', stage);
+  const wcontent = $('.wcontent', stage);
+  const wcover = $('.wcontent__cover', stage);
+  const wtitle = $('.wcontent__title', stage);
+  const wdesc = $('.wcontent__desc', stage);
+  const wback = $('.wcontent__back', stage);
+  const wSplit = (el, text) => {
+    el.setAttribute('aria-label', text);
+    // буквы внутри слов: слово не рвётся при переносе строки
+    el.innerHTML = text.split(' ').map((w) => '<span class="wword" aria-hidden="true">' + Array.from(w).map((ch) => '<span class="char-wrap"><span class="char">' + ch + '</span></span>').join('') + '</span>').join(' ');
+    return $$('.char', el);
+  };
+  wmenu.innerHTML = WORK_CATS.map((cat, k) => `<button class="wmenu__item" type="button" data-k="${k}">
+      <span class="wmenu__title"></span><span class="wmenu__desc">${WCAT[cat].desc}</span></button>`).join('');
+  const items = $$('.wmenu__item', wmenu).map((el, k) => {
+    const cat = WORK_CATS[k];
+    const chars = wSplit($('.wmenu__title', el), cat);
+    const group = document.createElement('div');
+    group.className = 'wtiles__group';
+    // x, y — доля свободного места: фрагменты всегда внутри сцены и не наезжают на сетку ниже
+    group.innerHTML = SCATTER[k].map(([x, y]) => `<div class="wtile" style="left:calc((100% - var(--tw)) * ${(x / 100).toFixed(2)});top:calc((100% - var(--th)) * ${(y / 100).toFixed(2)});background-image:url('${WCAT[cat].cover}')"></div>`).join('');
+    wtiles.appendChild(group);
+    // пропорции обложки — фрагменты повторяют форму кадра
+    const im = new Image();
+    im.onload = () => group.style.setProperty('--ar', im.naturalWidth / im.naturalHeight);
+    im.src = WCAT[cat].cover;
+    group.style.setProperty('--tw', 'clamp(9rem, 12vw, 22rem)');
+    return { el, k, cat, chars, title: $('.wmenu__title', el), desc: $('.wmenu__desc', el), group, tiles: $$('.wtile', group) };
   });
+  const canHover = window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
+  let tMode = 'menu';
+  let tBusy = false;
+  let tCur = null;
+  const kill = (els) => els.forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
+  const showTiles = (it) => {
+    kill([it.title, it.desc, ...it.tiles]);
+    it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
+    it.desc.animate([{ opacity: 0, transform: 'translateY(50%)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
+    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 500, delay: i * 45, easing: EZ_EXPO, fill: 'both' }));
+  };
+  const hideTiles = (it) => {
+    kill([it.title, it.desc, ...it.tiles]);
+    it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 300, easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)', fill: 'forwards' });
+    it.desc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(20%)' }], { duration: 300, easing: 'ease-out', fill: 'forwards' });
+    it.tiles.forEach((t) => t.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.5)' }], { duration: 300, easing: 'ease-out', fill: 'forwards' }));
+  };
+  if (canHover && !reduced) {
+    items.forEach((it) => {
+      it.el.addEventListener('mouseenter', () => { if (tMode === 'menu' && !tBusy) showTiles(it); });
+      it.el.addEventListener('mouseleave', () => { if (tMode === 'menu' && !tBusy) hideTiles(it); });
+      it.el.addEventListener('focus', () => { if (tMode === 'menu' && !tBusy) showTiles(it); });
+      it.el.addEventListener('blur', () => { if (tMode === 'menu' && !tBusy) hideTiles(it); });
+    });
+  }
+  // FLIP: элементы переезжают в новый контейнер, а анимация ведёт их из старого места
+  const flip = (els, move, opts) => {
+    const first = els.map((e) => e.getBoundingClientRect());
+    move();
+    const last = els.map((e) => e.getBoundingClientRect());
+    return Promise.all(els.map((e, i) => {
+      const a = first[i], b = last[i];
+      if (!b.width || !b.height) return Promise.resolve();
+      const from = `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
+      e.style.transformOrigin = '0 0';
+      return e.animate([{ transform: from, opacity: opts.fromOpacity ?? 1 }, { transform: 'none', opacity: opts.toOpacity ?? 1 }],
+        { duration: opts.duration, easing: opts.easing, delay: (opts.stagger || 0) * (opts.reverse ? els.length - 1 - i : i), fill: 'both' }).finished;
+    }));
+  };
+  const openCat = (it) => {
+    if (tBusy || tMode !== 'menu') return;
+    tBusy = true; tMode = 'content'; tCur = it;
+    const D = reduced ? 0 : 750;
+    wcover.style.setProperty('--ar', getComputedStyle(it.group).getPropertyValue('--ar') || 1);
+    wcover.style.backgroundImage = `url('${WCAT[it.cat].cover}')`;
+    const tChars = wSplit(wtitle, it.cat);
+    wdesc.textContent = WCAT[it.cat].desc;
+    if (window.siteTypograph) window.siteTypograph(wdesc);
+    // фрагменты видны на своих местах (на телефоне — без наведения) и слетаются в обложку
+    kill(it.tiles);
+    it.tiles.forEach((t) => { t.style.opacity = '1'; t.style.transform = 'none'; });
+    wcontent.classList.add('is-current');
+    wcover.classList.remove('is-whole');
+    flip(it.tiles, () => it.tiles.forEach((t) => wcover.appendChild(t)), { duration: D, easing: EZ_IO, stagger: reduced ? 0 : 20, reverse: true })
+      .then(() => wcover.classList.add('is-whole'));
+    // меню уходит: буквы выезжают влево, описание вверх
+    items.forEach((m) => {
+      m.chars.forEach((ch) => ch.animate([{ transform: 'none' }, { transform: 'translateX(-100%)' }], { duration: D, easing: EZ_IO, fill: 'forwards' }));
+      m.desc.animate([{ opacity: getComputedStyle(m.desc).opacity }, { opacity: 0, transform: 'translateY(-60%)' }], { duration: D, easing: EZ_IO, fill: 'forwards' });
+    });
+    wmenu.classList.add('is-hidden');
+    // название направления — по буквам справа, описание и «назад» — снизу
+    tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 400 + i * 25, easing: EZ_EXPO, fill: 'backwards' }));
+    [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'backwards' }));
+    applyFilter(it.cat);
+    setTimeout(() => { tBusy = false; wback.focus({ preventScroll: true }); }, D + 450);
+  };
+  const closeCat = () => {
+    if (tBusy || tMode !== 'content' || !tCur) return;
+    tBusy = true;
+    const it = tCur;
+    const D = reduced ? 0 : 600;
+    [wdesc, wback].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
+    $$('.char', wtitle).forEach((ch) => ch.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
+    wcover.classList.remove('is-whole');
+    flip(it.tiles, () => it.tiles.forEach((t) => it.group.appendChild(t)), { duration: D, easing: EZ_EXPO, toOpacity: 0 }).then(() => {
+      it.tiles.forEach((t) => { t.getAnimations().forEach((a) => a.cancel()); t.style.opacity = ''; t.style.transform = ''; t.style.transformOrigin = ''; });
+      wcontent.classList.remove('is-current');
+      [wdesc, wback].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
+      tBusy = false; tMode = 'menu'; tCur = null;
+      it.el.focus({ preventScroll: true });
+    });
+    // меню возвращается: буквы обратно, описания прячутся
+    setTimeout(() => {
+      wmenu.classList.remove('is-hidden');
+      items.forEach((m) => {
+        m.chars.forEach((ch, i) => { ch.getAnimations().forEach((a) => a.cancel()); ch.animate([{ transform: 'translateX(-100%)' }, { transform: 'none' }], { duration: D, delay: (m.chars.length - i) * 20, easing: EZ_EXPO, fill: 'backwards' }); });
+        m.desc.getAnimations().forEach((a) => a.cancel());
+        m.title.getAnimations().forEach((a) => a.cancel());
+      });
+    }, reduced ? 0 : 200);
+    applyFilter('Все');
+  };
+  items.forEach((it) => it.el.addEventListener('click', () => openCat(it)));
+  wback.addEventListener('click', closeCat);
 
   /* ---------------- lightbox ---------------- */
   const lb = $('#lightbox');
@@ -1066,7 +1208,7 @@
     return s.replace(/[ \t\n]+([—–])/g, `${NBSP}$1`);                              // тире не с новой строки
   };
   // элементы, где текст разбит на буквы/слова для анимаций или стоит в одну строку
-  const SKIP = '.glow, .hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, .bento__box, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
+  const SKIP = '.glow, .wmenu, .wcontent__title, .hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, .bento__box, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
   const BLOCKS = 'p, li, h1, h2, h3, legend, figcaption, label > span, .step__title';
   const walkText = (root, fn) => {
     const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
