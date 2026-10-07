@@ -769,7 +769,7 @@
     const pics = WORKS.filter((w) => w.cat === cat).sort((a, b) => (b.src === WCAT[cat].cover) - (a.src === WCAT[cat].cover)).slice(0, 4);
     group.innerHTML = pics.map((w) => `<div class="wtile" style="background-image:url('${w.src}')"></div>`).join('');
     wtiles.appendChild(group);
-    group.style.setProperty('--tw', 'clamp(15rem, 15vw, 27rem)');
+    group.style.setProperty('--tw', 'clamp(30rem, 30vw, 54rem)');   /* вдвое крупнее */
     return { el, k, cat, chars, title: $('.wmenu__title', el), desc: $('.wmenu__desc', el), group, tiles: $$('.wtile', group) };
   });
   const canHover = window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
@@ -778,45 +778,25 @@
   let tCur = null;
   const kill = (els) => els.forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
   // свободные места ищем при каждом наведении (размеры экрана могут меняться)
+  // кадры лежат ПОД текстами (как в образце Codrops): крупно, вразброс по всей сцене
+  const SPOTS = [[0.02, 0.04], [0.64, 0.02], [0.30, 0.50], [0.86, 0.62]];
   const placeTiles = (it) => {
     const st = stage.getBoundingClientRect();
-    const pad = 22;
-    // тексты всех строк (название может сдвинуться на 3rem — берём с запасом)
-    const blocks = items.flatMap((m) => [[$('.wmenu__title', m.el), 48], [m.desc, 0]]).map(([el, extra]) => {
-      const r = el.getBoundingClientRect();
-      return { l: r.left - st.left - pad - extra, t: r.top - st.top - pad, r: r.right - st.left + pad + extra, b: r.bottom - st.top + pad };
-    });
     it.tiles.forEach((t) => { t.style.display = ''; t.style.width = ''; t.style.height = ''; });
-    const base = it.tiles[0].offsetWidth || 240;
-    let seed = (it.k + 5) * 7919 + Math.round(st.width);
+    const base = it.tiles[0].offsetWidth || 480;
+    let seed = (it.k + 5) * 7919;
     const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-    const SCALES = [1.15, 0.8, 1, 0.7, 0.9];
-    const hit = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
-    const placed = [];
+    const SCALES = [1.1, 0.85, 1, 0.75, 0.95];
+    // порядок мест у каждого направления свой — картинка каждый раз новая
+    const order = SPOTS.map((s, i) => [s, rnd()]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
     it.tiles.forEach((t, i) => {
-      let s = SCALES[(i + it.k) % SCALES.length];
-      let best = null;
-      while (!best && s >= 0.45) {
-        const w = base * s, h = w * 0.75;
-        const ok = [];
-        for (let n = 0; n < 500 && ok.length < 40; n++) {
-          const x = rnd() * Math.max(1, st.width - w), y = rnd() * Math.max(1, st.height - h);
-          const box = { l: x, t: y, r: x + w, b: y + h };
-          if (blocks.some((b) => hit(box, b))) continue;
-          if (placed.some((p) => hit(box, { l: p.l - 28, t: p.t - 28, r: p.r + 28, b: p.b + 28 }))) continue;
-          ok.push(box);
-        }
-        // из подходящих мест — самое далёкое от уже стоящих кадров: разброс, а не строй
-        if (ok.length) {
-          const cx = (b) => [(b.l + b.r) / 2, (b.t + b.b) / 2];
-          best = ok.map((b) => [b, placed.length ? Math.min(...placed.map((p) => Math.hypot(cx(b)[0] - cx(p)[0], cx(b)[1] - cx(p)[1]))) : rnd()])
-            .sort((a, b) => b[1] - a[1])[0][0];
-        } else s *= 0.85;
-      }
-      if (!best) { t.style.display = 'none'; return; }
-      placed.push(best);
-      t.style.left = best.l + 'px'; t.style.top = best.t + 'px';
-      t.style.width = (best.r - best.l) + 'px'; t.style.height = (best.b - best.t) + 'px';
+      const w = Math.min(base * SCALES[(i + it.k) % SCALES.length], st.width * 0.42);
+      const h = w * 0.75;
+      const [fx, fy] = order[i % order.length];
+      const x = Math.max(0, Math.min(st.width - w, fx * st.width + (rnd() - 0.5) * st.width * 0.08));
+      const y = Math.max(0, Math.min(st.height - h, fy * st.height + (rnd() - 0.5) * st.height * 0.1));
+      t.style.left = x + 'px'; t.style.top = y + 'px';
+      t.style.width = w + 'px'; t.style.height = h + 'px';
     });
   };
   const showTiles = (it) => {

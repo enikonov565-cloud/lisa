@@ -1178,7 +1178,8 @@ body::before {
   grid-column: 2;
   display: block; white-space: nowrap;
   font-family: var(--display); font-size: 4.8rem; line-height: 1.15; letter-spacing: .02em;
-  color: rgba(76, 67, 67, .32);
+  color: #ad9890;   /* плотный приглушённый тон — читается и поверх фото */
+  text-shadow: 0 0 1.6rem rgba(242, 222, 210, .95), 0 0 .4rem rgba(242, 222, 210, .9);
   transform: translateX(3rem);
   transition: color .9s var(--ease);
 }
@@ -1187,7 +1188,8 @@ body::before {
   grid-column: 3; justify-self: end;
   max-width: 34rem;
   font-size: max(1.5rem, 12px); line-height: 1.35; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(76, 67, 67, .7);
+  color: rgba(76, 67, 67, .85);
+  text-shadow: 0 0 1.2rem rgba(242, 222, 210, .95), 0 0 .3rem rgba(242, 222, 210, .9);
   text-wrap: balance;
   opacity: 0;
 }
@@ -1199,7 +1201,7 @@ body::before {
 /* фрагменты: небольшие, вразброс поверх строк, без нажатия */
 .wtiles { position: relative; z-index: 2; pointer-events: none; }
 .wtiles__group { position: absolute; inset: 0; --th: calc(var(--tw) * .75); }
-.wtiles { z-index: 5; }   /* при перелёте кадры идут поверх ленты */
+.wtiles { z-index: 0; }   /* кадры — под текстами меню */
 .wtile {
   position: absolute;
   border-radius: var(--radius);
