@@ -731,11 +731,11 @@
   };
   // куда разлетаются фрагменты (в % от сцены): правее списка, вразброс
   const SCATTER = [
-    [[50, 0], [96, 18], [64, 86], [100, 100]],
-    [[92, 0], [52, 34], [100, 64], [70, 100]],
-    [[60, 4], [98, 8], [50, 80], [86, 100]],
-    [[100, 0], [56, 14], [90, 74], [54, 96]],
-    [[64, 0], [100, 40], [52, 56], [80, 100]],
+    [[2, 30], [70, 0], [10, 90], [92, 76]],
+    [[86, 4], [0, 60], [62, 100], [34, 0]],
+    [[60, 6], [4, 14], [96, 64], [28, 100]],
+    [[0, 0], [92, 30], [40, 96], [74, 100]],
+    [[30, 4], [98, 8], [6, 70], [66, 96]],
   ];
   const EZ_IO = 'cubic-bezier(0.76, 0, 0.24, 1)';   // power4.inOut
   const EZ_EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';  // expo.out
@@ -747,6 +747,8 @@
   const wtitle = $('.wcontent__title', stage);
   const wdesc = $('.wcontent__desc', stage);
   const wback = $('.wcontent__back', stage);
+  const wprev = $('.wthumb--prev', stage);
+  const wnext = $('.wthumb--next', stage);
   const wSplit = (el, text) => {
     el.setAttribute('aria-label', text);
     // буквы внутри слов: слово не рвётся при переносе строки
@@ -767,7 +769,7 @@
     const im = new Image();
     im.onload = () => group.style.setProperty('--ar', im.naturalWidth / im.naturalHeight);
     im.src = WCAT[cat].cover;
-    group.style.setProperty('--tw', 'clamp(9rem, 12vw, 22rem)');
+    group.style.setProperty('--tw', 'clamp(8rem, 9vw, 15rem)');
     return { el, k, cat, chars, title: $('.wmenu__title', el), desc: $('.wmenu__desc', el), group, tiles: $$('.wtile', group) };
   });
   const canHover = window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
@@ -778,7 +780,7 @@
   const showTiles = (it) => {
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
-    it.desc.animate([{ opacity: 0, transform: 'translateY(50%)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
+    it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 500, delay: i * 45, easing: EZ_EXPO, fill: 'both' }));
   };
   const hideTiles = (it) => {
@@ -817,6 +819,9 @@
     wcover.style.backgroundImage = `url('${WCAT[it.cat].cover}')`;
     const tChars = wSplit(wtitle, it.cat);
     wdesc.textContent = WCAT[it.cat].desc;
+    const others = WORKS.filter((w) => w.cat === it.cat && w.src !== WCAT[it.cat].cover);
+    wprev.style.backgroundImage = others[0] ? `url('${others[0].src}')` : '';
+    wnext.style.backgroundImage = others[1] ? `url('${others[1].src}')` : (others[0] ? `url('${others[0].src}')` : '');
     if (window.siteTypograph) window.siteTypograph(wdesc);
     // фрагменты видны на своих местах (на телефоне — без наведения) и слетаются в обложку
     kill(it.tiles);
@@ -834,6 +839,7 @@
     // название направления — по буквам справа, описание и «назад» — снизу
     tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 400 + i * 25, easing: EZ_EXPO, fill: 'backwards' }));
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'backwards' }));
+    [wprev, wnext].forEach((el, n) => el.animate([{ opacity: 0, transform: `translateX(${n ? -30 : 30}%) scale(.9)` }, { opacity: .45, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'both' }));
     applyFilter(it.cat);
     setTimeout(() => { tBusy = false; wback.focus({ preventScroll: true }); }, D + 450);
   };
@@ -843,12 +849,13 @@
     const it = tCur;
     const D = reduced ? 0 : 600;
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
+    [wprev, wnext].forEach((el, n) => { el.getAnimations().forEach((x) => x.cancel()); el.animate([{ opacity: .45 }, { opacity: 0, transform: `translateX(${n ? -80 : 80}%) scale(.9)` }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }); });
     $$('.char', wtitle).forEach((ch) => ch.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
     wcover.classList.remove('is-whole');
     flip(it.tiles, () => it.tiles.forEach((t) => it.group.appendChild(t)), { duration: D, easing: EZ_EXPO, toOpacity: 0 }).then(() => {
       it.tiles.forEach((t) => { t.getAnimations().forEach((a) => a.cancel()); t.style.opacity = ''; t.style.transform = ''; t.style.transformOrigin = ''; });
       wcontent.classList.remove('is-current');
-      [wdesc, wback].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
+      [wdesc, wback, wprev, wnext].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
       tBusy = false; tMode = 'menu'; tCur = null;
       it.el.focus({ preventScroll: true });
     });
