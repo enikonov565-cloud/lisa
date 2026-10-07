@@ -757,8 +757,14 @@
     el.innerHTML = text.split(' ').map((w) => '<span class="wword" aria-hidden="true">' + Array.from(w).map((ch) => '<span class="char-wrap"><span class="char">' + ch + '</span></span>').join('') + '</span>').join(' ');
     return $$('.char', el);
   };
+  // телефон: под каждым направлением — маленькая бегущая лента из его кадров (список удвоен для бесшовного круга)
+  const miniStrip = (cat, k) => {
+    const pics = WORKS.filter((w) => w.cat === cat);
+    const imgs = pics.map((w) => `<img src="${w.src}" alt="" loading="lazy">`).join('');
+    return `<span class="wmini${k % 2 ? ' wmini--rev' : ''}" aria-hidden="true"><span class="wmini__track" style="--dur:${pics.length * 7}s">${imgs}${imgs}</span></span>`;
+  };
   wmenu.innerHTML = WORK_CATS.map((cat, k) => `<button class="wmenu__item" type="button" data-k="${k}">
-      <span class="wmenu__title"></span><span class="wmenu__desc">${WCAT[cat].desc}</span></button>`).join('');
+      <span class="wmenu__title"></span><span class="wmenu__desc">${WCAT[cat].desc}</span>${miniStrip(cat, k)}</button>`).join('');
   const items = $$('.wmenu__item', wmenu).map((el, k) => {
     const cat = WORK_CATS[k];
     const chars = wSplit($('.wmenu__title', el), cat);

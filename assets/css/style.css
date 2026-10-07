@@ -1280,8 +1280,16 @@ body::before {
 .wcontent__cover.is-whole .wtile { visibility: hidden; }   /* после сборки — цельный кадр, без швов */
 .wcontent__cover.is-gone { opacity: 0; transition: opacity .4s ease; }
 
+/* мини-ленты кадров под направлениями — только на телефоне и планшете */
+.wmini { display: none; }
+.wmini__track { display: flex; gap: 1rem; width: max-content; animation: wmini var(--dur, 30s) linear infinite; }
+.wmini--rev .wmini__track { animation-direction: reverse; }
+.wmini img { flex: none; height: clamp(64px, 20vw, 110px); aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
+@keyframes wmini { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .wmini__track { animation: none; } .wmini { overflow-x: auto; } }
 @media (max-width: 1023px) {
   .wstage { min-height: 0; }
+  .wmini { display: block; grid-column: 1; margin-top: 1.2rem; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
   .wmenu__item { grid-template-columns: 1fr; row-gap: .4rem; padding: 1.6rem 0; }
   .wmenu__title { grid-column: 1; font-size: 4rem; transform: none; color: var(--cat, var(--ink)); }
   .wmenu__desc { grid-column: 1; justify-self: start; max-width: none; opacity: 1; padding: 0; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: rgba(76, 67, 67, .75); }
