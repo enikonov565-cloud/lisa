@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610071249">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610071259">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -397,10 +397,13 @@
             <button class="wcontent__back" type="button"><span aria-hidden="true">←</span> все направления</button>
             <h3 class="wcontent__title"></h3>
             <p class="wcontent__desc"></p>
-            <div class="wcontent__strip" aria-hidden="true">
-              <div class="wthumb wthumb--prev"></div>
-              <div class="wcontent__cover"></div>
-              <div class="wthumb wthumb--next"></div>
+            <!-- лента кадров направления: «coverflow» как в «Репертуаре» театра —
+                 крупный кадр в центре, по бокам меньше и приглушённо, сама едет по кругу -->
+            <div class="wcontent__strip">
+              <div class="wcar" aria-roledescription="карусель"></div>
+              <div class="wcontent__cover" aria-hidden="true"></div>
+              <button class="wcar__arrow wcar__arrow--prev" type="button" aria-label="Предыдущий кадр"><span aria-hidden="true">←</span></button>
+              <button class="wcar__arrow wcar__arrow--next" type="button" aria-label="Следующий кадр"><span aria-hidden="true">→</span></button>
             </div>
           </div>
         </div>
@@ -594,9 +597,9 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610071249" defer></script>
+  <script src="assets/js/main.js?v=202610071259" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610071249" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610071249" defer></script>
+  <script src="assets/js/depth-gallery.bundle.js?v=202610071259" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610071259" defer></script>
 </body>
 </html>
