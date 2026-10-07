@@ -1178,18 +1178,27 @@ body::before {
   grid-column: 2;
   display: block; white-space: nowrap;
   font-family: var(--display); font-size: 4.8rem; line-height: 1.15; letter-spacing: .02em;
-  color: #ad9890;   /* плотный приглушённый тон — читается и поверх фото */
-  text-shadow: 0 0 1.6rem rgba(242, 222, 210, .95), 0 0 .4rem rgba(242, 222, 210, .9);
+  color: #ad9890;   /* плотный приглушённый тон */
+  margin: 0 -1.6rem; padding: .2rem 1.6rem;
+  border-radius: var(--radius);
+  background-color: rgba(250, 245, 238, 0);
   transform: translateX(3rem);
-  transition: color .9s var(--ease);
+  transition: color .9s var(--ease), background-color .9s var(--ease), backdrop-filter .9s var(--ease);
 }
+/* пока под меню видны кадры — у названий мягкая молочная подложка, текст читается на любом фото */
+.wstage.has-tiles .wmenu__title:not(:hover) { color: #8c7870; }
+.wstage.has-tiles .wmenu__title { background-color: rgba(250, 245, 238, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title { color: var(--cat, var(--brick)); }   /* всё название — в цвете направления */
 .wmenu__desc {
   grid-column: 3; justify-self: end;
   max-width: 34rem;
   font-size: max(1.5rem, 12px); line-height: 1.35; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(76, 67, 67, .85);
-  text-shadow: 0 0 1.2rem rgba(242, 222, 210, .95), 0 0 .3rem rgba(242, 222, 210, .9);
+  color: var(--ink);
+  padding: 1rem 1.6rem;
+  border-radius: var(--radius);
+  background: rgba(250, 245, 238, .82);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1rem 2.4rem -1.6rem rgba(76, 67, 67, .4);
   text-wrap: balance;
   opacity: 0;
 }
@@ -1282,7 +1291,7 @@ body::before {
   .wstage { min-height: 0; }
   .wmenu__item { grid-template-columns: 1fr; row-gap: .4rem; padding: 1.6rem 0; }
   .wmenu__title { grid-column: 1; font-size: 4rem; transform: none; color: var(--cat, var(--ink)); }
-  .wmenu__desc { grid-column: 1; justify-self: start; max-width: none; opacity: 1; }
+  .wmenu__desc { grid-column: 1; justify-self: start; max-width: none; opacity: 1; padding: 0; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: rgba(76, 67, 67, .75); }
   .wtiles { display: none; }
   .wcontent__title { font-size: 4.8rem; }
   .wcard__title { flex-direction: column; gap: .4rem; text-align: center; }

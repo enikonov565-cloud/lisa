@@ -801,12 +801,14 @@
   };
   const showTiles = (it) => {
     placeTiles(it);
+    stage.classList.add('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
     it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: i * 90, easing: EZ_SOFT, fill: 'both' }));
   };
   const hideTiles = (it) => {
+    stage.classList.remove('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
     it.desc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(20%)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
