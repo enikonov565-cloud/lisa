@@ -1226,6 +1226,7 @@ body::before {
   font-size: max(1.5rem, 12px); letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
   transition: background-color .4s var(--ease), color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1);
 }
+.wcontent__back--bottom { align-self: center; margin-top: 2.4rem; }
 .wcontent__back:hover { transform: translateY(-.2rem); background-color: var(--milk); color: var(--cat, var(--brick)); }
 .wcontent__title { font-family: var(--display); font-weight: 400; font-size: 6.4rem; line-height: 1.05; letter-spacing: .02em; color: var(--ink); }
 .wcontent__title { color: var(--cat, var(--brick)); }

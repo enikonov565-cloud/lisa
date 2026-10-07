@@ -1043,6 +1043,9 @@
     tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 550 + i * 40, easing: EZ_EXPO, fill: 'backwards' }));
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'backwards' }));
     applyFilter(it.cat);
+    const hdr = $('#header');
+    const want = stage.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.offsetHeight : 0) - 24;
+    if (Math.abs(window.scrollY - want) > 8) window.scrollTo({ top: want, behavior: reduced ? 'auto' : 'smooth' });
     setTimeout(() => { tBusy = false; wback.focus({ preventScroll: true }); }, D + 450);
   };
   const closeCat = () => {
@@ -1082,6 +1085,7 @@
   };
   items.forEach((it) => it.el.addEventListener('click', () => openCat(it)));
   wback.addEventListener('click', closeCat);
+  $('.wcontent__back--bottom', stage).addEventListener('click', closeCat);
 
   /* ---------------- lightbox ---------------- */
   const lb = $('#lightbox');
