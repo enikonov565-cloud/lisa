@@ -1181,13 +1181,13 @@ body::before {
   transform: translateX(3rem);
   transition: color .9s var(--ease);
 }
-.wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title { color: var(--ink); }
-.wmenu__item:hover .wmenu__title .wword:first-child, .wmenu__item:focus-visible .wmenu__title .wword:first-child { color: var(--brick); }
+.wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title { color: var(--cat, var(--brick)); }   /* всё название — в цвете направления */
 .wmenu__desc {
   grid-column: 3; justify-self: end;
   max-width: 34rem;
   font-size: max(1.5rem, 12px); line-height: 1.35; letter-spacing: .1em; text-transform: uppercase;
   color: rgba(76, 67, 67, .7);
+  text-wrap: balance;
   opacity: 0;
 }
 .wmenu__item:focus-visible { outline: none; }
@@ -1227,10 +1227,10 @@ body::before {
   font-size: max(1.5rem, 12px); letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
   transition: background-color .4s var(--ease), color .4s var(--ease), transform .5s cubic-bezier(.34, 1.56, .64, 1);
 }
-.wcontent__back:hover { transform: translateY(-.2rem); background-color: var(--milk); color: var(--brick); }
+.wcontent__back:hover { transform: translateY(-.2rem); background-color: var(--milk); color: var(--cat, var(--brick)); }
 .wcontent__title { font-family: var(--display); font-weight: 400; font-size: 6.4rem; line-height: 1.05; letter-spacing: .02em; color: var(--ink); }
-.wcontent__title .wword:first-child { color: var(--brick); }
-.wcontent__desc { max-width: 60rem; font-size: max(1.5rem, 12px); line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; color: rgba(76, 67, 67, .7); }
+.wcontent__title { color: var(--cat, var(--brick)); }
+.wcontent__desc { text-wrap: balance; max-width: 60rem; font-size: max(1.5rem, 12px); line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; color: rgba(76, 67, 67, .7); }
 .wcontent__strip {
   align-self: stretch;
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 2rem;
@@ -1255,7 +1255,7 @@ body::before {
 
 @media (max-width: 1023px) {
   .wmenu__item { grid-template-columns: 1fr; row-gap: .4rem; padding: 1.6rem 0; }
-  .wmenu__title { grid-column: 1; font-size: 4rem; transform: none; color: var(--ink); }
+  .wmenu__title { grid-column: 1; font-size: 4rem; transform: none; color: var(--cat, var(--ink)); }
   .wmenu__desc { grid-column: 1; justify-self: start; max-width: none; opacity: 1; }
   .wtiles { display: none; }
   .wcontent__title { font-size: 4.8rem; }

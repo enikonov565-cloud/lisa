@@ -723,13 +723,14 @@
      (FLIP), название проявляется по буквам, сетка ниже показывает кадры направления.
      Сделано на Web Animations API, без GSAP/Flip/Splitting. */
   const WCAT = {
-    'Репортаж': { cover: 'assets/img/w/report-wheel.jpg', desc: 'Живые моменты событий и детали, которые рассказывают историю.' },
-    'Студийный портрет': { cover: 'assets/img/w/studio-gaze.jpg', desc: 'Свет, характер и внимательный взгляд в спокойной студии.' },
-    'Уличный портрет': { cover: 'assets/img/w/street-lilac.jpg', desc: 'Город, природа и мягкий естественный свет вокруг героя.' },
-    'Архитектура': { cover: 'assets/img/w/arch-arcade.jpg', desc: 'Линии, ритм и свет: здания, которые ведут взгляд.' },
-    'Стрит': { cover: 'assets/img/w/city-road.jpg', desc: 'Случайные моменты улиц, которые больше не повторятся.' },
+    'Репортаж': { cover: 'assets/img/w/report-wheel.jpg', color: '#b4532a', desc: 'Живые моменты событий и детали, которые рассказывают историю.' },
+    'Студийный портрет': { cover: 'assets/img/w/studio-gaze.jpg', color: '#c4643a', desc: 'Свет, характер и внимательный взгляд в спокойной студии.' },
+    'Уличный портрет': { cover: 'assets/img/w/street-lilac.jpg', color: '#df600f', desc: 'Город, природа и мягкий естественный свет вокруг героя.' },
+    'Архитектура': { cover: 'assets/img/w/arch-arcade.jpg', color: '#d9824f', desc: 'Линии, ритм и свет: здания, которые ведут взгляд.' },
+    'Стрит': { cover: 'assets/img/w/city-road.jpg', color: '#7d8036', desc: 'Случайные моменты улиц, которые больше не повторятся.' },
   };
   // куда разлетаются фрагменты (в % от сцены): правее списка, вразброс
+  Object.values(WCAT).forEach((c) => { c.desc = c.desc.replace(/ (\S+)$/, '\u00a0$1'); });
   const SCATTER = [
     [[2, 30], [70, 0], [10, 90], [92, 76]],
     [[86, 4], [0, 60], [62, 100], [34, 0]],
@@ -761,6 +762,7 @@
   const items = $$('.wmenu__item', wmenu).map((el, k) => {
     const cat = WORK_CATS[k];
     const chars = wSplit($('.wmenu__title', el), cat);
+    el.style.setProperty('--cat', WCAT[cat].color);
     const group = document.createElement('div');
     group.className = 'wtiles__group';
     // x, y — доля свободного места: фрагменты всегда внутри сцены и не наезжают на сетку ниже
@@ -770,7 +772,7 @@
     const im = new Image();
     im.onload = () => group.style.setProperty('--ar', im.naturalWidth / im.naturalHeight);
     im.src = WCAT[cat].cover;
-    group.style.setProperty('--tw', 'clamp(8rem, 9vw, 15rem)');
+    group.style.setProperty('--tw', 'clamp(15rem, 16vw, 28rem)');
     return { el, k, cat, chars, title: $('.wmenu__title', el), desc: $('.wmenu__desc', el), group, tiles: $$('.wtile', group) };
   });
   const canHover = window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
@@ -778,7 +780,42 @@
   let tBusy = false;
   let tCur = null;
   const kill = (els) => els.forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
+  // свободные места ищем при каждом наведении (размеры экрана могут меняться)
+  const placeTiles = (it) => {
+    // свободные вертикальные полосы: слева от названий и между названиями и описаниями
+    const st = stage.getBoundingClientRect();
+    const gap = 40;
+    const titles = items.map((m) => $('.wmenu__title', m.el).getBoundingClientRect());
+    const descs = items.map((m) => m.desc.getBoundingClientRect());
+    const tl = Math.min(...titles.map((r) => r.left)) - st.left - 48;      // название может сдвинуться на 3rem
+    const tr = Math.max(...titles.map((r) => r.right)) - st.left + 48;
+    const dl = Math.min(...descs.map((r) => r.left)) - st.left;
+    const strips = [[0, tl - gap], [tr + gap, dl - gap]].filter(([a, b]) => b - a > 80);
+    it.tiles.forEach((t) => { t.style.display = ''; t.style.width = ''; t.style.height = ''; });
+    const tw0 = it.tiles[0].offsetWidth || 180;
+    const th0 = it.tiles[0].offsetHeight || 270;
+    let seed = (it.k + 3) * 7919;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    const slots = [];
+    strips.forEach(([a, b]) => {
+      // в каждой полосе — свой размер: крупно, но в пределах полосы и высоты сцены
+      const k = Math.min(1, (b - a) / tw0, (st.height - 24) / (2 * th0 + 24));
+      const tw = tw0 * k, th = th0 * k;
+      const free = st.height - 2 * th;                 // запас по высоте на разброс
+      const y1 = rnd() * free * 0.45;
+      const y2 = th + free * (0.55 + rnd() * 0.45);
+      [y1, y2].forEach((y) => slots.push({ x: a + rnd() * Math.max(0, b - a - tw), y, tw, th }));
+    });
+    it.tiles.forEach((t, i) => {
+      const p = slots[i];
+      t.style.display = p ? '' : 'none';
+      if (!p) return;
+      t.style.width = p.tw + 'px'; t.style.height = p.th + 'px';
+      t.style.left = p.x + 'px'; t.style.top = p.y + 'px';
+    });
+  };
   const showTiles = (it) => {
+    placeTiles(it);
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
     it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
@@ -819,6 +856,9 @@
     wcover.style.setProperty('--ar', getComputedStyle(it.group).getPropertyValue('--ar') || 1);
     wcover.style.backgroundImage = `url('${WCAT[it.cat].cover}')`;
     const tChars = wSplit(wtitle, it.cat);
+    wcontent.style.setProperty('--cat', WCAT[it.cat].color);
+    if (!it.tiles[0].style.left) placeTiles(it);
+    it.tiles.forEach((t) => { t.style.display = ''; });
     wdesc.textContent = WCAT[it.cat].desc;
     const others = WORKS.filter((w) => w.cat === it.cat && w.src !== WCAT[it.cat].cover);
     wprev.style.backgroundImage = others[0] ? `url('${others[0].src}')` : '';
