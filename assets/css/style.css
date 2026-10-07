@@ -1233,7 +1233,7 @@ body::before {
 .wcontent__desc { text-wrap: balance; max-width: 60rem; font-size: max(1.5rem, 12px); line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; color: rgba(76, 67, 67, .7); }
 .wcontent__strip { position: relative; align-self: stretch; height: var(--sh, 60rem); margin-top: .8rem; }
 /* карусель: карточки ставятся покадрово из JS (позиция, ширина, высота, прозрачность) */
-.wcar { position: absolute; inset: 0; opacity: 0; transition: opacity .6s var(--ease); }
+.wcar { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity .6s var(--ease); }   /* своя стопка слоёв: карточки не перекрывают стрелки */
 .wcar.is-on { opacity: 1; }
 .wcard { position: absolute; left: 50%; top: 0; }
 .wcard__title {
@@ -1250,7 +1250,7 @@ body::before {
 .wcard__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .3s ease; }
 .wcard:not(.current) .wcard__img img { opacity: .5; }
 .wcar__arrow {
-  position: absolute; top: var(--arrow-y, 50%); z-index: 6;
+  position: absolute; top: var(--arrow-y, 50%); z-index: 10;
   display: grid; place-items: center;
   width: 5.2rem; height: 5.2rem; min-width: 38px; min-height: 38px;
   border-radius: 50%;
