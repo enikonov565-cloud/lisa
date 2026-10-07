@@ -84,6 +84,9 @@
     { src: 'assets/img/w/studio-green.jpg', cat: 'Студийный портрет', title: 'Зелёный свет', alt: 'Портрет в зелёном свете с длинной выдержкой', desc: 'Длинная выдержка и цветной свет: портрет в движении.' },
   ];
 
+  // точка фокуса каждого кадра (по вертикали, %): при обрезке в кадре остаются лица и главное
+  const FOCUS = { 'studio-profile': 30, 'street-night-park': 60, 'street-crossing': 62, 'street-alley': 40, 'report-tractor': 70, 'street-lilac': 18, 'street-grass': 50, 'studio-gaze': 30, 'street-curls': 28, 'report-wheel': 40, 'arch-metro': 45, 'arch-glass': 50, 'arch-tower': 40, 'city-taxi': 62, 'city-boardwalk': 62, 'studio-bw-sit': 25, 'studio-bw-hands': 35, 'arch-arcade': 50, 'still-bottles': 75 };
+  const focusOf = (src) => { const m = /\/w\/([\w-]+)\.jpg/.exec(src || ''); return 'center ' + (m && FOCUS[m[1]] != null ? FOCUS[m[1]] : 50) + '%'; };
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -523,6 +526,7 @@
       const el = document.createElement('div');
       el.className = 'svc-photo__layer';
       el.style.backgroundImage = 'url("' + SERVICES[i].img + '")';
+      el.style.backgroundPosition = focusOf(SERVICES[i].img);
       el.style.transform = 'translateX(' + x + ')';
       track.appendChild(el);
       return el;
@@ -794,7 +798,7 @@
     group.className = 'wtiles__group';
     // кадры направления: обложка первой, потом остальные — каждый фрагмент из своего фото
     const pics = WORKS.filter((w) => w.cat === cat).sort((a, b) => (b.src === WCAT[cat].cover) - (a.src === WCAT[cat].cover)).slice(0, 4);
-    group.innerHTML = pics.map((w) => `<div class="wtile" style="background-image:url('${w.src}')"></div>`).join('');
+    group.innerHTML = pics.map((w) => `<div class="wtile" style="background-image:url('${w.src}');background-position:${focusOf(w.src)}"></div>`).join('');
     wtiles.appendChild(group);
     group.style.setProperty('--tw', 'clamp(30rem, 30vw, 54rem)');   /* вдвое крупнее */
     const descEl = $('.wmenu__desc', el);
@@ -1442,6 +1446,11 @@
     rDlg.addEventListener('click', (e) => { if (e.target === rDlg) rDlg.close(); });
     rDlg.addEventListener('close', () => { if (opener && opener.focus) opener.focus({ preventScroll: true }); });
   }
+
+  // все <img> с кадрами — по точке фокуса (сетка, лента, мини-ленты, карточки, подход, приглашение)
+  const applyFocus = (rootEl) => $$('img[src*="/w/"]', rootEl).forEach((im) => { im.style.objectPosition = focusOf(im.getAttribute('src')); });
+  applyFocus(document);
+  new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach((nd) => { if (nd.nodeType === 1) applyFocus(nd); }))).observe(document.body, { childList: true, subtree: true });
 
   $('#year').textContent = new Date().getFullYear();
 
