@@ -739,6 +739,7 @@
   ];
   const EZ_IO = 'cubic-bezier(0.76, 0, 0.24, 1)';   // power4.inOut
   const EZ_EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';  // expo.out
+  const EZ_SOFT = 'cubic-bezier(0.25, 0.1, 0.25, 1)'; // мягкое, без рывков
   const stage = $('#wstage');
   const wmenu = $('.wmenu', stage);
   const wtiles = $('.wtiles', stage);
@@ -779,15 +780,15 @@
   const kill = (els) => els.forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
   const showTiles = (it) => {
     kill([it.title, it.desc, ...it.tiles]);
-    it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
-    it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: EZ_EXPO, fill: 'forwards' });
-    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 500, delay: i * 45, easing: EZ_EXPO, fill: 'both' }));
+    it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
+    it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
+    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: i * 90, easing: EZ_SOFT, fill: 'both' }));
   };
   const hideTiles = (it) => {
     kill([it.title, it.desc, ...it.tiles]);
-    it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 300, easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)', fill: 'forwards' });
-    it.desc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(20%)' }], { duration: 300, easing: 'ease-out', fill: 'forwards' });
-    it.tiles.forEach((t) => t.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.5)' }], { duration: 300, easing: 'ease-out', fill: 'forwards' }));
+    it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
+    it.desc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(20%)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
+    it.tiles.forEach((t) => t.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.5)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' }));
   };
   if (canHover && !reduced) {
     items.forEach((it) => {
@@ -814,7 +815,7 @@
   const openCat = (it) => {
     if (tBusy || tMode !== 'menu') return;
     tBusy = true; tMode = 'content'; tCur = it;
-    const D = reduced ? 0 : 750;
+    const D = reduced ? 0 : 1100;
     wcover.style.setProperty('--ar', getComputedStyle(it.group).getPropertyValue('--ar') || 1);
     wcover.style.backgroundImage = `url('${WCAT[it.cat].cover}')`;
     const tChars = wSplit(wtitle, it.cat);
@@ -828,7 +829,7 @@
     it.tiles.forEach((t) => { t.style.opacity = '1'; t.style.transform = 'none'; });
     wcontent.classList.add('is-current');
     wcover.classList.remove('is-whole');
-    flip(it.tiles, () => it.tiles.forEach((t) => wcover.appendChild(t)), { duration: D, easing: EZ_IO, stagger: reduced ? 0 : 20, reverse: true })
+    flip(it.tiles, () => it.tiles.forEach((t) => wcover.appendChild(t)), { duration: D, easing: EZ_IO, stagger: reduced ? 0 : 45, reverse: true })
       .then(() => wcover.classList.add('is-whole'));
     // меню уходит: буквы выезжают влево, описание вверх
     items.forEach((m) => {
@@ -837,7 +838,7 @@
     });
     wmenu.classList.add('is-hidden');
     // название направления — по буквам справа, описание и «назад» — снизу
-    tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 400 + i * 25, easing: EZ_EXPO, fill: 'backwards' }));
+    tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 550 + i * 40, easing: EZ_EXPO, fill: 'backwards' }));
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'backwards' }));
     [wprev, wnext].forEach((el, n) => el.animate([{ opacity: 0, transform: `translateX(${n ? -30 : 30}%) scale(.9)` }, { opacity: .45, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'both' }));
     applyFilter(it.cat);
@@ -847,7 +848,7 @@
     if (tBusy || tMode !== 'content' || !tCur) return;
     tBusy = true;
     const it = tCur;
-    const D = reduced ? 0 : 600;
+    const D = reduced ? 0 : 950;
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
     [wprev, wnext].forEach((el, n) => { el.getAnimations().forEach((x) => x.cancel()); el.animate([{ opacity: .45 }, { opacity: 0, transform: `translateX(${n ? -80 : 80}%) scale(.9)` }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }); });
     $$('.char', wtitle).forEach((ch) => ch.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
@@ -1215,7 +1216,7 @@
     return s.replace(/[ \t\n]+([—–])/g, `${NBSP}$1`);                              // тире не с новой строки
   };
   // элементы, где текст разбит на буквы/слова для анимаций или стоит в одну строку
-  const SKIP = '.glow, .wmenu, .wcontent__title, .hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, .bento__box, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
+  const SKIP = '.glow, .wmenu__title, .wcontent__title, .hero__title, .hero__genres, .rot, .marquee, .chip, .pill, .flip, .bento__box, script, style, svg, noscript, textarea, input, .footer__nav, .menu__nav';
   const BLOCKS = 'p, li, h1, h2, h3, legend, figcaption, label > span, .step__title';
   const walkText = (root, fn) => {
     const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {

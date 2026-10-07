@@ -1160,11 +1160,12 @@ body::before {
    ========================================================================== */
 .works { padding-top: var(--sec); }
 /* ---------- направления: лёгкое меню с рассыпающимися фрагментами (как в образце Codrops) ---------- */
-.wstage { position: relative; display: grid; margin-bottom: 6rem; }
+.wstage { position: relative; display: grid; min-height: calc(100svh - 14rem); margin-bottom: var(--sec); }   /* меню направлений — отдельный экран */
 .wmenu, .wcontent, .wtiles { grid-area: 1 / 1; }
 
 /* меню: строки с тонкими линиями, приглушённые названия, яркое — только под курсором */
 .wmenu { position: relative; z-index: 1; display: flex; flex-direction: column; border-top: 1px solid rgba(76, 67, 67, .14); }
+.wmenu__item { flex: 1; }
 .wmenu.is-hidden { pointer-events: none; }
 .wmenu__item {
   display: grid; grid-template-columns: 18% auto minmax(0, 1fr); align-items: center; column-gap: 4rem;
@@ -1178,7 +1179,7 @@ body::before {
   font-family: var(--display); font-size: 4.8rem; line-height: 1.15; letter-spacing: .02em;
   color: rgba(76, 67, 67, .32);
   transform: translateX(3rem);
-  transition: color .45s var(--ease);
+  transition: color .9s var(--ease);
 }
 .wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title { color: var(--ink); }
 .wmenu__item:hover .wmenu__title .wword:first-child, .wmenu__item:focus-visible .wmenu__title .wword:first-child { color: var(--brick); }
@@ -1192,13 +1193,15 @@ body::before {
 .wmenu__item:focus-visible { outline: none; }
 .char-wrap { display: inline-block; position: relative; overflow: hidden; vertical-align: top; }
 .char { display: inline-block; will-change: transform; }
-.wword { display: inline-block; white-space: nowrap; transition: color .45s var(--ease); }
+.wword { display: inline-block; white-space: nowrap; transition: color .9s var(--ease); }
 
 /* фрагменты: небольшие, вразброс поверх строк, без нажатия */
 .wtiles { position: relative; z-index: 2; pointer-events: none; }
 .wtiles__group { position: absolute; inset: 0; --th: calc(var(--tw) / var(--ar, 1)); }
 .wtile {
   position: absolute;
+  border-radius: var(--radius);
+  box-shadow: 0 1.6rem 3.2rem -1.6rem rgba(76, 67, 67, .35);
   width: var(--tw); height: var(--th);
   background-size: 200% 200%;
   opacity: 0; transform: scale(.5);
@@ -1246,7 +1249,7 @@ body::before {
   height: 100%; aspect-ratio: var(--ar, 1);
   background-size: 0 0; background-repeat: no-repeat; background-position: center;
 }
-.wcontent__cover .wtile { position: relative; width: auto; height: auto; opacity: 1; transform: none; }
+.wcontent__cover .wtile { position: relative; width: auto; height: auto; opacity: 1; transform: none; border-radius: calc(var(--radius) * .6); box-shadow: none; }
 .wcontent__cover.is-whole { background-size: cover; border-radius: var(--radius); }
 .wcontent__cover.is-whole .wtile { visibility: hidden; }   /* после сборки — цельный кадр, без швов */
 
