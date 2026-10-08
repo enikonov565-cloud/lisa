@@ -2,6 +2,14 @@
 (() => {
   'use strict';
 
+  // сайт всегда открывается с первого экрана: без восстановления прокрутки и без якоря в адресе
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  const toTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  toTop();
+  window.addEventListener('load', toTop, { once: true });
+  window.addEventListener('pageshow', (e) => { if (e.persisted) toTop(); });
+
   /* ----------------------------------------------------------------------
      НАСТРОЙКИ — всё, что Лисса может поменять сама
      ---------------------------------------------------------------------- */
