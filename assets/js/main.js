@@ -840,7 +840,7 @@
     wtiles.appendChild(group);
     group.style.setProperty('--tw', 'clamp(30rem, 30vw, 54rem)');   /* вдвое крупнее */
     const descEl = $('.wmenu__desc', el);
-    descEl.innerHTML = descEl.textContent.replace(/(^|\s)([А-Яа-яЁё]{1,3}) /g, '$1$2 ').split(' ').map((w) => '<span class="wdw">' + w + '</span>').join(' ');
+    descEl.innerHTML = descEl.textContent.replace(/(^|\s)([А-Яа-яЁё]{1,3}) /g, '$1$2 ').split(' ').map((w) => '<span class="wdw">' + [...w].map((c) => '<span class="wch">' + c + '</span>').join('') + '</span>').join(' ');
     return { el, k, cat, chars, title: $('.wmenu__title', el), desc: $('.wmenu__desc', el), group, tiles: $$('.wtile', group) };
   });
   const canHover = window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
@@ -925,72 +925,74 @@
       }
       return null;
     };
-    // яркость под текстом — по нескольким точкам по всей ширине; вне кадра — светлый фон страницы
-    const PAGE = 0.86;
     const lin = (v) => Math.pow(v, 2.2);                     // яркость → относительная светлота
     const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
     const L_LIGHT = 0.9, L_DARK = 0.03;
-    // слово целиком: собираем яркость под всеми его буквами
-    const paintGroup = (els) => {
-      let sum = 0, cnt = 0, onPhoto = 0;
-      els.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        const n = Math.max(2, Math.min(9, Math.round(r.width / 14)));
-        for (let i = 0; i < n; i++) {
-          const x = r.left + r.width * (i + 0.5) / n;
-          for (const fy of [0.35, 0.65]) {
-            const v = tone(x, r.top + r.height * fy);
-            if (v != null) onPhoto++;
-            sum += v != null ? v : PAGE; cnt++;
-          }
-        }
-      });
-      let col = '';
-      if (onPhoto / Math.max(1, cnt) > 0.2) {                  // слово заметно лежит на фото
-        const bg = lin(sum / cnt);
-        col = contrast(L_LIGHT, bg) >= contrast(L_DARK, bg) ? LIGHT : DARK;
+    // какой кадр под точкой (индекс) — верхний кадр последний
+    const boxAt = (x, y) => {
+      for (let i = boxes.length - 1; i >= 0; i--) {
+        const b = boxes[i];
+        if (x >= b.l && x <= b.l + b.w && y >= b.t && y <= b.t + b.h) return i;
       }
-      els.forEach((el) => { el.style.color = col; });
+      return -1;
     };
-    const paint = (el) => {
-      const r = el.getBoundingClientRect();
-      const n = Math.max(3, Math.min(9, Math.round(r.width / 14)));
-      let sum = 0, onPhoto = 0;
-      for (let i = 0; i < n; i++) {
-        const x = r.left + r.width * (i + 0.5) / n;
-        for (const fy of [0.35, 0.65]) {
-          const v = tone(x, r.top + r.height * fy);
-          if (v != null) onPhoto++;
-          sum += v != null ? v : PAGE;
+    // текст наведённого направления ещё едет — меряем по месту, где он остановится
+    const shift = (el) => {
+      const m = new DOMMatrixReadOnly(getComputedStyle(el).transform === 'none' ? undefined : getComputedStyle(el).transform);
+      return [-m.m41, -m.m42];
+    };
+    // буквы слова делим на участки «над кадром N» и «над фоном»; каждый участок — один цвет
+    const paintWord = (chars, dx, dy) => {
+      const parts = new Map();
+      chars.forEach((el) => {
+        const rc = el.getBoundingClientRect();
+        if (!rc.width) { el.style.color = ''; return; }
+        const pts = [];
+        for (const fx of [0.2, 0.5, 0.8]) for (const fy of [0.3, 0.55, 0.8]) pts.push([rc.left + dx + rc.width * fx, rc.top + dy + rc.height * fy]);
+        const votes = new Map();
+        pts.forEach(([x, y]) => { const k = boxAt(x, y); votes.set(k, (votes.get(k) || 0) + 1); });
+        let k = -1, best = 0;
+        votes.forEach((v, key) => { if (v > best) { best = v; k = key; } });
+        if (!parts.has(k)) parts.set(k, { els: [], sum: 0, cnt: 0 });
+        const p = parts.get(k);
+        p.els.push(el);
+        if (k >= 0) pts.forEach(([x, y]) => { if (boxAt(x, y) === k) { p.sum += tone(x, y); p.cnt++; } });
+      });
+      parts.forEach((p, k) => {
+        let col = '';
+        if (k >= 0 && p.cnt && boxes[k].rec.grid) {
+          const bg = lin(p.sum / p.cnt);
+          col = contrast(L_LIGHT, bg) >= contrast(L_DARK, bg) ? LIGHT : DARK;
         }
-      }
-      const avg = sum / (n * 2);
-      el.style.color = onPhoto && avg < 0.62 ? LIGHT : '';
+        p.els.forEach((el) => { el.style.color = col; });
+      });
     };
     items.forEach((m) => {
-      $$('.wword', $('.wmenu__title', m.el)).forEach((w) => paintGroup($$('.char', w)));
-      $$('.wdw', m.desc).forEach((w) => paintGroup([w]));
+      const title = $('.wmenu__title', m.el);
+      const [tx, ty] = m === it ? shift(title) : [0, 0];
+      const [dx, dy] = m === it ? shift(m.desc) : [0, 0];
+      $$('.wword', title).forEach((w) => paintWord($$('.char', w), tx, ty));
+      $$('.wdw', m.desc).forEach((w) => paintWord($$('.wch', w), dx, dy));
     });
   };
-  const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; }); $$('.wdw', m.desc).forEach((w) => { w.style.color = ''; }); });
+  const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; }); $$('.wch', m.desc).forEach((w) => { w.style.color = ''; }); });
   const quickHide = (m) => m.tiles.forEach((t) => {
     const o = parseFloat(getComputedStyle(t).opacity);
-    if (o <= 0.01) return;
     t.getAnimations().forEach((a) => a.cancel());
-    t.animate([{ opacity: o, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.9)' }], { duration: 250, easing: 'ease-out', fill: 'forwards' });
+    t.animate([{ opacity: Math.min(o, 1), transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.9)' }], { duration: o > 0.01 ? 200 : 1, easing: 'ease-out', fill: 'forwards' });
   });
   const showTiles = (it) => {
     items.forEach((m) => { if (m !== it) quickHide(m); });
     placeTiles(it);
     curHover = it;
-    adaptText(it);
-    clearTimeout(it.adaptT);
-    it.adaptT = setTimeout(() => adaptText(it), 950);   // после сдвига названия — уточняем
     stage.classList.add('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
     it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
-    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: i * 90, easing: EZ_SOFT, fill: 'both' }));
+    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: 200 + i * 90, easing: EZ_SOFT, fill: 'both' }));
+    adaptText(it);
+    clearTimeout(it.adaptT);
+    it.adaptT = setTimeout(() => adaptText(it), 950);   // после сдвига названия — сверяем ещё раз
   };
   const hideTiles = (it) => {
     if (curHover === it) curHover = null;
