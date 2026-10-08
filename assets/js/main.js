@@ -397,7 +397,37 @@
      Каждый кадр смотрим, какая плашка проходит через середину окна, и переворачиваем её.
      Работает, только пока строка на экране. */
   const marquee = $('.marquee');
-  const mflips = $$('.marquee .mflip');
+  let mflips = $$('.marquee .mflip');
+  /* бесшовная бегущая строка: наборов плашек ровно столько, чтобы закрыть экран любой ширины,
+     сдвиг — ровно на длину одного набора, поэтому круг замыкается без пробела и рывка */
+  if (marquee && !reduced) {
+    const track = $('.marquee__track', marquee);
+    const proto = $('.marquee__list', track);
+    const SPEED = 55;                       // px в секунду — спокойно, как раньше
+    let anim = null;
+    const build = () => {
+      const progress = anim ? (anim.currentTime % anim.effect.getTiming().duration) / anim.effect.getTiming().duration : 0;
+      if (anim) anim.cancel();
+      $$('.marquee__list', track).forEach((l, i) => { if (i) l.remove(); });
+      const w = proto.getBoundingClientRect().width;
+      if (!w) return;
+      const need = Math.ceil((marquee.clientWidth + w) / w) + 1;
+      for (let i = 1; i < need; i++) {
+        const c = proto.cloneNode(true);
+        c.setAttribute('aria-hidden', 'true');
+        track.appendChild(c);
+      }
+      mflips = $$('.marquee .mflip');
+      const dur = (w / SPEED) * 1000;
+      anim = track.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${-w}px)` }], { duration: dur, iterations: Infinity, easing: 'linear' });
+      anim.currentTime = progress * dur;
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(build);
+    let rT = 0;
+    window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(build, 150); });
+    marquee.addEventListener('mouseenter', () => anim && anim.pause());
+    marquee.addEventListener('mouseleave', () => anim && anim.play());
+  }
   if (marquee && mflips.length && !reduced) {
     let mRaf = 0;
     const tick = () => {

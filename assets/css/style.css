@@ -496,8 +496,7 @@ body::before {
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
           mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
 }
-.marquee__track { display: flex; width: max-content; animation: marquee 36s linear infinite; }
-.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__track { display: flex; width: max-content; will-change: transform; }   /* движение задаёт скрипт — бесшовно на любой ширине */
 .marquee__list { display: flex; gap: 2rem; padding-right: 2rem; }
 .marquee .chip { font-size: 3rem; padding: .6rem 2.8rem; transition: background-color .4s var(--ease), color .4s var(--ease); }
 /* объём лицевой стороны: молочная подложка, блик сверху, мягкая тень */
