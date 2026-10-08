@@ -849,25 +849,42 @@
   let tCur = null;
   const kill = (els) => els.forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
   // свободные места ищем при каждом наведении (размеры экрана могут меняться)
-  // кадры лежат ПОД текстами (как в образце Codrops): крупно, вразброс по всей сцене
-  const SPOTS = [[0.02, 0.04], [0.64, 0.02], [0.30, 0.50], [0.86, 0.62]];
+  // кадры лежат ПОД текстами (как в образце Codrops): крупно, вразброс, без наплывов друг на друга
   const placeTiles = (it) => {
     const st = stage.getBoundingClientRect();
     it.tiles.forEach((t) => { t.style.display = ''; t.style.width = ''; t.style.height = ''; });
-    const base = it.tiles[0].offsetWidth || 480;
+    const base = Math.min(it.tiles[0].offsetWidth || 480, st.width * 0.4);
     let seed = (it.k + 5) * 7919;
     const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-    const SCALES = [1.1, 0.85, 1, 0.75, 0.95];
-    // порядок мест у каждого направления свой — картинка каждый раз новая
-    const order = SPOTS.map((s, i) => [s, rnd()]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
+    const SCALES = [1.05, 0.85, 0.95, 0.75, 0.9];
+    const GAP = 28;
+    const hit = (a, b) => a.l < b.r + GAP && a.r + GAP > b.l && a.t < b.b + GAP && a.b + GAP > b.t;
+    let k = 1, placed = [];
+    for (let attempt = 0; attempt < 8; attempt++, k *= 0.9) {
+      placed = [];
+      for (let i = 0; i < it.tiles.length; i++) {
+        const w = base * SCALES[(i + it.k) % SCALES.length] * k, h = w * 0.75;
+        const ok = [];
+        for (let n = 0; n < 400 && ok.length < 30; n++) {
+          const x = rnd() * Math.max(1, st.width - w), y = rnd() * Math.max(1, st.height - h);
+          const box = { l: x, t: y, r: x + w, b: y + h };
+          if (!placed.some((p) => hit(box, p))) ok.push(box);
+        }
+        if (!ok.length) break;
+        // самое далёкое от уже стоящих — разброс по всей сцене
+        const c = (b) => [(b.l + b.r) / 2, (b.t + b.b) / 2];
+        const best = ok.map((b) => [b, placed.length ? Math.min(...placed.map((p) => Math.hypot(c(b)[0] - c(p)[0], c(b)[1] - c(p)[1]))) : rnd()])
+          .sort((a, b) => b[1] - a[1])[0][0];
+        placed.push(best);
+      }
+      if (placed.length === it.tiles.length) break;
+    }
     it.tiles.forEach((t, i) => {
-      const w = Math.min(base * SCALES[(i + it.k) % SCALES.length], st.width * 0.42);
-      const h = w * 0.75;
-      const [fx, fy] = order[i % order.length];
-      const x = Math.max(0, Math.min(st.width - w, fx * st.width + (rnd() - 0.5) * st.width * 0.08));
-      const y = Math.max(0, Math.min(st.height - h, fy * st.height + (rnd() - 0.5) * st.height * 0.1));
-      t.style.left = x + 'px'; t.style.top = y + 'px';
-      t.style.width = w + 'px'; t.style.height = h + 'px';
+      const p = placed[i];
+      t.style.display = p ? '' : 'none';
+      if (!p) return;
+      t.style.left = p.l + 'px'; t.style.top = p.t + 'px';
+      t.style.width = (p.r - p.l) + 'px'; t.style.height = (p.b - p.t) + 'px';
     });
   };
   /* ---- цвет текста подстраивается под то, что под ним ----
@@ -898,6 +915,7 @@
   };
   items.forEach((m) => m.tiles.forEach((t) => lumOf(t.style.backgroundImage.slice(5, -2))));
   const LIGHT = '#faf3ec';
+  const DARK = '#2b2323';
   let curHover = null;
   const adaptText = (it) => {
     const st = stage.getBoundingClientRect();
@@ -917,6 +935,31 @@
     };
     // яркость под текстом — по нескольким точкам по всей ширине; вне кадра — светлый фон страницы
     const PAGE = 0.86;
+    const lin = (v) => Math.pow(v, 2.2);                     // яркость → относительная светлота
+    const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    const L_LIGHT = 0.9, L_DARK = 0.03;
+    // слово целиком: собираем яркость под всеми его буквами
+    const paintGroup = (els) => {
+      let sum = 0, cnt = 0, onPhoto = 0;
+      els.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const n = Math.max(2, Math.min(9, Math.round(r.width / 14)));
+        for (let i = 0; i < n; i++) {
+          const x = r.left + r.width * (i + 0.5) / n;
+          for (const fy of [0.35, 0.65]) {
+            const v = tone(x, r.top + r.height * fy);
+            if (v != null) onPhoto++;
+            sum += v != null ? v : PAGE; cnt++;
+          }
+        }
+      });
+      let col = '';
+      if (onPhoto / Math.max(1, cnt) > 0.2) {                  // слово заметно лежит на фото
+        const bg = lin(sum / cnt);
+        col = contrast(L_LIGHT, bg) >= contrast(L_DARK, bg) ? LIGHT : DARK;
+      }
+      els.forEach((el) => { el.style.color = col; });
+    };
     const paint = (el) => {
       const r = el.getBoundingClientRect();
       const n = Math.max(3, Math.min(9, Math.round(r.width / 14)));
@@ -932,10 +975,20 @@
       const avg = sum / (n * 2);
       el.style.color = onPhoto && avg < 0.62 ? LIGHT : '';
     };
-    items.forEach((m) => { m.chars.forEach(paint); $$('.wdw', m.desc).forEach(paint); });
+    items.forEach((m) => {
+      $$('.wword', $('.wmenu__title', m.el)).forEach((w) => paintGroup($$('.char', w)));
+      $$('.wdw', m.desc).forEach((w) => paintGroup([w]));
+    });
   };
   const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; }); $$('.wdw', m.desc).forEach((w) => { w.style.color = ''; }); });
+  const quickHide = (m) => m.tiles.forEach((t) => {
+    const o = parseFloat(getComputedStyle(t).opacity);
+    if (o <= 0.01) return;
+    t.getAnimations().forEach((a) => a.cancel());
+    t.animate([{ opacity: o, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.9)' }], { duration: 250, easing: 'ease-out', fill: 'forwards' });
+  });
   const showTiles = (it) => {
+    items.forEach((m) => { if (m !== it) quickHide(m); });
     placeTiles(it);
     curHover = it;
     adaptText(it);
