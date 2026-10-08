@@ -891,12 +891,14 @@
       const g = new Float32Array(W * H);
       for (let i = 0; i < W * H; i++) g[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
       rec.grid = g;
+      if (curHover) adaptText(curHover);   // яркость посчиталась уже после наведения — обновляем цвета
     };
     im.src = src;
     return rec;
   };
   items.forEach((m) => m.tiles.forEach((t) => lumOf(t.style.backgroundImage.slice(5, -2))));
   const LIGHT = '#faf3ec';
+  let curHover = null;
   const adaptText = (it) => {
     const st = stage.getBoundingClientRect();
     const boxes = it.tiles.filter((t) => t.style.display !== 'none').map((t) => {
@@ -913,16 +915,29 @@
       }
       return null;
     };
+    // яркость под текстом — по нескольким точкам по всей ширине; вне кадра — светлый фон страницы
+    const PAGE = 0.86;
     const paint = (el) => {
       const r = el.getBoundingClientRect();
-      const lum = tone(r.left + r.width / 2, r.top + r.height / 2);
-      el.style.color = lum != null && lum < 0.5 ? LIGHT : '';
+      const n = Math.max(3, Math.min(9, Math.round(r.width / 14)));
+      let sum = 0, onPhoto = 0;
+      for (let i = 0; i < n; i++) {
+        const x = r.left + r.width * (i + 0.5) / n;
+        for (const fy of [0.35, 0.65]) {
+          const v = tone(x, r.top + r.height * fy);
+          if (v != null) onPhoto++;
+          sum += v != null ? v : PAGE;
+        }
+      }
+      const avg = sum / (n * 2);
+      el.style.color = onPhoto && avg < 0.62 ? LIGHT : '';
     };
     items.forEach((m) => { m.chars.forEach(paint); $$('.wdw', m.desc).forEach(paint); });
   };
   const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; }); $$('.wdw', m.desc).forEach((w) => { w.style.color = ''; }); });
   const showTiles = (it) => {
     placeTiles(it);
+    curHover = it;
     adaptText(it);
     clearTimeout(it.adaptT);
     it.adaptT = setTimeout(() => adaptText(it), 950);   // после сдвига названия — уточняем
@@ -933,6 +948,7 @@
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: i * 90, easing: EZ_SOFT, fill: 'both' }));
   };
   const hideTiles = (it) => {
+    if (curHover === it) curHover = null;
     clearTimeout(it.adaptT);
     clearText();
     stage.classList.remove('has-tiles');
