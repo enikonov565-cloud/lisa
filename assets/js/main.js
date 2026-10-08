@@ -990,7 +990,7 @@
   const quickHide = (m) => m.tiles.forEach((t) => {
     const o = parseFloat(getComputedStyle(t).opacity);
     t.getAnimations().forEach((a) => a.cancel());
-    t.animate([{ opacity: Math.min(o, 1), transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.9)' }], { duration: o > 0.01 ? 200 : 1, easing: 'ease-out', fill: 'forwards' });
+    t.animate([{ opacity: Math.min(o, 1), transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.9)' }], { duration: o > 0.01 ? 380 : 1, easing: EZ_SOFT, fill: 'forwards' });
   });
   const showTiles = (it) => {
     items.forEach((m) => { if (m !== it) quickHide(m); });
@@ -998,12 +998,12 @@
     curHover = it;
     stage.classList.add('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
-    it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
-    it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 900, easing: EZ_SOFT, fill: 'forwards' });
-    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1000, delay: 200 + i * 90, easing: EZ_SOFT, fill: 'both' }));
+    it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
+    it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
+    it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1500, delay: 380 + i * 140, easing: EZ_SOFT, fill: 'both' }));
     adaptText(it);
     clearTimeout(it.adaptT);
-    it.adaptT = setTimeout(() => adaptText(it), 950);   // после сдвига названия — сверяем ещё раз
+    it.adaptT = setTimeout(() => adaptText(it), 1450);   // после сдвига названия — сверяем ещё раз
   };
   const hideTiles = (it) => {
     if (curHover === it) curHover = null;
@@ -1011,17 +1011,29 @@
     clearText();
     stage.classList.remove('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
-    it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
-    it.desc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(20%)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' });
-    it.tiles.forEach((t) => t.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.5)' }], { duration: 700, easing: EZ_SOFT, fill: 'forwards' }));
+    it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 1100, easing: EZ_SOFT, fill: 'forwards' });
+    it.desc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(20%)' }], { duration: 1100, easing: EZ_SOFT, fill: 'forwards' });
+    it.tiles.forEach((t) => t.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.5)' }], { duration: 1100, easing: EZ_SOFT, fill: 'forwards' }));
+  };
+  // фиксация на слове: курсор задержался на слове — оно выбрано и держится,
+  // промежутки между словами и случайные пролёты курсора ничего не сбрасывают
+  let pinned = null, pickT = 0;
+  const pick = (it, wait = 220) => {
+    clearTimeout(pickT);
+    pickT = setTimeout(() => {
+      if (tMode !== 'menu' || tBusy || pinned === it) return;
+      if (pinned) hideTiles(pinned);
+      pinned = it;
+      if (it) showTiles(it);
+    }, wait);
   };
   if (canHover && !reduced) {
     items.forEach((it) => {
-      it.el.addEventListener('mouseenter', () => { if (tMode === 'menu' && !tBusy) showTiles(it); });
-      it.el.addEventListener('mouseleave', () => { if (tMode === 'menu' && !tBusy) hideTiles(it); });
-      it.el.addEventListener('focus', () => { if (tMode === 'menu' && !tBusy) showTiles(it); });
-      it.el.addEventListener('blur', () => { if (tMode === 'menu' && !tBusy) hideTiles(it); });
+      it.el.addEventListener('mouseenter', () => pick(it));
+      it.el.addEventListener('focus', () => pick(it, 0));
     });
+    stage.addEventListener('mouseleave', () => { clearTimeout(pickT); pickT = setTimeout(() => pick(null, 0), 500); });
+    stage.addEventListener('mouseenter', () => clearTimeout(pickT));
   }
   // FLIP: элементы переезжают в новый контейнер, а анимация ведёт их из старого места
   const flip = (els, move, opts) => {
@@ -1041,7 +1053,7 @@
      Непрерывная позиция едет к цели с постоянной скоростью (0,6 с на карточку),
      после остановки 3 с пауза и шаг дальше — слева направо, по кругу.
      Центр — крупно, соседние — меньше и приглушённо, дальше — растворяются. */
-  const CAR = { move: 0.6, dwell: 3, dir: -1 };
+  const CAR = { move: 0.95, dwell: 4, dir: -1 };
   let car = null;
   const carSizes = () => {
     const W = wstrip.clientWidth || stage.clientWidth;
@@ -1146,8 +1158,11 @@
   };
   const openCat = (it) => {
     if (tBusy || tMode !== 'menu') return;
+    clearTimeout(pickT);
+    if (pinned && pinned !== it) hideTiles(pinned);
+    pinned = null;
     tBusy = true; tMode = 'content'; tCur = it;
-    const D = reduced ? 0 : 1100;
+    const D = reduced ? 0 : 1600;
     const cover = WCAT[it.cat].cover;
     const list = WORKS.filter((w) => w.cat === it.cat).sort((a, b) => (b.src === cover) - (a.src === cover));
     wcover.style.display = 'none';
@@ -1174,7 +1189,7 @@
     })).then(() => {
       wcar.classList.add('is-on');
       wstrip.classList.add('is-car');
-      setTimeout(() => it.tiles.forEach((t) => { t.style.visibility = 'hidden'; }), 300);
+      setTimeout(() => it.tiles.forEach((t) => { t.style.visibility = 'hidden'; }), 450);
     });
     // меню уходит: буквы выезжают влево, описание вверх
     items.forEach((m) => {
@@ -1183,19 +1198,19 @@
     });
     wmenu.classList.add('is-hidden');
     clearTimeout(it.adaptT); clearText();
-    tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 550 + i * 40, easing: EZ_EXPO, fill: 'backwards' }));
-    [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 400, easing: EZ_EXPO, fill: 'backwards' }));
+    tChars.forEach((ch, i) => ch.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: D, delay: 800 + i * 55, easing: EZ_EXPO, fill: 'backwards' }));
+    [wdesc, wback].forEach((el) => el.animate([{ opacity: 0, transform: 'translateY(100%)' }, { opacity: 1, transform: 'none' }], { duration: D, delay: 600, easing: EZ_EXPO, fill: 'backwards' }));
     applyFilter(it.cat);
     const hdr = $('#header');
     const want = stage.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.offsetHeight : 0) - 24;
     if (Math.abs(window.scrollY - want) > 8) window.scrollTo({ top: want, behavior: reduced ? 'auto' : 'smooth' });
-    setTimeout(() => { tBusy = false; wback.focus({ preventScroll: true }); }, D + 450);
+    setTimeout(() => { tBusy = false; wback.focus({ preventScroll: true }); }, D + 650);
   };
   const closeCat = () => {
     if (tBusy || tMode !== 'content' || !tCur) return;
     tBusy = true;
     const it = tCur;
-    const D = reduced ? 0 : 950;
+    const D = reduced ? 0 : 1400;
     [wdesc, wback].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
     $$('.char', wtitle).forEach((ch) => ch.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: D, easing: EZ_EXPO, fill: 'forwards' }));
     stopCar();
@@ -1219,11 +1234,11 @@
     setTimeout(() => {
       wmenu.classList.remove('is-hidden');
       items.forEach((m) => {
-        m.chars.forEach((ch, i) => { ch.getAnimations().forEach((a) => a.cancel()); ch.animate([{ transform: 'translateX(-100%)' }, { transform: 'none' }], { duration: D, delay: (m.chars.length - i) * 20, easing: EZ_EXPO, fill: 'backwards' }); });
+        m.chars.forEach((ch, i) => { ch.getAnimations().forEach((a) => a.cancel()); ch.animate([{ transform: 'translateX(-100%)' }, { transform: 'none' }], { duration: D, delay: (m.chars.length - i) * 30, easing: EZ_EXPO, fill: 'backwards' }); });
         m.desc.getAnimations().forEach((a) => a.cancel());
         m.title.getAnimations().forEach((a) => a.cancel());
       });
-    }, reduced ? 0 : 450);
+    }, reduced ? 0 : 650);
     applyFilter('Все');
   };
   items.forEach((it) => it.el.addEventListener('click', () => openCat(it)));
