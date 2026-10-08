@@ -859,6 +859,15 @@
     const SCALES = [1.05, 0.85, 0.95, 0.75, 0.9];
     const GAP = 28;
     const hit = (a, b) => a.l < b.r + GAP && a.r + GAP > b.l && a.t < b.b + GAP && a.b + GAP > b.t;
+    // Репортаж: кадры обходят название и подпись направления (там, где текст остановится)
+    const keep = [];
+    if (it.cat === 'Репортаж') [it.title, it.desc].forEach((el) => {
+      const rc = el.getBoundingClientRect();
+      const tr = getComputedStyle(el).transform;
+      const m = new DOMMatrixReadOnly(tr === 'none' ? undefined : tr);
+      const l = rc.left - m.m41 - st.left, t = rc.top - m.m42 - st.top;
+      keep.push({ l, t, r: l + rc.width, b: t + rc.height });
+    });
     let k = 1, placed = [];
     for (let attempt = 0; attempt < 8; attempt++, k *= 0.9) {
       placed = [];
@@ -868,7 +877,7 @@
         for (let n = 0; n < 400 && ok.length < 30; n++) {
           const x = rnd() * Math.max(1, st.width - w), y = rnd() * Math.max(1, st.height - h);
           const box = { l: x, t: y, r: x + w, b: y + h };
-          if (!placed.some((p) => hit(box, p))) ok.push(box);
+          if (!placed.some((p) => hit(box, p)) && !keep.some((p) => hit(box, p))) ok.push(box);
         }
         if (!ok.length) break;
         // самое далёкое от уже стоящих — разброс по всей сцене
