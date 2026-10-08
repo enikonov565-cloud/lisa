@@ -1192,8 +1192,8 @@ body::before {
 }
 .wmenu__item:focus-visible { outline: none; }
 .char-wrap { display: inline-block; position: relative; overflow: hidden; vertical-align: top; }
-.char { display: inline-block; will-change: transform; transition: color .8s var(--ease); }
-.wch { transition: color .8s var(--ease); }
+.char { display: inline-block; will-change: transform; transition: color .8s var(--ease), text-shadow .8s var(--ease); }
+.wch { transition: color .8s var(--ease), text-shadow .8s var(--ease); }
 .wword { display: inline-block; white-space: nowrap; transition: color .9s var(--ease); }
 
 /* фрагменты: небольшие, вразброс поверх строк, без нажатия */

@@ -946,7 +946,7 @@
       const parts = new Map();
       chars.forEach((el) => {
         const rc = el.getBoundingClientRect();
-        if (!rc.width) { el.style.color = ''; return; }
+        if (!rc.width) { el.style.color = ''; el.style.textShadow = ''; return; }
         const pts = [];
         for (const fx of [0.2, 0.5, 0.8]) for (const fy of [0.3, 0.55, 0.8]) pts.push([rc.left + dx + rc.width * fx, rc.top + dy + rc.height * fy]);
         const votes = new Map();
@@ -964,7 +964,9 @@
           const bg = lin(p.sum / p.cnt);
           col = contrast(L_LIGHT, bg) >= contrast(L_DARK, bg) ? LIGHT : DARK;
         }
-        p.els.forEach((el) => { el.style.color = col; });
+        // мягкий ореол в цвет, противоположный буквам — тонкий текст читается даже на пёстром кадре
+        const glow = col === LIGHT ? '0 0 .5em rgba(43,35,35,.55), 0 0 .15em rgba(43,35,35,.45)' : col === DARK ? '0 0 .5em rgba(250,243,236,.95), 0 0 .15em rgba(250,243,236,.9)' : '';
+        p.els.forEach((el) => { el.style.color = col; el.style.textShadow = glow; });
       });
     };
     items.forEach((m) => {
@@ -975,7 +977,7 @@
       $$('.wdw', m.desc).forEach((w) => paintWord($$('.wch', w), dx, dy));
     });
   };
-  const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; }); $$('.wch', m.desc).forEach((w) => { w.style.color = ''; }); });
+  const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; c.style.textShadow = ''; }); $$('.wch', m.desc).forEach((w) => { w.style.color = ''; w.style.textShadow = ''; }); });
   const quickHide = (m) => m.tiles.forEach((t) => {
     const o = parseFloat(getComputedStyle(t).opacity);
     t.getAnimations().forEach((a) => a.cancel());
