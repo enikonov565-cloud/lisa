@@ -1598,7 +1598,7 @@
     const E = {
       p3: 'cubic-bezier(.215, .61, .355, 1)',     // power3.out
       p2io: 'cubic-bezier(.455, .03, .515, .955)', // power2.inOut
-      exio: 'cubic-bezier(.87, 0, .13, 1)',       // expo.inOut
+      exio: 'cubic-bezier(.65, 0, .35, 1)',      // мягкий inOut — без рывка
       expo: 'cubic-bezier(.19, 1, .22, 1)',       // expo.out
       exin: 'cubic-bezier(.95, .05, .795, .035)', // expo.in
     };
@@ -1626,6 +1626,7 @@
         busy = false; return;
       }
       const up = dir > 0 ? 1 : -1;
+      const K = 1.7;   // смена медленная и плавная
       stop([A.wrap, A.img, ...A.rows, ...A.links, B.wrap, B.img, ...B.rows, ...B.links]);
       // исходное положение приходящего слайда
       B.wrap.style.transform = `translateY(${up * 100}%)`;
@@ -1636,19 +1637,19 @@
       B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden');
       B.el.style.zIndex = 2; A.el.style.zIndex = 1;
       // уходящий: круг сжимается, текст уезжает
-      tw(A.wrap, [{ clipPath: CLIP.initial }, { clipPath: CLIP.final }], { duration: 1000, easing: E.p3 });
-      A.rows.forEach((r) => tw(r, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 160}%)` }], { duration: 1000, easing: E.p3 }));
-      A.links.forEach((l) => tw(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: E.p3 }));
+      tw(A.wrap, [{ clipPath: CLIP.initial }, { clipPath: CLIP.final }], { duration: 1000 * K, easing: E.p3 });
+      A.rows.forEach((r) => tw(r, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 160}%)` }], { duration: 1000 * K, easing: E.p3 }));
+      A.links.forEach((l) => tw(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 500 * K, easing: E.p3 }));
       // через 0.6 с — уходящий уезжает, приходящий въезжает (картинки — навстречу)
-      tw(A.wrap, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 100}%)` }], { duration: 1000, delay: 600, easing: E.p2io, composite: 'replace' });
-      tw(A.img, [{ transform: 'translateY(0)' }, { transform: `translateY(${up * 5}%)` }], { duration: 1000, delay: 600, easing: E.p2io });
-      tw(B.wrap, [{ transform: `translateY(${up * 100}%)` }, { transform: 'translateY(0)' }], { duration: 1000, delay: 600, easing: E.p2io });
-      tw(B.img, [{ transform: `translateY(${-up * 5}%)` }, { transform: 'translateY(0)' }], { duration: 1000, delay: 600, easing: E.p2io });
+      tw(A.wrap, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 100}%)` }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io, composite: 'replace' });
+      tw(A.img, [{ transform: 'translateY(0)' }, { transform: `translateY(${up * 5}%)` }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io });
+      tw(B.wrap, [{ transform: `translateY(${up * 100}%)` }, { transform: 'translateY(0)' }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io });
+      tw(B.img, [{ transform: `translateY(${-up * 5}%)` }, { transform: 'translateY(0)' }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io });
       // круг раскрывается, строки выезжают по очереди, ссылка проявляется
-      const open = tw(B.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500, delay: 1200, easing: E.exio });
+      const open = tw(B.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500 * K, delay: 1200 * K, easing: E.exio });
       const order = up > 0 ? B.rows : [...B.rows].reverse();
-      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: 1500, delay: 1100 + (i % 2) * 100, easing: E.exio }));
-      B.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000, delay: 1400, easing: E.exin }));
+      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: 1500 * K, delay: 1100 * K + (i % 2) * 100 * K, easing: E.exio }));
+      B.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000 * K, delay: 1400 * K, easing: E.exin }));
       open.finished.then(() => {
         A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
         A.el.style.zIndex = ''; B.el.style.zIndex = '';
@@ -1656,11 +1657,15 @@
         A.wrap.style.transform = ''; A.img.style.transform = ''; A.wrap.style.clipPath = CLIP.initial;
         A.rows.forEach((r) => { r.style.transform = ''; }); A.links.forEach((l) => { l.style.opacity = ''; });
         busy = false;
+        plan();
       });
     };
-    $('.shapes__btn--next', hero).addEventListener('click', () => navigate(1));
-    $('.shapes__btn--prev', hero).addEventListener('click', () => navigate(-1));
-    dots.forEach((d, i) => d.addEventListener('click', () => navigate(i > cur ? 1 : -1, i)));
+    // фото меняются сами по кругу; пауза, когда экран не виден
+    let autoT = 0, heroSeen = true;
+    const plan = () => { clearTimeout(autoT); if (!reduced && heroSeen && !document.hidden) autoT = setTimeout(() => navigate(1), 5000); };
+    new IntersectionObserver(([e]) => { heroSeen = e.isIntersecting; if (!busy) plan(); }).observe(hero);
+    document.addEventListener('visibilitychange', () => { if (!busy) plan(); });
+    dots.forEach((d, i) => d.addEventListener('click', () => { clearTimeout(autoT); navigate(i > cur ? 1 : -1, i); }));
 
     /* цвет нижней строки подстраивается под круг с фото: буква внутри круга — светлая, снаружи — тёмная.
        Положение круга берём из живых значений (сжатие, сдвиг, перетекание), поэтому цвет едет вместе с ним */
