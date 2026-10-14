@@ -1923,6 +1923,70 @@
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(measure);
   }
 
+  /* ---------- «Мой подход и гарантии»: Layer Motion Slideshow (Codrops) ----------
+     слои слайда (фото, текст, название) уходят и приходят по очереди, картинки внутри — навстречу */
+  const lms = $('.lms');
+  if (lms) {
+    const slides = $$('.lms__slide', lms).map((el) => ({
+      el,
+      layers: [...$$('.lms__ph', el), $('.lms__text', el), $('.lms__title', el)],
+      title: $('.lms__title', el),
+    }));
+    slides.forEach((s) => {
+      const t = $('.lms__in', s.title);
+      t.innerHTML = [...t.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="lt">' + ch + '</span>').join('');
+      s.chars = $$('.lt', t);
+    });
+    const curEl = $('.lms__cur', lms);
+    const EX = 'cubic-bezier(.77, 0, .175, 1)';
+    let cur = 0, busy = false;
+    // буквы названия над фото — светлые, над фоном — тёмные
+    const paint = () => {
+      const s = slides[cur];
+      const rects = $$('.lms__ph', s.el).map((p) => p.getBoundingClientRect());
+      s.chars.forEach((ch) => {
+        const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height * 0.6;
+        ch.classList.toggle('on-photo', rects.some((r) => x > r.left && x < r.right && y > r.top && y < r.bottom));
+      });
+    };
+    const go = (dir) => {
+      if (busy) return;
+      const next = (cur + dir + slides.length) % slides.length;
+      const A = slides[cur], B = slides[next];
+      cur = next; curEl.textContent = String(cur + 1);
+      if (reduced) {
+        A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
+        B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden'); paint(); return;
+      }
+      busy = true;
+      A.el.classList.add('is-leaving'); A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
+      B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden');
+      paint();
+      const D = 1300, ST = 90, up = dir > 0 ? -1 : 1;
+      const anims = [];
+      A.layers.forEach((L, k) => {
+        const inner = $('.lms__in', L), img = $('img', L);
+        anims.push(inner.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${up * 101}%)` }], { duration: D, delay: k * ST, easing: EX, fill: 'both' }));
+        if (img) img.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 40}%)` }], { duration: D, delay: k * ST, easing: EX, fill: 'both' });
+      });
+      B.layers.forEach((L, k) => {
+        const inner = $('.lms__in', L), img = $('img', L);
+        anims.push(inner.animate([{ transform: `translateY(${-up * 101}%)` }, { transform: 'translateY(0)' }], { duration: D, delay: 200 + k * ST, easing: EX, fill: 'both' }));
+        if (img) img.animate([{ transform: `translateY(${up * 40}%)` }, { transform: 'translateY(0)' }], { duration: D, delay: 200 + k * ST, easing: EX, fill: 'both' });
+      });
+      Promise.all(anims.map((a) => a.finished)).then(() => {
+        A.el.classList.remove('is-leaving');
+        [A, B].forEach((S) => S.layers.forEach((L) => { $('.lms__in', L).getAnimations().forEach((a) => a.cancel()); const im = $('img', L); if (im) im.getAnimations().forEach((a) => a.cancel()); }));
+        busy = false; paint();
+      });
+    };
+    $('.lms__btn--next', lms).addEventListener('click', () => go(1));
+    $('.lms__btn--prev', lms).addEventListener('click', () => go(-1));
+    window.addEventListener('resize', paint);
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(paint);
+    new IntersectionObserver(([e]) => { if (e.isIntersecting) paint(); }).observe(lms);
+  }
+
   $('#year').textContent = new Date().getFullYear();
 
   /* ---------------- типографика ----------------

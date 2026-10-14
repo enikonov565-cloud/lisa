@@ -2116,3 +2116,59 @@ main > section[hidden] { display: none !important; }
 }
 .os-title .oc { transition: color .35s var(--ease), text-shadow .35s var(--ease); }
 .os-title .oc.on-photo { color: var(--milk); text-shadow: 0 0 .35em rgba(43, 35, 35, .45); }
+
+/* ==========================================================================
+   «МОЙ ПОДХОД И ГАРАНТИИ» — раскладка Layer Motion Slideshow (Codrops):
+   большое фото в центре, три маленьких по краям, текст слева от главного фото,
+   огромное название поперёк; слайды сменяются слоями
+   ========================================================================== */
+.approach { padding-top: var(--sec); }
+.lms { position: relative; height: 100vh; height: 100svh; min-height: 64rem; overflow: hidden; }
+.lms__head { position: absolute; left: var(--pad); top: 4rem; z-index: 5; max-width: 34%; }
+.lms__bar { display: flex; align-items: center; gap: 2.4rem; }
+.lms__count { font-size: 2rem; letter-spacing: .06em; white-space: nowrap; }
+.lms__btn { width: 1.6rem; height: 2.6rem; padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer; transition: color .4s var(--ease), transform .5s var(--ease); }
+.lms__btn svg { display: block; width: 100%; height: 100%; fill: currentColor; overflow: visible; }
+.lms__btn:hover { color: var(--orange); }
+.lms__btn--prev:hover { transform: translateX(-.4rem); }
+.lms__btn--next:hover { transform: translateX(.4rem); }
+.lms__slide { position: absolute; inset: 0; pointer-events: none; visibility: hidden; }
+.lms__slide.is-current, .lms__slide.is-leaving { visibility: visible; }
+.lms__slide.is-current { pointer-events: auto; }
+.lms__in { display: block; width: 100%; height: 100%; will-change: transform; }
+.lms__ph { position: absolute; margin: 0; overflow: hidden; border-radius: var(--radius); }
+.lms__ph img { width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
+.lms__ph--main { left: 50%; width: 35%; top: 0; height: 100%; }
+.lms__ph--top { left: 35%; width: 15%; top: 0; height: 25%; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.lms__ph--bl { left: 0; width: 14.7%; bottom: 0; height: 24%; }
+.lms__ph--br { right: 0; width: 14%; bottom: 0; height: 24%; }
+.lms__text { position: absolute; right: 51.5%; top: 29%; width: 19%; overflow: hidden; text-align: right; }
+.lms__by { margin: 0 0 1.6rem; font-size: max(2.2rem, 14px); line-height: 1.3; }
+.lms__p { margin: 0; font-size: max(2rem, 13px); line-height: 1.45; color: rgba(76, 67, 67, .7); }
+.lms__title {
+  position: absolute; left: 0; right: 0; top: 50%; z-index: 4; margin: 0; overflow: hidden;
+  text-align: center; pointer-events: none;
+  font-family: var(--display); font-weight: 400; line-height: 1.05;
+  font-size: clamp(6rem, 10.5vw, 20rem); letter-spacing: -.01em; white-space: nowrap;
+  padding: 0 0 .08em;
+}
+.lms__title .lt { color: var(--ink); transition: color .3s var(--ease); }
+.lms__title .lt.on-photo { color: var(--milk); text-shadow: 0 0 .25em rgba(43, 35, 35, .35); }
+@media (max-width: 1023px) {
+  .lms { height: auto; min-height: 0; overflow: visible; display: grid; }
+  .lms__head { position: relative; left: auto; top: auto; max-width: none; padding: 0 var(--pad); margin-bottom: 3rem; }
+  .lms__bar { flex-wrap: wrap; row-gap: 1.2rem; }
+  .lms__slide { position: relative; grid-area: 2 / 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 0 var(--pad); }
+  .lms__ph { position: relative; inset: auto; width: auto; height: auto; aspect-ratio: 1; }
+  .lms__ph--main { grid-column: 1 / -1; aspect-ratio: 4 / 5; left: auto; }
+  .lms__ph--top { border-radius: var(--radius); }
+  .lms__text { position: relative; right: auto; top: auto; width: auto; grid-column: 1 / -1; grid-row: 3; text-align: left; margin-top: 1.6rem; }
+  .lms__title { position: absolute; top: auto; left: var(--pad); right: var(--pad); bottom: auto; grid-column: 1 / -1; grid-row: 1; align-self: end; margin-bottom: 2rem; font-size: 5.6rem; text-align: left; }
+}
+@media (min-width: 1024px) { .lms { margin: 0 var(--pad); } .lms__head { left: 0; top: 2rem; } }   /* поля страницы 60 */
+@media (max-width: 1023px) {
+  .lms__ph--main { grid-row: 1; }
+  .lms__ph--top, .lms__ph--bl, .lms__ph--br { grid-row: 2; }
+  .lms__title { position: relative; left: auto; right: auto; grid-row: 3; margin: 1.6rem 0 0; font-size: 6rem; }
+  .lms__text { grid-row: 4; margin-top: 1rem; }
+}
