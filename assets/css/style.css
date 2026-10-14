@@ -1863,7 +1863,7 @@ body::before {
    сначала маленькое фото в центре экрана с подписью и стрелкой «нажмите»;
    по нажатию фото раскрывается во всю ширину, выезжают заголовок и подзаголовок, ниже — текст
    ========================================================================== */
-.ab { position: relative; padding-top: var(--sec); --thumb: min(30rem, 60vw); }
+.ab { position: relative; padding-top: var(--sec); --thumb: min(40rem, 72vw); }
 .ab.is-thumb { height: 100svh; min-height: 62rem; overflow: hidden; }
 .ab__inner { max-width: 128rem; margin: 0 auto; padding: 0 var(--pad); }
 .ab__num { display: inline-block; font-size: 1.6rem; font-weight: 500; letter-spacing: .08em; will-change: transform; }
@@ -1893,14 +1893,25 @@ body::before {
 .ab__cap {
   position: absolute; left: 0; top: 0;
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 1.5rem; letter-spacing: .08em; text-transform: uppercase;
+  font-size: 1.8rem; letter-spacing: .02em;
   pointer-events: none;
 }
 .ab:not(.is-thumb) .ab__cap { display: none; }
 .ab__captitle { font-weight: 500; }
-.ab__hint { display: inline-flex; align-items: center; gap: .8rem; text-transform: lowercase; color: var(--orange); }
-.ab__hint svg { width: 1.2rem; height: 1.8rem; animation: abHint 1.8s cubic-bezier(.45, 0, .2, 1) infinite; }
-@keyframes abHint { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-.6rem); } }
+/* значок в уголке фото: «раскрыть» — маленький, молочный, мягко пульсирует */
+.ab__hint {
+  position: absolute; right: 1.4rem; bottom: 1.4rem; z-index: 1;
+  display: grid; place-items: center;
+  width: 3.8rem; height: 3.8rem; border-radius: 50%;
+  background: rgba(250, 245, 238, .85); color: var(--ink);
+  box-shadow: 0 .6rem 1.4rem -.6rem rgba(43, 35, 35, .5);
+  pointer-events: none;
+  transition: opacity .5s var(--ease), transform .6s var(--ease);
+}
+.ab__hint svg { width: 1.7rem; height: 1.7rem; animation: abHint 2.4s cubic-bezier(.45, 0, .2, 1) infinite; }
+.ab__intro:hover .ab__hint { transform: scale(1.12); }
+.ab:not(.is-thumb) .ab__hint { opacity: 0; transform: scale(.6); }
+@keyframes abHint { 0%, 60%, 100% { transform: scale(1); } 30% { transform: scale(1.18); } }
 .ab__body {
   display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 6rem;
   padding-top: 8rem;

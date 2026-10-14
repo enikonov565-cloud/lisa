@@ -1726,7 +1726,7 @@
   const ab = $('.ab');
   if (ab) {
     const intro = $('.ab__intro', ab), wrapI = $('.ab__imgwrap', ab), img = $('img', wrapI);
-    const num = $('.ab__num', ab), cap = $('.ab__cap', ab), blks = $$('.ab__blk', ab);
+    const cap = $('.ab__cap', ab), blks = $$('.ab__blk', ab);
     const bodyParts = [...$$('.ab__para--main .lead', ab), $('.ab__para--side', ab)];
     const EXIO = 'cubic-bezier(.87, 0, .13, 1)', EXPO = 'cubic-bezier(.19, 1, .22, 1)';
     const rem = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -1734,14 +1734,13 @@
     // маленькое фото — в центр экрана-раздела; номер — над ним, подпись — под ним
     const layout = () => {
       if (opened) return;
-      intro.style.transform = ''; num.style.transform = '';
+      intro.style.transform = '';
       const sr = ab.getBoundingClientRect(), ir = intro.getBoundingClientRect();
       const padTop = parseFloat(getComputedStyle(ab).paddingTop);
       shiftY = (sr.top + padTop + (sr.height - padTop) / 2) - (ir.top + ir.height / 2);
       intro.style.transform = `translateY(${shiftY}px)`;
       const t = { l: ir.left, t: ir.top + shiftY, w: ir.width, h: ir.height };
-      const nr = num.getBoundingClientRect(), off = rem() * 1.4;
-      num.style.transform = `translate(${t.l - nr.left}px, ${t.t - nr.top - nr.height - off}px)`;
+      const off = rem() * 1.4;
       cap.style.left = (t.l - sr.left) + 'px';
       cap.style.top = (t.t + t.h - sr.top + off) + 'px';
       cap.style.width = t.w + 'px';
@@ -1764,16 +1763,14 @@
       intro.style.transform = '';
       const r1 = intro.getBoundingClientRect();
       intro.removeAttribute('role'); intro.removeAttribute('tabindex'); intro.removeAttribute('aria-label');
-      if (reduced) { num.style.transform = ''; return; }
+      if (reduced) return;
       const D = 1200;
       const anims = [
         intro.animate([{ width: r0.width + 'px', height: r0.height + 'px', transform: `translateY(${shiftY}px)` },
                        { width: r1.width + 'px', height: r1.height + 'px', transform: 'translateY(0)' }], { duration: D, easing: EXIO }),
         img.animate([{ objectPosition: '50% 50%' }, { objectPosition: '50% 28%' }], { duration: D, easing: EXIO }),
         wrapI.animate([{ transform: wrapT === 'none' ? 'scale(1)' : wrapT }, { transform: 'scale(1)' }], { duration: D, easing: EXIO, fill: 'forwards' }),
-        num.animate([{ transform: num.style.transform || 'none' }, { transform: 'none' }], { duration: D, easing: EXIO }),
       ];
-      num.style.transform = '';
       // заголовок и подзаголовок выезжают снизу с лёгким поворотом, по очереди
       blks.forEach((el, i) => el.animate([{ transform: 'translateY(115%) rotate(3deg)' }, { transform: 'none' }], { duration: 900, delay: 750 + i * 300, easing: EXPO, fill: 'backwards' }));
       // текст ниже проявляется следом
