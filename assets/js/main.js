@@ -1798,7 +1798,7 @@
   /* ---------- «О чём мои кадры»: горизонтальная лента при прокрутке (по образцу Gooey Hover) ---------- */
   const gsec = $('.genres');
   if (gsec && !reduced) {
-    const track = $('.genres__grid', gsec), bgTitle = $('#genres-title', gsec), bar = $('.genres__progress span', gsec);
+    const track = $('.genres__grid', gsec), bgTitle = $('#genres-title', gsec);
     const mqH = window.matchMedia('(min-width: 1024px)');
     // крупные названия поверх карточек: первая часть / вторая со сдвигом; буквы — для смены цвета
     const names = $$('.genre', gsec).map((card) => {
@@ -1843,7 +1843,6 @@
         cur += (p - cur) * 0.08;   // мягкое «догоняние», как плавная прокрутка в образце
         if (Math.abs(p - cur) < 0.0004) cur = p;
         track.style.transform = `translate3d(${-cur * dist}px, 0, 0)`;
-        bar.style.transform = `scaleX(${0.05 + cur * 0.95})`;
       }
       requestAnimationFrame(frame);
     };
