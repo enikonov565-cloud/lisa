@@ -1769,18 +1769,33 @@ body::before {
 .text-row { position: relative; display: block; overflow: hidden; white-space: nowrap; }
 .text-row { margin: -.12em 0; }
 .text-row > span { display: block; position: relative; padding: .2em .25em .22em 0; }   /* запас под курсив и выносные элементы */
+/* «смотреть работы» — кнопка как «перейти в каталог» на мебельном сайте:
+   слова со стрелкой и тонкая линия, по которой всё время бежит блик;
+   при наведении блик гаснет, стрелка уходит вправо; после нажатия линия плавно возвращается */
 .shapes__link {
-  margin-top: 2.4rem;
-  font-size: clamp(1.8rem, 1.6vw, 3rem); font-weight: 300;
-  pointer-events: auto;
+  --lk: var(--ink); --lk-line: rgba(76, 67, 67, .3);
   position: relative;
+  display: inline-flex; align-items: center; gap: 1.4rem;
+  margin-top: 2.8rem; padding: 0 0 .9rem;
+  font-family: var(--sans); font-weight: 400;
+  font-size: clamp(1.8rem, 1.5vw, 2.6rem); letter-spacing: .02em; line-height: 1.2;
+  color: var(--lk); white-space: nowrap;
+  pointer-events: auto;
 }
-.shapes__cap--light .shapes__link { pointer-events: none; }
+.shapes__cap--light .shapes__link { --lk: var(--milk); --lk-line: rgba(250, 245, 238, .38); pointer-events: none; text-shadow: 0 1px 14px rgba(17, 11, 0, .45); }
 .shapes__link::after {
-  content: ""; position: absolute; left: 0; bottom: -.25em; width: 50%; height: 1px; background: currentColor;
-  transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease);
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--lk) 50%, transparent) no-repeat, var(--lk-line);
+  background-size: 38% 100%, 100% 100%; background-position: -60% 0, 0 0;
+  animation: lkRun 2.6s linear infinite;
+  transition: opacity .45s ease;
 }
-.shapes__link:hover::after { transform: scaleX(1); }
+.shapes__link:hover::after, .shapes__link.is-hover::after { opacity: 0; }
+.shapes__link:active::after, .shapes__link.is-clicked::after { opacity: 1; transition-duration: .8s; }
+.shapes__link .lk-arrow { display: inline-block; transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+.shapes__link:hover .lk-arrow, .shapes__link.is-hover .lk-arrow { transform: translateX(.8rem); }
+@keyframes lkRun { from { background-position: -60% 0, 0 0; } to { background-position: 160% 0, 0 0; } }
+@media (prefers-reduced-motion: reduce) { .shapes__link::after { animation: none; background: var(--lk-line); } }
 /* нижняя строка поверх слайдшоу: лёгкое матовое стекло — читается и на фото, и на фоне */
 .hero--shapes .hero__bar {
   position: relative; z-index: 2;

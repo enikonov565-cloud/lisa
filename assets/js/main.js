@@ -1695,6 +1695,13 @@
     // наведение на ссылку: круг перетекает под заголовок
     slides.forEach((s) => {
       const link = $('figcaption .shapes__link', s.el);
+      // светлая копия кнопки (внутри круга) повторяет всё, что происходит с настоящей
+      const both = $$('.shapes__link', s.el);
+      const mark = (cls, on) => both.forEach((l) => l.classList.toggle(cls, on));
+      link.addEventListener('mouseenter', () => mark('is-hover', true));
+      link.addEventListener('mouseleave', () => { mark('is-hover', false); mark('is-clicked', false); });
+      link.addEventListener('blur', () => mark('is-clicked', false));
+      link.addEventListener('click', () => mark('is-clicked', true));
       link.addEventListener('mouseenter', () => { if (busy || reduced) return; stop([s.wrap]); tw(s.wrap, [{ clipPath: getComputedStyle(s.wrap).clipPath }, { clipPath: CLIP.hover }], { duration: 1000, easing: E.expo }); });
       link.addEventListener('mouseleave', () => { if (busy || reduced) return; stop([s.wrap]); tw(s.wrap, [{ clipPath: getComputedStyle(s.wrap).clipPath }, { clipPath: CLIP.initial }], { duration: 1000, easing: E.expo }); });
     });
