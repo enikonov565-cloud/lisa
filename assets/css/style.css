@@ -2414,3 +2414,15 @@ main > section[hidden] { display: none !important; }
 .genre__cta { display: inline-block !important; gap: 0 !important; white-space: nowrap; }
 .genre__cta .lk-arrow { margin-left: .6rem; }
 @media (min-width: 1024px) { .genres.is-v .genre:nth-child(odd) { margin-right: 5vw; } }   /* название левой колонки не выходит за поле 60 */
+/* === «Мой подход и гарантии»: единый ритм текстов на всех слайдах ===
+   название (шрифт с засечками, 0.9 заголовка страницы, интерлиньяж 1)
+   → 1.2rem → продолжение (H3: 24, курсив с засечками, интерлиньяж 1.2)
+   → 2.4rem → пояснение (текст: 20, Inter, интерлиньяж 1.35) → кнопка внизу */
+.lm__copy .lm__title { line-height: 1 !important; }
+.lm__copy .lm__sub,
+.lm__copy .lm__title.has-desc .lm__sub { margin-top: 1.2rem; font-size: var(--t-h3); line-height: 1.2; letter-spacing: .01em; }
+.lm__copy .lm__text { margin-top: 2.4rem; gap: 0; }
+.lm__copy .lm__desc { font-size: var(--t-text); line-height: 1.35; letter-spacing: .01em; max-width: 34rem; }
+@media (min-width: 1024px) {
+  .lm__slide--layout-2 .lm__copy { grid-row-start: 7; }   /* не упирается в фото сверху */
+}
