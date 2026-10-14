@@ -1962,3 +1962,70 @@ body::before {
 
 /* пока «Кто я» не раскрыт — после него сразу футер; остальные страницы появляются при раскрытии (main.js) */
 main > section[hidden] { display: none !important; }
+
+/* ==========================================================================
+   «О ЧЁМ МОИ КАДРЫ» — оформление и движение карточек по образцу Gooey Hover (Codrops):
+   при прокрутке страницы лента высоких карточек едет вбок, карточки стоят лесенкой,
+   крупные названия (шрифт с засечками) выходят за край карточки, на фоне — огромная
+   бледная надпись без засечек, внизу полоска прогресса. Переворот карточек — прежний.
+   ========================================================================== */
+.genres__progress { display: none; }
+@media (min-width: 1024px) {
+  .genres.is-h { padding-top: 0; }
+  .genres.is-h .genres__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .genres.is-h .wrap { position: relative; height: 100%; padding: 0; }
+  /* фоновая надпись */
+  .genres.is-h .genres__head { position: absolute; inset: 0; margin: 0; pointer-events: none; display: block; }
+  .genres.is-h #genres-title {
+    position: absolute; top: 11rem; left: var(--pad); z-index: 0;
+    font-family: var(--sans); font-weight: 200; text-transform: uppercase;
+    font-size: calc(4vw + 8rem); line-height: .975; white-space: nowrap;
+    color: var(--ink); opacity: .1;
+    will-change: transform;
+  }
+  .genres.is-h .genres__head .note { position: absolute; left: var(--pad); bottom: 4.4rem; z-index: 1; opacity: 1; transform: none; }
+  /* лента */
+  .genres.is-h .genres__grid {
+    position: relative; z-index: 1;
+    display: flex; flex-wrap: nowrap; align-items: center;
+    width: max-content; height: 100%; gap: 0;
+    padding-right: 10vw;
+    will-change: transform;
+  }
+  .genres.is-h .genre { flex: 0 0 auto; width: clamp(25rem, 40vmin, 56rem); margin-left: 20vw; position: relative; }
+  .genres.is-h .genre:nth-child(odd) { top: 8vh; }
+  .genres.is-h .genre:nth-child(even) { top: -8vh; }
+  .genres.is-h .genre__img { aspect-ratio: 1 / 1.3636; }
+  .genres.is-h .genre__front .genre__title { display: none; }
+  /* название поверх карточки, выходит за её левый край; вторая строка — со сдвигом */
+  .genre__name {
+    position: absolute; left: -45%; bottom: 3.6rem; z-index: 3;
+    margin: 0; pointer-events: none;
+    font-family: var(--display); font-weight: 400; text-transform: uppercase;
+    font-size: calc(2rem + 2.5vw); line-height: 1; letter-spacing: .01em; white-space: nowrap;
+    transition: opacity .5s var(--ease);
+  }
+  .genre__name > span { display: block; }
+  .genre__name > span + span { margin-left: 23%; }
+  .genre.is-flipped .genre__name { opacity: 0; }
+  .genre__name .gc { color: var(--ink); transition: color .4s var(--ease); }
+  .genre__name .gc.on-card { color: var(--milk); text-shadow: 0 0 .4em rgba(43, 35, 35, .35); }
+  .genre:hover .genre__name .gc.on-card { color: #fff; }
+  /* полоска прогресса */
+  .genres.is-h .genres__progress {
+    display: block; position: absolute; left: calc(50% - 6.5rem); bottom: 5%; z-index: 2;
+    width: 13rem; height: .4rem; overflow: hidden;
+    border-radius: .4rem; background: rgba(76, 67, 67, .15);
+  }
+  .genres__progress span {
+    display: block; width: 100%; height: 100%;
+    border-radius: .4rem; background: var(--ink);
+    transform-origin: left center; transform: scaleX(.05);
+  }
+  /* оборот карточки: название — шрифтом с засечками */
+  .genres.is-h .genre__back-title { font-family: var(--display); text-transform: uppercase; }
+}
+.genre__name { display: none; }
+@media (min-width: 1024px) { .genres.is-h .genre__name { display: block; } }
+/* названия категорий — шрифтом с засечками на любой ширине */
+.genre__title, .genre__back-title { font-family: var(--display); font-weight: 400; }

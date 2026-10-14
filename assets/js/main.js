@@ -1795,6 +1795,61 @@
     intro.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   }
 
+  /* ---------- «О чём мои кадры»: горизонтальная лента при прокрутке (по образцу Gooey Hover) ---------- */
+  const gsec = $('.genres');
+  if (gsec && !reduced) {
+    const track = $('.genres__grid', gsec), bgTitle = $('#genres-title', gsec), bar = $('.genres__progress span', gsec);
+    const mqH = window.matchMedia('(min-width: 1024px)');
+    // крупные названия поверх карточек: первая часть / вторая со сдвигом; буквы — для смены цвета
+    const names = $$('.genre', gsec).map((card) => {
+      const t = $('.genre__title', card).textContent.trim();
+      const m = /^(\S+-)(.+)$/.exec(t) || /^(\S+)\s+(.+)$/.exec(t);
+      const parts = m ? [m[1], m[2]] : [t];
+      const el = document.createElement('p');
+      el.className = 'genre__name'; el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = parts.map((p) => '<span>' + [...p].map((ch) => '<span class="gc">' + ch + '</span>').join('') + '</span>').join('');
+      card.appendChild(el);
+      return { card, el, chars: $$('.gc', el), img: $('.genre__img', card) };
+    });
+    // буквы над фото — светлые, над фоном — тёмные (положение названия относительно карточки постоянно)
+    const paintNames = () => names.forEach(({ chars, img }) => {
+      const ir = img.getBoundingClientRect();
+      chars.forEach((ch) => {
+        const r = ch.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+        ch.classList.toggle('on-card', x > ir.left && x < ir.right && y > ir.top && y < ir.bottom);
+      });
+    });
+    let dist = 0, cur = 0, run = false, on = false, offTitle = 0;
+    const layout = () => {
+      on = mqH.matches && !gsec.hidden;
+      gsec.classList.toggle('is-h', on);
+      if (!on) { gsec.style.height = ''; track.style.transform = ''; bgTitle.style.transform = ''; return; }
+      dist = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
+      gsec.style.height = (window.innerHeight + dist) + 'px';
+      offTitle = Math.min(dist, bgTitle.scrollWidth * 0.25);
+      requestAnimationFrame(paintNames);
+    };
+    const frame = () => {
+      if (!run) return;
+      if (on) {
+        const top = gsec.getBoundingClientRect().top;
+        const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
+        cur += (p - cur) * 0.08;   // мягкое «догоняние», как плавная прокрутка в образце
+        if (Math.abs(p - cur) < 0.0004) cur = p;
+        track.style.transform = `translate3d(${-cur * dist}px, 0, 0)`;
+        bgTitle.style.transform = `translate3d(${-cur * offTitle}px, 0, 0)`;
+        bar.style.transform = `scaleX(${0.05 + cur * 0.95})`;
+      }
+      requestAnimationFrame(frame);
+    };
+    new IntersectionObserver(([e]) => { const was = run; run = e.isIntersecting; if (run && !was) requestAnimationFrame(frame); }).observe(gsec);
+    layout();
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(layout);
+    window.addEventListener('load', layout);
+    window.addEventListener('resize', layout);
+    mqH.addEventListener('change', layout);
+  }
+
   $('#year').textContent = new Date().getFullYear();
 
   /* ---------------- типографика ----------------
