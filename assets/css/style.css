@@ -2328,3 +2328,33 @@ main > section[hidden] { display: none !important; }
 .lm__text--right .lm__link { align-self: flex-end; }
 .lm__link .lk-arrow { margin-left: 1.2rem; }
 @media (max-width: 1023px) { .lm__text .lm__link { align-self: flex-start; } }
+/* === раскладка текстов без наползаний: название → продолжение → пояснение → кнопка внизу, один левый край === */
+@media (min-width: 1024px) {
+  .lm { top: 9rem; height: calc(100vh - 9rem); height: calc(100svh - 9rem); min-height: 56rem; }   /* сцена под шапкой, верх фото не закрыт */
+  .lm-track { height: calc(4 * 70vh + 100vh - 9rem); }
+  .lm__title { font-size: min(9vw, 16vh); height: auto; grid-row-end: span 3; }
+  .lm__sub { margin-top: .6rem; }
+  .lm__text { grid-row-end: 21 !important; grid-column-end: span 6 !important; padding: 0 0 2.4rem; text-align: left; align-items: flex-start; }
+  .lm__slide--layout-1 .lm__title { grid-row-start: 10; grid-column-start: 4; }
+  .lm__slide--layout-1 .lm__text { grid-row-start: 16; grid-column-start: 4; }
+  .lm__slide--layout-2 .lm__title { grid-row-start: 6; grid-column-start: 11; }
+  .lm__slide--layout-2 .lm__text { grid-row-start: 11; grid-column-start: 11; }
+  .lm__slide--layout-3 .lm__title { grid-row-start: 9; grid-column-start: 9; }
+  .lm__slide--layout-3 .lm__text { grid-row-start: 15; grid-column-start: 9; }
+  .lm__slide--layout-4 .lm__title { grid-row-start: 11; grid-column-start: 2; }
+  .lm__slide--layout-4 .lm__text { grid-row-start: 17; grid-column-start: 2; }
+  /* точки — столбиком у левого края по центру, не мешают кнопке */
+  .lm__dots { left: 0; bottom: auto; top: 50%; transform: translateY(-50%); flex-direction: column; }
+  .lm__dot.is-on { width: 1rem; height: 3.2rem; }
+  .lm__dot { transition: height .6s var(--ease), opacity .4s var(--ease), background-color .3s var(--ease); }
+}
+/* кнопка — аккуратная, в размер текста: тонкая линия, небольшая стрелка */
+.lm__text .lm__link { font-size: max(1.8rem, 14px); letter-spacing: .02em; padding-bottom: .7rem; }
+.lm__link .lk-arrow { margin-left: .6rem; font-size: .9em; }
+.lm__desc { font-size: max(2rem, 14px); line-height: 1.4; max-width: 36rem; }
+@media (min-width: 1024px) {
+  .lm__sub { margin-top: 1.6rem; }   /* продолжение не касается выносных элементов названия */
+  .lm__slide--layout-1 .lm__title { grid-column-start: 5; }
+  .lm__slide--layout-1 .lm__text { grid-column-start: 5; }
+}
+@media (min-width: 1024px) { .lm__sub { margin-top: 2.6rem; } }   /* под хвостами букв «р», «ц», «з» */
