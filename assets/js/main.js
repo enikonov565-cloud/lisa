@@ -1965,7 +1965,7 @@
       A.el.classList.add('is-leaving'); A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
       B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden');
       paint();
-      const D = 1300, ST = 90, up = dir > 0 ? -1 : 1;
+      const D = 1000, ST = 70, up = dir > 0 ? -1 : 1;
       const anims = [];
       A.layers.forEach((L, k) => {
         const inner = $('.lms__in', L), img = $('img', L);
@@ -1977,12 +1977,14 @@
         anims.push(inner.animate([{ transform: `translateY(${-up * 101}%)` }, { transform: 'translateY(0)' }], { duration: D, delay: 200 + k * ST, easing: EX, fill: 'both' }));
         if (img) img.animate([{ transform: `translateY(${up * 40}%)` }, { transform: 'translateY(0)' }], { duration: D, delay: 200 + k * ST, easing: EX, fill: 'both' });
       });
-      Promise.all(anims.map((a) => a.finished)).then(() => {
+      // завершаем по таймеру — смена не «залипает», даже если анимацию прервали или вкладка была свёрнута
+      const total = 200 + (B.layers.length - 1) * ST + D + 60;
+      setTimeout(() => {
         A.el.classList.remove('is-leaving');
         [A, B].forEach((S) => S.layers.forEach((L) => { $('.lms__in', L).getAnimations().forEach((a) => a.cancel()); const im = $('img', L); if (im) im.getAnimations().forEach((a) => a.cancel()); }));
         busy = false; paint();
-        if (want !== cur) go(want > cur ? 1 : -1, want);   // прокрутили дальше, пока шла смена — догоняем
-      });
+        if (want !== cur) go(want > cur ? 1 : -1);   // прокрутили дальше, пока шла смена — догоняем по одному слайду
+      }, total);
     };
     // слайд выбирается прокруткой: сцена стоит на экране, каждые «полэкрана» прокрутки — следующая страница
     const trackEl = lms.parentElement;
@@ -1992,7 +1994,7 @@
       if (span <= 0) return;
       const p = Math.min(0.999, Math.max(0, -tr.top / span));
       want = Math.floor(p * slides.length);
-      if (want !== cur && !busy) go(want > cur ? 1 : -1, want);
+      if (want !== cur && !busy) go(want > cur ? 1 : -1);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
