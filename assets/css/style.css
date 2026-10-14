@@ -2382,3 +2382,15 @@ main > section[hidden] { display: none !important; }
 }
 .lm__copy .lm__sub { margin-top: -.3em; }   /* продолжение сразу под строкой названия, по линии основания букв */
 .lm__copy .lm__title.has-desc .lm__sub { margin-top: .25em; }
+/* все фото — одинаковое скругление 20 по всем углам (обрезка не теряется при движении слоёв) */
+.lm__fig { clip-path: inset(0 round var(--radius)); isolation: isolate; }
+/* название слайда не крупнее заголовка страницы */
+.lm__title, .lm__copy .lm__title { font-size: calc(var(--t-h1) * .9) !important; }
+.lm__copy .lm__sub { font-size: .42em; }
+/* точки — тонкие и лёгкие */
+.lm__dots { gap: .9rem; }
+.lm__dot { width: .5rem; height: .5rem; min-width: 4px; min-height: 4px; opacity: .35; }
+.lm__dot.is-on { opacity: .9; }
+@media (min-width: 1024px) { .lm__dot.is-on { width: .5rem; height: 2.4rem; } }
+@media (max-width: 1023px) { .lm__dot.is-on { width: 2.4rem; height: .5rem; } }
+.lm__fig--main .lm__img { max-width: none; }   /* запас под «плавание» — картинка шире рамки, края не оголяются */
