@@ -1959,3 +1959,6 @@ body::before {
 }
 @media (max-width: 1023px) { :root { --t-h2: 2.4rem; } .note { font-size: 1.85rem; } }
 @media (max-width: 1023px) { .ab__sub { white-space: normal; text-wrap: balance; font-size: 1.85rem; } }
+
+/* разделы временно скрыты (после «Кто я» сразу футер); вернуть — убрать атрибут hidden в index.html */
+main > section[hidden] { display: none !important; }
