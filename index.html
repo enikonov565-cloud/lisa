@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610141822">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610141905">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -298,48 +298,65 @@
           <p class="note rv" style="--d:.1s">За каждой цифрой — люди, бренды и истории, которые я сохранила в фотографиях.</p>
         </div>
 
-        <div class="bento">
-          <div class="bento__col bento__col--1">
-            <figure class="bento__img bento__img--fox rv">
-              <img src="assets/img/w/still-spiral.jpg" width="120" height="120" loading="lazy" alt="Спираль из деревянных палочек на тёмном фоне">
-            </figure>
-            <div class="bento__box bento__box--b rv" style="--d:.1s">
-              <p>без&nbsp;поз и&nbsp;напряжения</p>
+        <!-- по мотивам Codrops «On-Scroll SVG Filter Effect» (MIT): при прокрутке слова названия
+             расходятся по краям, а фото проявляется через маску с «живым» краем -->
+        <div class="os">
+          <div class="os-wrap">
+            <div class="os-intro"><div class="os-tw" aria-hidden="true"><span class="os-title os-title--up">Без поз</span><span class="os-title os-title--down">и напряжения</span></div></div>
+            <div class="os-layout os-layout--1">
+              <h3 class="os-h"><span class="os-title os-title--up">Без поз</span> <span class="os-title os-title--down">и напряжения</span></h3>
+              <svg class="os-img" viewBox="0 0 933 1400" style="aspect-ratio:933/1400" role="img" aria-label="Портрет девушки в мягком свете на тёмном фоне">
+                <defs>
+                  <filter id="osFilter1"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="50" xChannelSelector="R" yChannelSelector="G"/></filter>
+                  <mask id="osMask1"><circle cx="50%" cy="50%" r="0" data-final="862" fill="white" class="os-mask" style="filter:url(#osFilter1)"/></mask>
+                </defs>
+                <image href="assets/img/w/studio-gaze.jpg" width="933" height="1400" preserveAspectRatio="xMidYMid slice" mask="url(#osMask1)"/>
+              </svg>
+              <p class="os-text">Гарантирую комфортную съёмку.</p>
             </div>
           </div>
-          <figure class="bento__img bento__img--portrait rv" style="--d:.08s">
-            <img src="assets/img/w/street-curls.jpg" width="1200" height="1200" loading="lazy" alt="Девушка с кудрявыми волосами на фоне городских зданий">
-          </figure>
-          <div class="bento__col bento__col--3">
-            <div class="bento__box bento__box--t rv" style="--d:.14s">
-              <p>эмоции в&nbsp;каждом снимке</p>
+          <div class="os-wrap">
+            <div class="os-intro"><div class="os-tw" aria-hidden="true"><span class="os-title os-title--up">Эмоции</span><span class="os-title os-title--down">в каждом снимке</span></div></div>
+            <div class="os-layout os-layout--2">
+              <h3 class="os-h"><span class="os-title os-title--up">Эмоции</span> <span class="os-title os-title--down">в каждом снимке</span></h3>
+              <svg class="os-img" viewBox="0 0 1400 933" style="aspect-ratio:1400/933" role="img" aria-label="Студийный портрет на зелёном фоне">
+                <defs>
+                  <filter id="osFilter2"><feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="1" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" result="displacement" scale="100" xChannelSelector="R" yChannelSelector="G"/><feMorphology operator="dilate" radius="2" result="morph" in="displacement"/></filter>
+                  <mask id="osMask2"><circle cx="50%" cy="50%" r="0" data-final="862" fill="white" class="os-mask" style="filter:url(#osFilter2)"/></mask>
+                </defs>
+                <image href="assets/img/w/studio-green.jpg" width="1400" height="933" preserveAspectRatio="xMidYMid slice" mask="url(#osMask2)"/>
+              </svg>
+              <p class="os-text">Гарантирую внимательное отношение к&nbsp;вашим пожеланиям.</p>
             </div>
-            <figure class="bento__img bento__img--owl rv" style="--d:.2s">
-              <img src="assets/img/w/still-bottles.jpg" width="120" height="120" loading="lazy" alt="Тёмные флаконы в мягком боковом свете">
-            </figure>
           </div>
-          <aside class="guarantee rv" style="--d:.24s" aria-labelledby="guarantee-title">
-            <h3 class="guarantee__title glow" id="guarantee-title">
-              <svg viewBox="0 0 96 96" aria-hidden="true"><path d="M93.781 51.578C95 50.969 96 49.359 96 48c0-1.375-1-2.969-2.219-3.578 0 0-22.868-1.514-31.781-10.422-8.915-8.91-10.438-31.781-10.438-31.781C50.969 1 49.375 0 48 0s-2.969 1-3.594 2.219c0 0-1.5 22.87-10.406 31.781-8.908 8.913-31.781 10.422-31.781 10.422C1 45.031 0 46.625 0 48c0 1.359 1 2.969 2.219 3.578 0 0 22.873 1.51 31.781 10.422 8.906 8.911 10.406 31.781 10.406 31.781C45.031 95 46.625 96 48 96s2.969-1 3.562-2.219c0 0 1.523-22.871 10.438-31.781 8.913-8.908 31.781-10.422 31.781-10.422Z"/></svg><svg viewBox="0 0 96 96" aria-hidden="true"><path d="M93.781 51.578C95 50.969 96 49.359 96 48c0-1.375-1-2.969-2.219-3.578 0 0-22.868-1.514-31.781-10.422-8.915-8.91-10.438-31.781-10.438-31.781C50.969 1 49.375 0 48 0s-2.969 1-3.594 2.219c0 0-1.5 22.87-10.406 31.781-8.908 8.913-31.781 10.422-31.781 10.422C1 45.031 0 46.625 0 48c0 1.359 1 2.969 2.219 3.578 0 0 22.873 1.51 31.781 10.422 8.906 8.911 10.406 31.781 10.406 31.781C45.031 95 46.625 96 48 96s2.969-1 3.562-2.219c0 0 1.523-22.871 10.438-31.781 8.913-8.908 31.781-10.422 31.781-10.422Z"/></svg><svg viewBox="0 0 96 96" aria-hidden="true"><path d="M93.781 51.578C95 50.969 96 49.359 96 48c0-1.375-1-2.969-2.219-3.578 0 0-22.868-1.514-31.781-10.422-8.915-8.91-10.438-31.781-10.438-31.781C50.969 1 49.375 0 48 0s-2.969 1-3.594 2.219c0 0-1.5 22.87-10.406 31.781-8.908 8.913-31.781 10.422-31.781 10.422C1 45.031 0 46.625 0 48c0 1.359 1 2.969 2.219 3.578 0 0 22.873 1.51 31.781 10.422 8.906 8.911 10.406 31.781 10.406 31.781C45.031 95 46.625 96 48 96s2.969-1 3.562-2.219c0 0 1.523-22.871 10.438-31.781 8.913-8.908 31.781-10.422 31.781-10.422Z"/></svg><svg viewBox="0 0 96 96" aria-hidden="true"><path d="M93.781 51.578C95 50.969 96 49.359 96 48c0-1.375-1-2.969-2.219-3.578 0 0-22.868-1.514-31.781-10.422-8.915-8.91-10.438-31.781-10.438-31.781C50.969 1 49.375 0 48 0s-2.969 1-3.594 2.219c0 0-1.5 22.87-10.406 31.781-8.908 8.913-31.781 10.422-31.781 10.422C1 45.031 0 46.625 0 48c0 1.359 1 2.969 2.219 3.578 0 0 22.873 1.51 31.781 10.422 8.906 8.911 10.406 31.781 10.406 31.781C45.031 95 46.625 96 48 96s2.969-1 3.562-2.219c0 0 1.523-22.871 10.438-31.781 8.913-8.908 31.781-10.422 31.781-10.422Z"/></svg><svg viewBox="0 0 96 96" aria-hidden="true"><path d="M93.781 51.578C95 50.969 96 49.359 96 48c0-1.375-1-2.969-2.219-3.578 0 0-22.868-1.514-31.781-10.422-8.915-8.91-10.438-31.781-10.438-31.781C50.969 1 49.375 0 48 0s-2.969 1-3.594 2.219c0 0-1.5 22.87-10.406 31.781-8.908 8.913-31.781 10.422-31.781 10.422C1 45.031 0 46.625 0 48c0 1.359 1 2.969 2.219 3.578 0 0 22.873 1.51 31.781 10.422 8.906 8.911 10.406 31.781 10.406 31.781C45.031 95 46.625 96 48 96s2.969-1 3.562-2.219c0 0 1.523-22.871 10.438-31.781 8.913-8.908 31.781-10.422 31.781-10.422Z"/></svg>
-              <span class="glow__base">Что&nbsp;я&nbsp;гарантирую каждому&nbsp;клиенту</span>
-              <span class="glow__face" aria-hidden="true">Что&nbsp;я&nbsp;гарантирую каждому&nbsp;клиенту</span>
-            </h3>
-            <ul class="guarantee__list">
-              <li><img src="assets/img/check.svg" width="24" height="24" alt="">комфортную съёмку</li>
-              <li><img src="assets/img/check.svg" width="24" height="24" alt="">внимательное отношение к&nbsp;вашим пожеланиям</li>
-              <li><img src="assets/img/check.svg" width="24" height="24" alt="">бережную обработку фотоснимков</li>
-            </ul>
-            <div class="guarantee__foot">
-              <img class="guarantee__line" src="assets/img/line-light.svg" width="320" height="5.7735" alt="">
-              <a class="guarantee__link" href="#works">
-                <span class="glow glow--link">
-                  <span class="glow__base">мои работы</span>
-                  <span class="glow__face" aria-hidden="true">мои работы</span>
-                </span>
-                <img src="assets/img/arrow-light.svg" width="30" height="5.7735" alt="">
-              </a>
+          <div class="os-wrap">
+            <div class="os-intro"><div class="os-tw" aria-hidden="true"><span class="os-title os-title--up">Бережная</span><span class="os-title os-title--down">обработка</span></div></div>
+            <div class="os-layout os-layout--3">
+              <h3 class="os-h"><span class="os-title os-title--up">Бережная</span> <span class="os-title os-title--down">обработка</span></h3>
+              <svg class="os-img" viewBox="0 0 933 1400" style="aspect-ratio:933/1400" role="img" aria-label="Девушка в красном среди цветущей сирени">
+                <defs>
+                  <filter id="osFilter3"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="80" result="displacement" xChannelSelector="R" yChannelSelector="G"/></filter>
+                  <mask id="osMask3"><path d="M 0 700 Q 467 700 933 700 Q 467 700 0 700" data-w="933" data-h="1400" fill="white" class="os-mask" style="filter:url(#osFilter3)"/></mask>
+                </defs>
+                <image href="assets/img/w/street-lilac.jpg" width="933" height="1400" preserveAspectRatio="xMidYMid slice" mask="url(#osMask3)"/>
+              </svg>
+              <p class="os-text">Гарантирую бережную обработку фотоснимков.</p>
             </div>
-          </aside>
+          </div>
+          <div class="os-wrap">
+            <div class="os-intro"><div class="os-tw" aria-hidden="true"><span class="os-title os-title--up">Мои</span><span class="os-title os-title--down">работы</span></div></div>
+            <div class="os-layout os-layout--4">
+              <h3 class="os-h"><span class="os-title os-title--up">Мои</span> <span class="os-title os-title--down">работы</span></h3>
+              <svg class="os-img" viewBox="0 0 933 1400" style="aspect-ratio:933/1400" role="img" aria-label="Девушка в красном сидит в траве на склоне">
+                <defs>
+                  <filter id="osFilter4"><feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="150" xChannelSelector="R" yChannelSelector="G"/></filter>
+                  <mask id="osMask4"><circle cx="50%" cy="50%" r="0" data-final="862" fill="white" class="os-mask" style="filter:url(#osFilter4)"/></mask>
+                </defs>
+                <image href="assets/img/w/street-grass.jpg" width="933" height="1400" preserveAspectRatio="xMidYMid slice" mask="url(#osMask4)"/>
+              </svg>
+              <p class="os-text"><a class="shapes__link os-link" href="#works">смотреть работы <span class="lk-arrow" aria-hidden="true">→</span></a></p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -623,8 +640,8 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610141822" defer></script>
+  <script src="assets/js/main.js?v=202610141905" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/ribbon-glow.js?v=202610141822" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610141905" defer></script>
 </body>
 </html>

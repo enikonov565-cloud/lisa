@@ -1859,6 +1859,70 @@
     mqH.addEventListener('change', layout);
   }
 
+  /* ---------- «Мой подход и гарантии»: On-Scroll SVG Filter (Codrops) ----------
+     слова названия «перелетают» из центра на свои места (FLIP), маска с рваным краем раскрывает фото */
+  const osItems = $$('.os-wrap').map((wrap) => {
+    const tw = $('.os-tw', wrap);
+    const ghosts = $$('.os-title', tw);
+    const words = $$('.os-layout .os-title', wrap);
+    // буквы — по отдельности, чтобы цвет менялся ровно по краю проявившегося фото
+    words.forEach((w) => { w.innerHTML = [...w.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="oc">' + ch + '</span>').join(''); });
+    const chars = words.flatMap((w) => $$('.oc', w));
+    const svg = $('.os-img', wrap);
+    const mask = $('.os-mask', wrap), image = $('image', wrap);
+    const isCircle = mask.tagName.toLowerCase() === 'circle';
+    return { wrap, tw, ghosts, words, chars, svg, mask, image, isCircle, d: [], cur: reduced ? 1 : 0 };
+  });
+  if (osItems.length) {
+    const measure = () => osItems.forEach((it) => {
+      it.words.forEach((w) => { w.style.transform = ''; });
+      it.d = it.words.map((w, i) => {
+        const a = it.ghosts[i].getBoundingClientRect(), b = w.getBoundingClientRect();
+        return [a.left - b.left, a.top - b.top];
+      });
+    });
+    const lens = (it, p) => {
+      const W = +it.mask.dataset.w, H = +it.mask.dataset.h, mx = W / 2, my = H / 2;
+      const down = my + (H * 1.65 - my) * p, up = my + (-H * 0.65 - my) * p;
+      return `M 0 ${my} Q ${mx} ${down} ${W} ${my} Q ${mx} ${up} 0 ${my}`;
+    };
+    const apply = (it) => {
+      const p = it.cur, q = 1 - p;
+      it.words.forEach((w, i) => { const [dx, dy] = it.d[i] || [0, 0]; w.style.transform = `translate3d(${dx * q}px, ${dy * q}px, 0)`; });
+      if (it.isCircle) it.mask.setAttribute('r', (+it.mask.dataset.final * p).toFixed(1));
+      else it.mask.setAttribute('d', lens(it, p));
+      it.image.style.transform = it.isCircle ? `scale(${1 + 0.2 * p})` : '';
+      it.image.style.filter = `brightness(${100 + 12 * p}%)`;
+      // буква над видимой частью фото — светлая, над фоном — тёмная
+      const sr = it.svg.getBoundingClientRect(), k = sr.width / it.svg.viewBox.baseVal.width;
+      const cx = sr.left + sr.width / 2, cy = sr.top + sr.height / 2;
+      const rad = it.isCircle ? +it.mask.dataset.final * p * k : 0;
+      it.chars.forEach((ch) => {
+        const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height * 0.55;
+        const inBox = x > sr.left && x < sr.right && y > sr.top && y < sr.bottom;
+        const seen = inBox && (it.isCircle ? Math.hypot(x - cx, y - cy) < rad * 0.92 : p > 0.6);
+        ch.classList.toggle('on-photo', seen);
+      });
+    };
+    let osRun = false;
+    const osFrame = () => {
+      const vh = window.innerHeight;
+      osItems.forEach((it) => {
+        const t = it.tw.getBoundingClientRect().top;
+        // как в образце: начало — когда названия у нижней кромки экрана, конец — через 40% высоты
+        const target = reduced ? 1 : Math.min(1, Math.max(0, (vh * 0.9 - t) / (vh * 0.4)));
+        it.cur += (target - it.cur) * 0.12;
+        if (Math.abs(target - it.cur) < 0.001) it.cur = target;
+        apply(it);
+      });
+      if (osRun) requestAnimationFrame(osFrame);
+    };
+    const osSec = $('.approach');
+    new IntersectionObserver(([e]) => { const was = osRun; osRun = e.isIntersecting; if (osRun && !was) { measure(); requestAnimationFrame(osFrame); } }).observe(osSec);
+    window.addEventListener('resize', () => { measure(); osItems.forEach(apply); });
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(measure);
+  }
+
   $('#year').textContent = new Date().getFullYear();
 
   /* ---------------- типографика ----------------

@@ -2056,3 +2056,63 @@ main > section[hidden] { display: none !important; }
   .genre__cta:hover .lk-arrow { transform: translateX(.8rem); }
 }
 @media (prefers-reduced-motion: reduce) { .genre__cta::after { animation: none; background: var(--lk-line); } }
+
+/* ==========================================================================
+   «МОЙ ПОДХОД И ГАРАНТИИ» — On-Scroll SVG Filter (Codrops):
+   два слова названия сначала рядом в центре экрана, при прокрутке расходятся по местам,
+   фото проявляется через маску с рваным краем, слегка приближается и светлеет
+   ========================================================================== */
+.os { padding-top: 4rem; }
+.os-wrap { display: grid; grid-template-areas: 'main'; place-items: center; }
+.os-wrap + .os-wrap { margin-top: 30vmax; }
+.os-intro, .os-layout { grid-area: main; }
+.os-intro { height: 100vh; height: 100svh; display: grid; place-items: center; width: 100%; }
+.os-tw { display: flex; gap: .4em; align-items: baseline; justify-content: center; visibility: hidden; }
+.os-title {
+  display: inline-block; position: relative; z-index: 2;
+  font-family: var(--display); font-weight: 400; line-height: .9;
+  font-size: clamp(4rem, 8vw, 13rem); letter-spacing: -.01em; white-space: nowrap;
+  color: var(--ink);
+}
+.os-title--up { font-style: italic; }
+.os-tw .os-title { font-size: clamp(4rem, 8vw, 13rem); }
+.os-h { display: contents; font: inherit; margin: 0; }
+.os-layout { display: grid; gap: 2rem; width: 100%;
+  grid-template-areas: 'up down' 'img img' 'text text'; grid-template-columns: 1fr 1fr; }
+.os-layout .os-title--up { grid-area: up; }
+.os-layout .os-title--down { grid-area: down; }
+.os-img { grid-area: img; display: block; width: 100%; height: auto; border-radius: var(--radius); overflow: hidden; }
+.os-img image { transform-box: fill-box; transform-origin: 50% 50%; will-change: transform, filter; }
+.os-text {
+  grid-area: text; margin: 0;
+  font-size: max(1.8rem, 13px); line-height: 1.35; letter-spacing: .08em; text-transform: uppercase;
+  color: rgba(76, 67, 67, .75);
+}
+.os-text .os-link { text-transform: none; letter-spacing: .02em; }
+@media (min-width: 1024px) {
+  .os-layout .os-title--up { justify-self: end; align-self: start; }
+  .os-layout .os-title--down { justify-self: start; align-self: end; }
+  /* 1: высокое фото по центру, слова — слева сверху и справа снизу */
+  .os-layout--1 { grid-template-areas: 'up img .' 'text img down'; grid-template-columns: 30% auto 30%; grid-template-rows: 1fr 1fr; column-gap: 2vw; }
+  .os-layout--1 .os-img { height: min(84vh, 90rem); width: auto; }
+  .os-layout--1 .os-text { max-width: 28rem; text-align: right; justify-self: end; align-self: end; }
+  /* 2: широкое фото, слова — над ним слева и под ним справа */
+  .os-layout--2 { grid-template-areas: 'up .' 'img img' 'text down'; grid-template-columns: auto auto; justify-content: center; row-gap: 3vh; }
+  .os-layout--2 .os-img { width: 60vw; }
+  .os-layout--2 .os-title--up { justify-self: start; }
+  .os-layout--2 .os-title--down { justify-self: end; align-self: start; margin-top: -.1em; }
+  .os-layout--2 .os-text { max-width: 42rem; justify-self: start; align-self: start; }
+  /* 3: узкое фото между словами, текст ниже */
+  .os-layout--3 { grid-template-areas: 'up img down' 'text text text'; grid-template-columns: 20vw auto 20vw; row-gap: 8vh; column-gap: 2vw; justify-content: center; align-content: center; }
+  .os-layout--3 .os-img { width: min(30vw, 50vh); }
+  .os-layout--3 .os-title--up { justify-self: end; align-self: center; }
+  .os-layout--3 .os-title--down { align-self: center; }
+  .os-layout--3 .os-text { text-align: center; }
+  /* 4: фото по центру, слова сверху и снизу */
+  .os-layout--4 { grid-template-areas: 'up' 'img' 'down' 'text'; grid-template-columns: 1fr; row-gap: 3vh; justify-items: center; }
+  .os-layout--4 .os-img { width: min(34vw, 56vh); }
+  .os-layout--4 .os-title--up, .os-layout--4 .os-title--down { justify-self: center; }
+  .os-layout--4 .os-text { text-align: center; margin-top: 2rem; }
+}
+.os-title .oc { transition: color .35s var(--ease), text-shadow .35s var(--ease); }
+.os-title .oc.on-photo { color: var(--milk); text-shadow: 0 0 .35em rgba(43, 35, 35, .45); }
