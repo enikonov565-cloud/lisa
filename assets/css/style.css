@@ -2187,3 +2187,12 @@ main > section[hidden] { display: none !important; }
 .lms__sub { color: var(--ink); }
 .lms__p { color: var(--ink); font-size: max(2.4rem, 15px); line-height: 1.35; }
 @media (max-width: 1023px) { .lms__sub { font-size: .5em; } }
+
+/* слайды листаются прокруткой: дорожка высотой в несколько экранов, сцена прилипает к экрану */
+.lms-track { position: relative; height: calc(4 * 70vh + 100vh); }
+.lms-track > .lms { position: sticky; top: 0; }
+@media (max-width: 1023px) {
+  .lms-track { height: calc(4 * 60svh + 100svh); }
+  .lms-track > .lms { top: 7rem; }
+}
+.lms__count { font-size: 2.4rem; }

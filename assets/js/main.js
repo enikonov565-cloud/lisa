@@ -1950,9 +1950,11 @@
         ch.classList.toggle('on-photo', rects.some((r) => x > r.left && x < r.right && y > r.top && y < r.bottom));
       });
     };
-    const go = (dir) => {
+    let want = 0;
+    const go = (dir, to) => {
       if (busy) return;
-      const next = (cur + dir + slides.length) % slides.length;
+      const next = to != null ? to : (cur + dir + slides.length) % slides.length;
+      if (next === cur) return;
       const A = slides[cur], B = slides[next];
       cur = next; curEl.textContent = String(cur + 1);
       if (reduced) {
@@ -1979,10 +1981,21 @@
         A.el.classList.remove('is-leaving');
         [A, B].forEach((S) => S.layers.forEach((L) => { $('.lms__in', L).getAnimations().forEach((a) => a.cancel()); const im = $('img', L); if (im) im.getAnimations().forEach((a) => a.cancel()); }));
         busy = false; paint();
+        if (want !== cur) go(want > cur ? 1 : -1, want);   // прокрутили дальше, пока шла смена — догоняем
       });
     };
-    $('.lms__btn--next', lms).addEventListener('click', () => go(1));
-    $('.lms__btn--prev', lms).addEventListener('click', () => go(-1));
+    // слайд выбирается прокруткой: сцена стоит на экране, каждые «полэкрана» прокрутки — следующая страница
+    const trackEl = lms.parentElement;
+    const onScroll = () => {
+      const tr = trackEl.getBoundingClientRect();
+      const span = tr.height - lms.offsetHeight;
+      if (span <= 0) return;
+      const p = Math.min(0.999, Math.max(0, -tr.top / span));
+      want = Math.floor(p * slides.length);
+      if (want !== cur && !busy) go(want > cur ? 1 : -1, want);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
     window.addEventListener('resize', paint);
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(paint);
     new IntersectionObserver(([e]) => { if (e.isIntersecting) paint(); }).observe(lms);
