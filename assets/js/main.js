@@ -1761,6 +1761,9 @@
     const open = () => {
       if (opened) return;
       opened = true;
+      // остальные страницы появляются только после раскрытия «Кто я»; до этого сразу футер
+      $$('main > section[hidden]').forEach((s) => { s.hidden = false; });
+      requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
       const r0 = intro.getBoundingClientRect();
       const wrapT = getComputedStyle(wrapI).transform;
       intro.style.width = ''; intro.style.height = '';
@@ -1783,6 +1786,12 @@
       Promise.all(anims.map((an) => an.finished)).then(() => wrapI.getAnimations().forEach((an) => an.cancel()));
     };
     intro.addEventListener('click', open);
+    // ссылка на скрытую пока страницу (меню, футер, кнопки) — сначала раскрываем «Кто я»
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      const t = a && a.getAttribute('href').length > 1 && document.querySelector(a.getAttribute('href'));
+      if (t && !opened && (t.closest('section[hidden]'))) open();
+    }, true);
     intro.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   }
 

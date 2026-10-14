@@ -1919,8 +1919,7 @@ body::before {
 }
 .ab.is-thumb .ab__body { visibility: hidden; }
 .ab__para { margin: 0; }
-.ab__para--main { display: flex; flex-direction: column; gap: 3rem; text-align: left; width: 50%; }   /* от середины фото до правого края: абзацы в 2 и 3 строки */
-.ab__para--main .lead { text-wrap: balance; }
+.ab__para--main { display: flex; flex-direction: column; gap: 3rem; text-align: left; width: max-content; max-width: 100%; }   /* абзацы в 2 и 3 строки, самая длинная строка — ровно до правого края фото */
 .ab__para--side { grid-column: 3; }
 .ab__para--side strong { font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .ab__hint svg { animation: none; } }
@@ -1961,5 +1960,5 @@ body::before {
 @media (max-width: 1023px) { :root { --t-h2: 2.4rem; } .note { font-size: 1.85rem; } }
 @media (max-width: 1023px) { .ab__sub { white-space: normal; text-wrap: balance; font-size: 1.85rem; } }
 
-/* разделы временно скрыты (после «Кто я» сразу футер); вернуть — убрать атрибут hidden в index.html */
+/* пока «Кто я» не раскрыт — после него сразу футер; остальные страницы появляются при раскрытии (main.js) */
 main > section[hidden] { display: none !important; }
