@@ -1929,3 +1929,33 @@ body::before {
   .ab__sub { font-size: 1.85rem; margin-bottom: 4rem; white-space: nowrap; }   /* подзаголовок — ровно две строки */
   .ab__intro { height: min(50svh, 56rem); }
 }
+
+/* ==========================================================================
+   ЕДИНАЯ ТИПОГРАФИКА — 4 уровня по образцам с первого экрана:
+   H1 — тонкий Inter заглавными (как «НЕСТАНДАРТНЫЕ РЕШЕНИЯ»), курсив с засечками — только как акцент;
+   H2 — Inter Light 32 (как «Лисса Миляева —»);
+   H3 — Inter Light 24 (как текст на карточках);
+   Текст — Inter Light 20 (как подзаголовки разделов).
+   Кнопки, меню и мелкие подписи не трогаем.
+   ========================================================================== */
+:root { --t-h1: clamp(3.4rem, 4.4vw, 8.4rem); --t-h2: 3.2rem; --t-h3: max(2.4rem, 15px); --t-text: max(2rem, 14px); }
+.h1, .ab__title, .wcontent__title {
+  font-family: var(--sans); font-weight: 200; font-style: normal;
+  font-size: var(--t-h1); line-height: .98; letter-spacing: 0;
+  text-transform: uppercase;
+}
+.ab__title { margin: 1.2rem 0 2.4rem; }
+.lead, .genre__title, .genre__back-title, .svc-card__price, .wmenu__title, .wpanel__title, .extras-dialog__title {
+  font-family: var(--sans); font-weight: 300; font-style: normal;
+  font-size: var(--t-h2); line-height: 1.21; letter-spacing: .01em;
+}
+.genre__text, .wcard__title h4, .pdlg__name {
+  font-family: var(--sans); font-weight: 300; font-style: normal;
+  font-size: var(--t-h3); line-height: 1.3; letter-spacing: .01em;
+}
+.note, .ab__sub, .invite__text, .svc__item p {
+  font-family: var(--sans); font-weight: 300; font-style: normal;
+  font-size: var(--t-text); line-height: 1.2; letter-spacing: .02em;
+}
+@media (max-width: 1023px) { :root { --t-h2: 2.4rem; } .note { font-size: 1.85rem; } }
+@media (max-width: 1023px) { .ab__sub { white-space: normal; text-wrap: balance; font-size: 1.85rem; } }
