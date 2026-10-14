@@ -1843,7 +1843,6 @@
         cur += (p - cur) * 0.08;   // мягкое «догоняние», как плавная прокрутка в образце
         if (Math.abs(p - cur) < 0.0004) cur = p;
         track.style.transform = `translate3d(${-cur * dist}px, 0, 0)`;
-        bgTitle.style.transform = `translate3d(${-cur * offTitle}px, 0, 0)`;
         bar.style.transform = `scaleX(${0.05 + cur * 0.95})`;
       }
       requestAnimationFrame(frame);
