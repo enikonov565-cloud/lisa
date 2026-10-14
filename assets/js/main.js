@@ -1875,6 +1875,8 @@
       title.before(copy);
       copy.append(title, $('.lm__text', el));
       const main = $('.lm__tl--main', title), sub = $('.lm__sub', title);
+      // у букв с хвостом вниз (р, у, д, ц, щ, ф) продолжение опускаем ниже хвоста, иначе — сразу по линии основания
+      if (/[рудцщф]/i.test(main.textContent)) title.classList.add('has-desc');
       [main, sub].forEach((t) => { t.innerHTML = [...t.textContent].map((ch) => '<span class="lt">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>').join(''); });
       // пояснение и кнопка: буквы в span, пробелы — обычные, чтобы строки переносились
       const splitSoft = (node) => [...node.childNodes].forEach((n) => {

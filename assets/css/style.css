@@ -2380,3 +2380,5 @@ main > section[hidden] { display: none !important; }
   .lm__slide .lm__copy { grid-column: 1 / -1; margin-top: 1rem; }
   .lm__copy .lm__text { margin-top: 1.6rem; }
 }
+.lm__copy .lm__sub { margin-top: -.3em; }   /* продолжение сразу под строкой названия, по линии основания букв */
+.lm__copy .lm__title.has-desc .lm__sub { margin-top: .25em; }
