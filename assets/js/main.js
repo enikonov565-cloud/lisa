@@ -1795,7 +1795,7 @@
     intro.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   }
 
-  /* ---------- «О чём мои кадры»: горизонтальная лента при прокрутке (по образцу Gooey Hover) ---------- */
+  /* ---------- «О чём мои кадры»: оформление по образцу Gooey Hover, карточки по две — движение вверх-вниз ---------- */
   const gsec = $('.genres');
   if (gsec && !reduced) {
     const track = $('.genres__grid', gsec), bgTitle = $('#genres-title', gsec);
@@ -1830,24 +1830,27 @@
       const split = inY ? Math.min(cr.width, Math.max(0, ir.left - cr.left)) : cr.width;
       cta.style.setProperty('--split', split + 'px');
     });
-    let dist = 0, cur = 0, run = false, on = false, offTitle = 0;
+    // две колонки карточек, при прокрутке колонки мягко плывут вверх-вниз навстречу друг другу
+    const cards = $$('.genre', gsec);
+    let run = false, on = false;
     const layout = () => {
       on = mqH.matches && !gsec.hidden;
       gsec.classList.toggle('is-h', on);
-      if (!on) { gsec.style.height = ''; track.style.transform = ''; bgTitle.style.transform = ''; return; }
-      dist = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
-      gsec.style.height = (window.innerHeight + dist) + 'px';
-      offTitle = Math.min(dist, bgTitle.scrollWidth * 0.25);
+      gsec.classList.toggle('is-v', on);
+      gsec.style.height = ''; track.style.transform = '';
+      if (!on) { cards.forEach((c) => { c.style.translate = ''; }); return; }
       requestAnimationFrame(paintNames);
     };
     const frame = () => {
       if (!run) return;
       if (on) {
-        const top = gsec.getBoundingClientRect().top;
-        const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
-        cur += (p - cur) * 0.08;   // мягкое «догоняние», как плавная прокрутка в образце
-        if (Math.abs(p - cur) < 0.0004) cur = p;
-        track.style.transform = `translate3d(${-cur * dist}px, 0, 0)`;
+        const vh = window.innerHeight;
+        cards.forEach((c, i) => {
+          const r = c.getBoundingClientRect();
+          const d = (r.top + r.height / 2 - (parseFloat(c.style.translate.split(' ')[1]) || 0)) - vh / 2;
+          const k = i % 2 ? -0.07 : 0.07;
+          c.style.translate = `0 ${(d * k).toFixed(1)}px`;
+        });
       }
       requestAnimationFrame(frame);
     };

@@ -2394,3 +2394,23 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) { .lm__dot.is-on { width: .5rem; height: 2.4rem; } }
 @media (max-width: 1023px) { .lm__dot.is-on { width: 2.4rem; height: .5rem; } }
 .lm__fig--main .lm__img { max-width: none; }   /* запас под «плавание» — картинка шире рамки, края не оголяются */
+
+/* === «О чём мои кадры»: по две карточки в ряд, движение сверху вниз и обратно (вместо ленты вбок) === */
+@media (min-width: 1024px) {
+  .genres.is-v { padding-top: var(--sec); height: auto !important; }
+  .genres.is-v .genres__sticky { position: relative; height: auto; overflow: visible; }
+  .genres.is-v .wrap { height: auto; }
+  .genres.is-v .genres__head { position: sticky; top: 9rem; height: 0; z-index: 0; }
+  .genres.is-v #genres-title { top: 0; }
+  .genres.is-v .genres__grid {
+    display: grid; grid-template-columns: 1fr 1fr; row-gap: 12vh; column-gap: 0;
+    width: auto; height: auto; padding: 18rem 0 14rem; transform: none !important;
+  }
+  .genres.is-v .genre { width: min(28vw, 54rem); margin: 0; top: 0 !important; }
+  .genres.is-v .genre:nth-child(odd) { justify-self: end; margin-right: 6vw; }
+  .genres.is-v .genre:nth-child(even) { justify-self: start; margin-left: 12vw; margin-top: 22vh; }
+}
+/* «детали»: буквы стоят вплотную, как в обычном слове */
+.genre__cta { display: inline-block !important; gap: 0 !important; white-space: nowrap; }
+.genre__cta .lk-arrow { margin-left: .6rem; }
+@media (min-width: 1024px) { .genres.is-v .genre:nth-child(odd) { margin-right: 5vw; } }   /* название левой колонки не выходит за поле 60 */
