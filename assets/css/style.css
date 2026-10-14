@@ -389,54 +389,6 @@ body::before {
 .tags__row { display: flex; gap: .7rem; }
 .tags__row:last-child { justify-content: flex-start; } /* обе строки ровно по левому краю заголовка */
 
-/* Shapes Slideshow (по мотивам Codrops «Shapes Slideshow», demo 1, MIT):
-   фото в круглой маске; при смене круг сжимается и уезжает вверх,
-   следующий въезжает снизу и раскрывается. Фон — страница, без чёрных подложек. */
-.hero__photo {
-  position: relative;
-  width: min(78.9rem, calc(100svh - 34rem));
-  aspect-ratio: 1 / 1;
-}
-.shapes__slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-.shapes__slide.is-current { opacity: 1; }
-.shapes__wrap {
-  position: absolute; inset: 0;
-  overflow: hidden;
-  clip-path: circle(50% at 50% 50%);
-  will-change: transform, clip-path;
-}
-.shapes__img {
-  position: absolute; left: 0; top: -10%;
-  width: 100%; height: 120%;          /* запас по высоте — для встречного параллакса */
-  max-width: none;
-  object-fit: cover;
-  will-change: transform;
-}
-/* стрелки и счётчик — в свободном нижнем углу квадрата, вне круга */
-.shapes__nav {
-  position: absolute; right: 0; bottom: 0; z-index: 2;
-  display: flex; align-items: center; gap: 1.2rem;
-  transform: translate(0, 0);
-}
-.shapes__btn {
-  width: 5.5rem; height: 2.4rem; padding: 0;
-  border: 0; background: none; cursor: pointer;
-  color: var(--ink);
-  transition: color .5s var(--ease), transform .6s var(--ease);
-}
-.shapes__btn svg { display: block; width: 100%; height: 100%; fill: currentColor; }
-.shapes__btn--prev:hover { color: var(--brick, #c4643a); transform: translateX(-.4rem); }
-.shapes__btn--next:hover { color: var(--brick, #c4643a); transform: translateX(.4rem); }
-.shapes__count {
-  margin-left: .6rem;
-  padding: .6rem 1.6rem .7rem;
-  border-radius: var(--radius);
-  font-size: 1.6rem; letter-spacing: .08em; white-space: nowrap;
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, .1) 60%, rgba(255, 255, 255, 0) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 .9rem 1.8rem -.8rem rgba(76, 67, 67, .35);
-}
-.shapes__cur { display: inline-block; min-width: 2ch; }
-
 .hero__bar {
   display: flex; align-items: center; justify-content: space-between; gap: 2rem;
   margin-top: 5.1rem;
@@ -1645,8 +1597,7 @@ body::before {
   .hero { height: auto; min-height: auto; padding-top: 11rem; }
   .hero__photo { width: auto; }
   .hero__grid { grid-template-columns: 1fr; margin-right: 0; gap: 4rem; }
-  .hero__photo { order: -1; aspect-ratio: 1 / 1; width: min(100%, 60rem); justify-self: center; margin-bottom: 4rem; }
-  .shapes__nav { top: 100%; bottom: auto; margin-top: 1.2rem; }   /* стрелки под кругом, не на фото */
+  .hero__photo { order: -1; aspect-ratio: 4 / 5; }
   .hero__text { padding-bottom: 0; }
   .hero__title { margin-bottom: 3rem; }
   .pill { font-size: 2.4rem; padding: .5rem 2.2rem; }
@@ -1769,4 +1720,109 @@ body::before {
   .genre:hover .genre__img img { transform: none; }
   .genre:hover .genre__icon { transform: none; }
   .genre__icon { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(var(--peach-rgb), .8); }
+}
+
+/* ==========================================================================
+   ПЕРВЫЙ ЭКРАН — Shapes Slideshow (Codrops, demo 1, MIT), как в образце:
+   фото на весь экран в большой круглой маске справа, крупный заголовок слева,
+   внизу — имя, жанры, стрелки и счётчик. Цвета сайта вместо чёрного фона.
+   ========================================================================== */
+.hero--shapes { padding: 0; justify-content: flex-end; }
+.shapes { position: absolute; inset: 0; z-index: 0; }
+.shapes__slide { position: absolute; inset: 0; margin: 0; opacity: 0; pointer-events: none; }
+.shapes__slide.is-current { opacity: 1; pointer-events: auto; }
+.shapes__wrap {
+  position: absolute; inset: 0; z-index: 1;
+  overflow: hidden;
+  clip-path: circle(55% at 70% 50%);
+  pointer-events: none;
+  will-change: transform, clip-path;
+}
+.shapes__img {
+  position: absolute; left: 25%; top: -5%;   /* фото — в правой части, под кругом: лицо и голова целиком */
+  width: 75%; height: 110%;           /* небольшой запас для встречного параллакса */
+  max-width: none;
+  object-fit: cover;
+  will-change: transform;
+}
+/* подпись слайда: тёмная — на фоне страницы, её светлая копия видна только внутри круга */
+.shapes__cap {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  padding: 0 var(--pad);
+  color: var(--ink);
+}
+.shapes__cap--light { color: var(--milk); pointer-events: none; }
+.shapes__slide figcaption { position: absolute; inset: 0; z-index: 0; }
+.shapes__slide figcaption .shapes__cap { pointer-events: none; }
+.shapes__head {
+  margin: 0;
+  font-family: var(--sans); font-weight: 200;
+  font-size: clamp(3.4rem, 5.6vw, 11rem);
+  line-height: .9;
+  text-transform: uppercase;
+}
+.shapes__head em {
+  font-family: var(--display); font-style: italic; font-weight: 400;
+  font-size: 1.06em;
+}
+.text-row { position: relative; display: block; overflow: hidden; white-space: nowrap; }
+.text-row > span { display: block; position: relative; padding: .08em 0 .1em; }
+.shapes__link {
+  margin-top: 2.4rem;
+  font-size: clamp(1.8rem, 1.6vw, 3rem); font-weight: 300;
+  pointer-events: auto;
+  position: relative;
+}
+.shapes__cap--light .shapes__link { pointer-events: none; }
+.shapes__link::after {
+  content: ""; position: absolute; left: 0; bottom: -.25em; width: 50%; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease);
+}
+.shapes__link:hover::after { transform: scaleX(1); }
+/* нижняя строка поверх слайдшоу: лёгкое матовое стекло — читается и на фото, и на фоне */
+.hero--shapes .hero__bar {
+  position: relative; z-index: 2;
+  margin: 0; padding: 0 var(--pad) 3.2rem;
+}
+.hero--shapes .hero__name,
+.hero--shapes .hero__genres,
+.shapes__btn,
+.shapes__count {
+  background: rgba(250, 245, 238, .78);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+          backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 .9rem 1.8rem -.9rem rgba(76, 67, 67, .3);
+}
+.hero--shapes .hero__name { padding: .6rem .8rem .6rem 2rem; border-radius: var(--radius); }
+.hero--shapes .hero__genres { padding: .4rem 2rem; border-radius: var(--radius); }
+.shapes__nav { display: flex; align-items: center; gap: 1.2rem; }
+.shapes__btn {
+  width: 8.4rem; height: 4.6rem; padding: 1.1rem 1.4rem;
+  border: 0; border-radius: var(--radius); cursor: pointer;
+  color: var(--ink);
+  transition: color .5s var(--ease), background-color .5s var(--ease), transform .6s var(--ease);
+}
+.shapes__btn svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.shapes__btn:hover { background-color: var(--brick); color: var(--milk); }
+.shapes__btn--prev:hover { transform: translateX(-.4rem); }
+.shapes__btn--next:hover { transform: translateX(.4rem); }
+/* счётчик — овал, как в образце (без обводки) */
+.shapes__count {
+  display: inline-flex; align-items: center; gap: 1rem;
+  margin-left: 1.2rem; padding: 1.4rem 2.8rem;
+  border-radius: 50%;
+  font-size: 2rem; letter-spacing: .06em; white-space: nowrap;
+}
+.shapes__cur { display: inline-block; min-width: 2ch; text-align: right; }
+@media (max-width: 1023px) {
+  .hero.hero--shapes { height: 100svh; min-height: 56rem; padding: 0; }
+  .hero--shapes .hero__bar { padding: 0 var(--pad) 2.4rem; row-gap: 1.2rem; }
+  .hero--shapes .hero__genres { order: 3; width: 100%; justify-content: space-between; }
+  .shapes__nav { margin-left: auto; }
+  .shapes__btn { width: 6.4rem; height: 4rem; padding: .9rem 1.1rem; }
+  .shapes__count { padding: 1rem 2rem; font-size: 1.8rem; }
+  .shapes__cap { justify-content: flex-start; padding-top: 14rem; }
+  .shapes__wrap { clip-path: circle(58% at 50% 60%); }
+  .shapes__img { left: 0; width: 100%; top: 6%; height: 100%; }   /* кадр целиком по ширине, голова не срезана */
 }
