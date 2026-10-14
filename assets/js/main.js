@@ -1727,7 +1727,7 @@
   if (ab) {
     const intro = $('.ab__intro', ab), wrapI = $('.ab__imgwrap', ab), img = $('img', wrapI);
     const cap = $('.ab__cap', ab), blks = $$('.ab__blk', ab);
-    const bodyParts = [...$$('.ab__para--main .lead', ab), $('.ab__para--side', ab)];
+    const bodyParts = $('.ab__para--main .lead', ab);
     const EXIO = 'cubic-bezier(.87, 0, .13, 1)', EXPO = 'cubic-bezier(.19, 1, .22, 1)';
     const rem = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
     let opened = false, shiftY = 0;
