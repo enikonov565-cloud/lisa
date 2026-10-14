@@ -1631,13 +1631,13 @@
       B.wrap.style.transform = `translateY(${up * 100}%)`;
       B.wrap.style.clipPath = CLIP.final;
       B.img.style.transform = `translateY(${-up * 5}%)`;
-      B.rows.forEach((r) => { r.style.transform = `translateY(${up * 100}%)`; });
+      B.rows.forEach((r) => { r.style.transform = `translateY(${up * 160}%)`; });
       B.links.forEach((l) => { l.style.opacity = 0; });
       B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden');
       B.el.style.zIndex = 2; A.el.style.zIndex = 1;
       // уходящий: круг сжимается, текст уезжает
       tw(A.wrap, [{ clipPath: CLIP.initial }, { clipPath: CLIP.final }], { duration: 1000, easing: E.p3 });
-      A.rows.forEach((r) => tw(r, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 100}%)` }], { duration: 1000, easing: E.p3 }));
+      A.rows.forEach((r) => tw(r, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 160}%)` }], { duration: 1000, easing: E.p3 }));
       A.links.forEach((l) => tw(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: E.p3 }));
       // через 0.6 с — уходящий уезжает, приходящий въезжает (картинки — навстречу)
       tw(A.wrap, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 100}%)` }], { duration: 1000, delay: 600, easing: E.p2io, composite: 'replace' });
@@ -1647,7 +1647,7 @@
       // круг раскрывается, строки выезжают по очереди, ссылка проявляется
       const open = tw(B.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500, delay: 1200, easing: E.exio });
       const order = up > 0 ? B.rows : [...B.rows].reverse();
-      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 100}%)` }, { transform: 'translateY(0)' }], { duration: 1500, delay: 1100 + (i % 2) * 100, easing: E.exio }));
+      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: 1500, delay: 1100 + (i % 2) * 100, easing: E.exio }));
       B.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000, delay: 1400, easing: E.exin }));
       open.finished.then(() => {
         A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
@@ -1665,7 +1665,9 @@
     /* цвет нижней строки подстраивается под круг с фото: буква внутри круга — светлая, снаружи — тёмная.
        Положение круга берём из живых значений (сжатие, сдвиг, перетекание), поэтому цвет едет вместе с ним */
     const bar = $('.hero__bar', hero);
-    $$('.hero__prefix, .hero__genres a', bar).forEach((el) => {
+    $$('.fall__char', bar).forEach((el) => el.classList.add('ac'));
+    $('.rot__badge', bar).classList.add('ac');
+    $$('.hero__prefix', bar).forEach((el) => {
       el.innerHTML = [...el.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="ac">' + ch + '</span>').join('');
     });
     const marks = [...$$('.ac', bar), ...$$('.hero__div', bar)];
@@ -1700,7 +1702,7 @@
     if (!reduced) {
       const s = slides[0];
       tw(s.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500, delay: 150, easing: E.exio });
-      s.rows.forEach((r, i) => tw(r, [{ transform: 'translateY(100%)' }, { transform: 'translateY(0)' }], { duration: 1500, delay: 100 + (i % 2) * 100, easing: E.exio }));
+      s.rows.forEach((r, i) => tw(r, [{ transform: 'translateY(160%)' }, { transform: 'translateY(0)' }], { duration: 1500, delay: 100 + (i % 2) * 100, easing: E.exio }));
       s.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000, delay: 400, easing: E.exin }));
     }
   }

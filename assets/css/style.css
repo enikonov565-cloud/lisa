@@ -1767,7 +1767,8 @@ body::before {
   font-size: 1.06em;
 }
 .text-row { position: relative; display: block; overflow: hidden; white-space: nowrap; }
-.text-row > span { display: block; position: relative; padding: .08em 0 .1em; }
+.text-row { margin: -.12em 0; }
+.text-row > span { display: block; position: relative; padding: .2em .25em .22em 0; }   /* запас под курсив и выносные элементы */
 .shapes__link {
   margin-top: 2.4rem;
   font-size: clamp(1.8rem, 1.6vw, 3rem); font-weight: 300;
@@ -1822,3 +1823,12 @@ body::before {
   .shapes__wrap { clip-path: circle(58% at 50% 60%); }
   .shapes__img { left: 0; width: 100%; top: 6%; height: 100%; }   /* кадр целиком по ширине, голова не срезана */
 }
+
+/* сменяющееся слово без оранжевой пилюли — шрифтом с засечками, как курсив в заголовке */
+.hero--shapes .rot__badge {
+  padding: .1em .18em; border-radius: 0;   /* запас под наклон курсива */
+  background: none; box-shadow: none;
+  color: var(--ink);
+}
+.hero--shapes .rot__badge.on-photo { color: var(--milk); text-shadow: 0 0 .5em rgba(43, 35, 35, .55), 0 0 .15em rgba(43, 35, 35, .45); }
+.hero--shapes .rot__content b { font-family: var(--display); font-style: italic; font-weight: 400; font-size: 1.12em; }
