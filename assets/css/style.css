@@ -2196,3 +2196,12 @@ main > section[hidden] { display: none !important; }
   .lms-track > .lms { top: 7rem; }
 }
 .lms__count { font-size: 2.4rem; }
+/* название — ниже лиц на фото; пояснение и кнопка «смотреть работы» — внизу, на каждом слайде */
+@media (min-width: 1024px) {
+  .lms__title { top: 50%; }
+  .lms__text { top: auto; bottom: 5%; width: 26%; }
+}
+.lms__p { text-wrap: balance; }
+.lms__text .lms__in { display: flex; flex-direction: column; align-items: flex-end; gap: 3.2rem; }
+.lms__btn-works { margin: 0; }
+@media (max-width: 1023px) { .lms__text .lms__in { align-items: flex-start; gap: 2rem; } }
