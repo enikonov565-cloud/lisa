@@ -1919,7 +1919,8 @@ body::before {
 }
 .ab.is-thumb .ab__body { visibility: hidden; }
 .ab__para { margin: 0; }
-.ab__para--main { display: flex; flex-direction: column; gap: 3rem; text-align: left; width: max-content; max-width: 100%; }
+.ab__para--main { display: flex; flex-direction: column; gap: 3rem; text-align: left; width: 50%; }   /* от середины фото до правого края: абзацы в 2 и 3 строки */
+.ab__para--main .lead { text-wrap: balance; }
 .ab__para--side { grid-column: 3; }
 .ab__para--side strong { font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .ab__hint svg { animation: none; } }
