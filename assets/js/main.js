@@ -1870,6 +1870,10 @@
     const shuffle = (arr) => arr.slice().sort(() => Math.random() - 0.5);
     const slides = $$('.lm__slide', lm).map((el) => {
       const title = $('.lm__title', el);
+      const copy = document.createElement('div');
+      copy.className = 'lm__copy';
+      title.before(copy);
+      copy.append(title, $('.lm__text', el));
       const main = $('.lm__tl--main', title), sub = $('.lm__sub', title);
       [main, sub].forEach((t) => { t.innerHTML = [...t.textContent].map((ch) => '<span class="lt">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>').join(''); });
       // пояснение и кнопка: буквы в span, пробелы — обычные, чтобы строки переносились
@@ -1928,7 +1932,6 @@
       if (!reduced && window.matchMedia('(min-width: 1024px)').matches) {
         const s = slides[cur];
         tilt(s.tiltImgs, [20, -20], (p) => 0.02 * p + 0.02, 0.1);
-        tilt(s.tiltTitle, [-50, 50], (p) => 0.05 * Math.pow(2, p), 0.25);
         if (!busy) paint();
       }
       requestAnimationFrame(tiltLoop);

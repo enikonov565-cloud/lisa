@@ -2358,3 +2358,25 @@ main > section[hidden] { display: none !important; }
   .lm__slide--layout-1 .lm__text { grid-column-start: 5; }
 }
 @media (min-width: 1024px) { .lm__sub { margin-top: 2.6rem; } }   /* под хвостами букв «р», «ц», «з» */
+
+/* === блок текста слайда: название → продолжение → пояснение → кнопка внизу; ничего не наползает при любой высоте окна === */
+.lm__copy { position: relative; z-index: 101; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.lm__copy .lm__title { position: relative; height: auto; grid-row: auto; grid-column: auto; }
+.lm__copy .lm__tl--main { position: relative; display: block; }
+.lm__copy .lm__tl:not(.lm__tl--main) { position: absolute; left: 0; top: 0; }
+.lm__copy .lm__sub { position: static; display: block; margin-top: .55em; line-height: 1.15; }
+.lm__copy .lm__text { grid-row: auto !important; grid-column: auto !important; padding: 0; margin-top: 2.4rem; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 2.4rem; }
+.lm__copy .lm__link { margin-top: auto; }
+.lm__title { line-height: .95; }
+@media (min-width: 1024px) {
+  .lm__copy { grid-row-end: 21; grid-column-end: 21; padding-bottom: 2.4rem; }
+  .lm__slide--layout-1 .lm__copy { grid-row-start: 9; grid-column-start: 5; }
+  .lm__slide--layout-2 .lm__copy { grid-row-start: 6; grid-column-start: 11; grid-column-end: 19; }
+  .lm__slide--layout-3 .lm__copy { grid-row-start: 8; grid-column-start: 9; grid-column-end: 16; }
+  .lm__slide--layout-4 .lm__copy { grid-row-start: 11; grid-column-start: 2; grid-column-end: 14; }
+  .lm__slide--layout-1 .lm__copy { grid-column-end: 18; }
+}
+@media (max-width: 1023px) {
+  .lm__slide .lm__copy { grid-column: 1 / -1; margin-top: 1rem; }
+  .lm__copy .lm__text { margin-top: 1.6rem; }
+}
