@@ -2205,3 +2205,126 @@ main > section[hidden] { display: none !important; }
 .lms__text .lms__in { display: flex; flex-direction: column; align-items: flex-end; gap: 3.2rem; }
 .lms__btn-works { margin: 0; }
 @media (max-width: 1023px) { .lms__text .lms__in { align-items: flex-start; gap: 2rem; } }
+
+/* ==========================================================================
+   «МОЙ ПОДХОД И ГАРАНТИИ» — Layer Motion Slideshow (Codrops), точная раскладка:
+   сетка 20×20 на экран, большое фото на всю высоту, три маленьких, название в три слоя,
+   текст с кнопкой; у каждого слайда своя раскладка. Листается прокруткой.
+   ========================================================================== */
+.lm-track { position: relative; height: calc(4 * 70vh + 100vh); }
+.lm { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 60rem; margin: 0 var(--pad); }
+.lm__count { position: absolute; left: 0; bottom: 2.4rem; z-index: 200; font-size: 2.4rem; letter-spacing: .06em; }
+.lm__slide {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  display: grid;
+  grid-template-rows: repeat(20, calc(100% / 20));
+  grid-template-columns: repeat(20, calc(100% / 20));
+  overflow: hidden;
+}
+.lm__slide.is-current { opacity: 1; pointer-events: auto; z-index: 100; }
+.lm__fig { position: relative; margin: 0; overflow: hidden; border-radius: var(--radius); }
+.lm__slide-el { display: block; width: 100%; height: 100%; }
+.lm__fig--box .lm__img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+.lm__inner { position: relative; overflow: hidden; will-change: transform; }
+.lm__fig--main .lm__img {
+  position: absolute; left: -20px; top: -20px; width: calc(100% + 40px); height: calc(100% + 40px);
+  object-fit: cover; opacity: .5; will-change: transform;
+}
+.lm__fig--main .lm__img:first-child { opacity: 1; }
+.lm__fig--box { grid-row-end: span 5; grid-column-end: span 3; }
+.lm__fig--main { grid-row: 1 / span 20; grid-column-end: span 7; }
+.lm__title {
+  position: relative; z-index: 100; margin: 0; pointer-events: none;
+  grid-row-end: span 3; grid-column-end: 21; height: 10vw;
+  font-family: var(--display); font-weight: 400; font-size: 9vw; line-height: 1; letter-spacing: -.02em;
+  color: var(--ink);
+}
+.lm__tl { position: absolute; left: 0; top: 0; white-space: pre; will-change: transform; }
+.lm__tl:not(.lm__tl--main) { color: transparent; -webkit-text-stroke: 1px rgba(76, 67, 67, .55); opacity: .7; }
+.lm__tl--main .lt { display: inline-block; white-space: pre; }
+.lm__tl--main .lt.on-photo { color: var(--milk); }
+.lm__sub {
+  position: absolute; left: .08em; top: 100%; margin-top: .4rem; white-space: nowrap;
+  font-family: var(--display); font-style: italic; font-size: .32em; line-height: 1.1;
+}
+.lm__sub .lt.on-photo { color: var(--milk); }
+.lm__text { display: flex; flex-direction: column; align-items: flex-start; gap: 2.4rem; padding: 1.5rem; grid-row-end: span 7; grid-column-end: span 6; position: relative; z-index: 101; }
+.lm__text--right { text-align: right; align-items: flex-end; }
+.lm__desc { margin: 0; max-width: 34rem; font-size: max(2.2rem, 14px); line-height: 1.4; text-wrap: balance; color: var(--ink); }
+.lm__link { margin: 0; }
+/* четыре раскладки — как в образце */
+.lm__slide--layout-1 .lm__fig--main { grid-column-start: 11; }
+.lm__slide--layout-1 .lm__fig:nth-child(2) { grid-row-start: 1; grid-column-start: 8; }
+.lm__slide--layout-1 .lm__fig:nth-child(3) { grid-row-start: 16; grid-column-start: 18; }
+.lm__slide--layout-1 .lm__fig:nth-child(4) { grid-row-start: 16; grid-column-start: 1; }
+.lm__slide--layout-1 .lm__title { grid-row-start: 12; grid-column-start: 5; }
+.lm__slide--layout-1 .lm__text { grid-row-start: 6; grid-column-start: 5; }
+.lm__slide--layout-2 .lm__fig--main { grid-column-start: 3; }
+.lm__slide--layout-2 .lm__fig:nth-child(2) { grid-row-start: 1; grid-column-start: 10; }
+.lm__slide--layout-2 .lm__fig:nth-child(3) { grid-row-start: 8; grid-column-start: 19; grid-row-end: span 2; grid-column-end: span 1; }
+.lm__slide--layout-2 .lm__fig:nth-child(4) { grid-row-start: 16; grid-column-start: 18; }
+.lm__slide--layout-2 .lm__title { grid-row-start: 7; grid-column-start: 9; }
+.lm__slide--layout-2 .lm__text { grid-row-start: 11; grid-column-start: 10; }
+.lm__slide--layout-3 .lm__fig--main { grid-column-start: 1; }
+.lm__slide--layout-3 .lm__fig:nth-child(2) { grid-row-start: 1; grid-column-start: 8; }
+.lm__slide--layout-3 .lm__fig:nth-child(3) { grid-row-start: 13; grid-column-start: 16; grid-row-end: span 3; grid-column-end: span 2; }
+.lm__slide--layout-3 .lm__fig:nth-child(4) { grid-row-start: 16; grid-column-start: 18; }
+.lm__slide--layout-3 .lm__title { grid-row-start: 13; grid-column-start: 6; }
+.lm__slide--layout-3 .lm__text { grid-row-start: 7; grid-column-start: 8; }
+.lm__slide--layout-4 .lm__fig--main { grid-column-start: 14; }
+.lm__slide--layout-4 .lm__fig:nth-child(2) { grid-row-start: 1; grid-column-start: 11; }
+.lm__slide--layout-4 .lm__fig:nth-child(3) { grid-row-start: 6; grid-column-start: 8; grid-row-end: span 5; grid-column-end: span 3; }
+.lm__slide--layout-4 .lm__fig:nth-child(4) { grid-row-start: 1; grid-column-start: 5; }
+.lm__slide--layout-4 .lm__title { grid-row-start: 16; grid-column-start: 9; }
+.lm__slide--layout-4 .lm__text { grid-row-start: 13; grid-column-start: 2; }
+@media (max-width: 1023px) {
+  .lm-track { height: calc(4 * 60svh + 100svh); }
+  .lm { top: 7rem; height: auto; min-height: 0; }
+  .lm__count { position: relative; bottom: auto; display: block; margin-bottom: 1.2rem; }
+  .lm__slide { position: absolute; top: 4rem; left: 0; right: 0; bottom: auto; inset-block-end: auto; grid-template-rows: none; grid-template-columns: repeat(3, 1fr); gap: 1rem; overflow: visible; }
+  .lm__slide.is-current { position: relative; top: 0; }
+  .lm__slide .lm__fig, .lm__slide .lm__title, .lm__slide .lm__text { grid-row: auto !important; grid-column: auto !important; }
+  .lm__slide .lm__fig--main { grid-column: 1 / -1 !important; aspect-ratio: 4 / 5; }
+  .lm__slide .lm__fig--box { aspect-ratio: 1; }
+  .lm__slide .lm__title { grid-column: 1 / -1 !important; height: auto; font-size: 5.6rem; margin-top: 1rem; }
+  .lm__tl:not(.lm__tl--main) { display: none; }
+  .lm__tl--main { position: relative; }
+  .lm__sub { position: relative; top: auto; display: block; margin-top: .6rem; }
+  .lm__slide .lm__text { grid-column: 1 / -1 !important; padding: 1.2rem 0 0; text-align: left; align-items: flex-start; }
+}
+/* смысловой порядок: название → продолжение → пояснение с кнопкой (пояснение ниже названия) */
+@media (min-width: 1024px) {
+  .lm__slide--layout-1 .lm__text { grid-row-start: 16; grid-column-start: 5; }
+  .lm__slide--layout-2 .lm__title { grid-column-start: 11; }
+  .lm__slide--layout-2 .lm__text { grid-row-start: 12; grid-column-start: 11; }
+  .lm__slide--layout-3 .lm__text { grid-row-start: 17; grid-column-start: 8; grid-row-end: span 4; }
+  .lm__slide--layout-4 .lm__text { grid-row-start: 16; grid-column-start: 2; grid-row-end: span 5; }
+  .lm__slide--layout-1 .lm__text, .lm__slide--layout-3 .lm__text { grid-row-end: span 5; }
+}
+.lm__title .lt.on-photo { text-shadow: 0 0 .3em rgba(43, 35, 35, .45); }
+
+/* кнопка «смотреть работы» — внизу на каждом слайде; цвет всех текстов подстраивается под фото */
+@media (min-width: 1024px) {
+  .lm__text { justify-content: space-between; grid-row-end: 21 !important; padding-bottom: 2.4rem; }
+}
+.lm__text .lt, .lm__count .lt { transition: color .3s var(--ease), text-shadow .3s var(--ease); }
+.lm__text .lt.on-photo, .lm__count .lt.on-photo { color: var(--milk); text-shadow: 0 0 .35em rgba(43, 35, 35, .45); }
+.lm__link .lt { color: inherit; }
+.lm__text .lm__link { margin-top: auto; }   /* кнопка прижата к низу, даже если пояснения нет */
+
+/* точки страниц: текущая — вытянутая, остальные — маленькие; цвет — по тому, что под ними */
+.lm__dots { position: absolute; left: 0; bottom: 3rem; z-index: 200; display: flex; align-items: center; gap: 1rem; }
+.lm__dot {
+  width: 1rem; height: 1rem; min-width: 8px; min-height: 8px; padding: 0;
+  border: 0; border-radius: 1rem; cursor: pointer;
+  background-color: var(--ink); opacity: .4;
+  transition: width .6s var(--ease), opacity .4s var(--ease), background-color .3s var(--ease);
+}
+.lm__dot.is-on { width: 3.2rem; opacity: 1; }
+.lm__dot:hover { opacity: .8; }
+.lm__dot.on-photo { background-color: var(--milk); box-shadow: 0 0 .6rem rgba(43, 35, 35, .4); }
+@media (max-width: 1023px) { .lm__dots { position: relative; bottom: auto; margin-bottom: 1.2rem; } }
+.lm__text .lm__link { display: inline-block; align-self: flex-start; white-space: nowrap; }   /* буквы в span — кнопка не раздвигает их */
+.lm__text--right .lm__link { align-self: flex-end; }
+.lm__link .lk-arrow { margin-left: 1.2rem; }
+@media (max-width: 1023px) { .lm__text .lm__link { align-self: flex-start; } }

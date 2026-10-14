@@ -1859,148 +1859,143 @@
     mqH.addEventListener('change', layout);
   }
 
-  /* ---------- «Мой подход и гарантии»: On-Scroll SVG Filter (Codrops) ----------
-     слова названия «перелетают» из центра на свои места (FLIP), маска с рваным краем раскрывает фото */
-  const osItems = $$('.os-wrap').map((wrap) => {
-    const tw = $('.os-tw', wrap);
-    const ghosts = $$('.os-title', tw);
-    const words = $$('.os-layout .os-title', wrap);
-    // буквы — по отдельности, чтобы цвет менялся ровно по краю проявившегося фото
-    words.forEach((w) => { w.innerHTML = [...w.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="oc">' + ch + '</span>').join(''); });
-    const chars = words.flatMap((w) => $$('.oc', w));
-    const svg = $('.os-img', wrap);
-    const mask = $('.os-mask', wrap), image = $('image', wrap);
-    const isCircle = mask.tagName.toLowerCase() === 'circle';
-    return { wrap, tw, ghosts, words, chars, svg, mask, image, isCircle, d: [], cur: reduced ? 1 : 0 };
-  });
-  if (osItems.length) {
-    const measure = () => osItems.forEach((it) => {
-      it.words.forEach((w) => { w.style.transform = ''; });
-      it.d = it.words.map((w, i) => {
-        const a = it.ghosts[i].getBoundingClientRect(), b = w.getBoundingClientRect();
-        return [a.left - b.left, a.top - b.top];
-      });
-    });
-    const lens = (it, p) => {
-      const W = +it.mask.dataset.w, H = +it.mask.dataset.h, mx = W / 2, my = H / 2;
-      const down = my + (H * 1.65 - my) * p, up = my + (-H * 0.65 - my) * p;
-      return `M 0 ${my} Q ${mx} ${down} ${W} ${my} Q ${mx} ${up} 0 ${my}`;
-    };
-    const apply = (it) => {
-      const p = it.cur, q = 1 - p;
-      it.words.forEach((w, i) => { const [dx, dy] = it.d[i] || [0, 0]; w.style.transform = `translate3d(${dx * q}px, ${dy * q}px, 0)`; });
-      if (it.isCircle) it.mask.setAttribute('r', (+it.mask.dataset.final * p).toFixed(1));
-      else it.mask.setAttribute('d', lens(it, p));
-      it.image.style.transform = it.isCircle ? `scale(${1 + 0.2 * p})` : '';
-      it.image.style.filter = `brightness(${100 + 12 * p}%)`;
-      // буква над видимой частью фото — светлая, над фоном — тёмная
-      const sr = it.svg.getBoundingClientRect(), k = sr.width / it.svg.viewBox.baseVal.width;
-      const cx = sr.left + sr.width / 2, cy = sr.top + sr.height / 2;
-      const rad = it.isCircle ? +it.mask.dataset.final * p * k : 0;
-      it.chars.forEach((ch) => {
-        const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height * 0.55;
-        const inBox = x > sr.left && x < sr.right && y > sr.top && y < sr.bottom;
-        const seen = inBox && (it.isCircle ? Math.hypot(x - cx, y - cy) < rad * 0.92 : p > 0.6);
-        ch.classList.toggle('on-photo', seen);
-      });
-    };
-    let osRun = false;
-    const osFrame = () => {
-      const vh = window.innerHeight;
-      osItems.forEach((it) => {
-        const t = it.tw.getBoundingClientRect().top;
-        // как в образце: начало — когда названия у нижней кромки экрана, конец — через 40% высоты
-        const target = reduced ? 1 : Math.min(1, Math.max(0, (vh * 0.9 - t) / (vh * 0.4)));
-        it.cur += (target - it.cur) * 0.12;
-        if (Math.abs(target - it.cur) < 0.001) it.cur = target;
-        apply(it);
-      });
-      if (osRun) requestAnimationFrame(osFrame);
-    };
-    const osSec = $('.approach');
-    new IntersectionObserver(([e]) => { const was = osRun; osRun = e.isIntersecting; if (osRun && !was) { measure(); requestAnimationFrame(osFrame); } }).observe(osSec);
-    window.addEventListener('resize', () => { measure(); osItems.forEach(apply); });
-    (document.fonts ? document.fonts.ready : Promise.resolve()).then(measure);
-  }
-
   /* ---------- «Мой подход и гарантии»: Layer Motion Slideshow (Codrops) ----------
-     слои слайда (фото, текст, название) уходят и приходят по очереди, картинки внутри — навстречу */
-  const lms = $('.lms');
-  if (lms) {
-    const slides = $$('.lms__slide', lms).map((el) => ({
-      el,
-      layers: [...$$('.lms__ph', el), $('.lms__title', el), $('.lms__text', el)],
-      title: $('.lms__title', el),
-    }));
-    slides.forEach((s) => {
-      $$('.lms__main, .lms__sub', s.title).forEach((t) => {
-        t.innerHTML = [...t.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="lt">' + ch + '</span>').join('');
+     смена как в образце: фото по очереди (по data-sort) уезжают вбок шторкой (рамка в одну сторону,
+     картинка в другую), следом въезжают фото нового слайда; буквы названия гаснут и проявляются
+     вразнобой; фото и название слегка «плывут» за курсором слоями. Листается прокруткой. */
+  const lm = $('.lm');
+  if (lm) {
+    const QUINT = 'cubic-bezier(.23, 1, .32, 1)';                // Quint.easeOut
+    const SET = { duration: 800, stagger: 130 };
+    const shuffle = (arr) => arr.slice().sort(() => Math.random() - 0.5);
+    const slides = $$('.lm__slide', lm).map((el) => {
+      const title = $('.lm__title', el);
+      const main = $('.lm__tl--main', title), sub = $('.lm__sub', title);
+      [main, sub].forEach((t) => { t.innerHTML = [...t.textContent].map((ch) => '<span class="lt">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>').join(''); });
+      // пояснение и кнопка: буквы в span, пробелы — обычные, чтобы строки переносились
+      const splitSoft = (node) => [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          [...n.textContent].forEach((ch) => {
+            if (/\s/.test(ch) && ch !== '\u00a0') frag.appendChild(document.createTextNode(ch));
+            else { const sp = document.createElement('span'); sp.className = 'lt'; sp.textContent = ch; frag.appendChild(sp); }
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && !n.classList.contains('lt')) splitSoft(n);
       });
-      s.chars = $$('.lt', s.title);
+      $$('.lm__desc, .lm__link', el).forEach(splitSoft);
+      return {
+        el, title,
+        figs: $$('.lm__fig', el).map((f) => ({ el: f, slideEl: $('.lm__slide-el', f), sort: +f.dataset.sort, isMain: f.classList.contains('lm__fig--main') })),
+        letters: $$('.lt', main), subLetters: $$('.lt', sub), textLetters: $$('.lm__text .lt', el),
+        extra: $$('.lm__tl:not(.lm__tl--main)', title),
+        tiltImgs: $$('.lm__fig--main .lm__img', el),
+        tiltTitle: [...$$('.lm__tl', title), sub],
+        text: $('.lm__text', el),
+      };
     });
-    const curEl = $('.lms__cur', lms);
-    const EX = 'cubic-bezier(.77, 0, .175, 1)';
-    let cur = 0, busy = false;
+    // точки вместо номеров страниц
+    const dots = $$('.lm__dot', lm);
+    const countLetters = dots;
+    const setDots = () => dots.forEach((d, i) => { d.classList.toggle('is-on', i === cur); if (i === cur) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+    let cur = 0, busy = false, want = 0;
     // буквы названия над фото — светлые, над фоном — тёмные
     const paint = () => {
       const s = slides[cur];
-      const rects = $$('.lms__ph', s.el).map((p) => p.getBoundingClientRect());
-      s.chars.forEach((ch) => {
+      const rects = s.figs.map((f) => f.el.getBoundingClientRect());
+      [...s.letters, ...s.subLetters, ...s.textLetters, ...countLetters].forEach((ch) => {
         const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height * 0.6;
         ch.classList.toggle('on-photo', rects.some((r) => x > r.left && x < r.right && y > r.top && y < r.bottom));
       });
     };
-    let want = 0;
-    const go = (dir, to) => {
-      if (busy) return;
-      const next = to != null ? to : (cur + dir + slides.length) % slides.length;
-      if (next === cur) return;
-      const A = slides[cur], B = slides[next];
-      cur = next; curEl.textContent = String(cur + 1);
-      if (reduced) {
-        A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
-        B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden'); paint(); return;
+    // «плавание» за курсором: каждый слой со своей скоростью (как TiltFx в образце)
+    const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    const lerp = (a, b, n) => (1 - n) * a + n * b;
+    const line = (to, from, max, v) => from + (to - from) * (v / max);
+    const tiltState = new Map();
+    const tilt = (els, range, factor, outer) => els.forEach((el, i) => {
+      const st = tiltState.get(el) || { x: 0, y: 0 };
+      const f = i < els.length - 1 ? factor(i) : outer;
+      st.x = lerp(st.x, line(range[1], range[0], innerWidth, mouse.x), f);
+      st.y = lerp(st.y, line(range[1], range[0], innerHeight, mouse.y), f);
+      tiltState.set(el, st);
+      el.style.transform = `translate(${st.x}px, ${st.y}px)`;
+    });
+    let lmSeen = false;
+    const tiltLoop = () => {
+      if (!lmSeen) return;
+      if (!reduced && window.matchMedia('(min-width: 1024px)').matches) {
+        const s = slides[cur];
+        tilt(s.tiltImgs, [20, -20], (p) => 0.02 * p + 0.02, 0.1);
+        tilt(s.tiltTitle, [-50, 50], (p) => 0.05 * Math.pow(2, p), 0.25);
+        if (!busy) paint();
       }
+      requestAnimationFrame(tiltLoop);
+    };
+    new IntersectionObserver(([e]) => { const was = lmSeen; lmSeen = e.isIntersecting; if (lmSeen && !was) { paint(); requestAnimationFrame(tiltLoop); } }).observe(lm);
+
+    const go = (dir) => {
+      if (busy) return;
+      const next = cur + dir;
+      if (next < 0 || next >= slides.length) return;
+      const A = slides[cur], B = slides[next];
+      cur = next; setDots();
+      A.el.setAttribute('aria-hidden', 'true'); B.el.removeAttribute('aria-hidden');
+      if (reduced) { A.el.classList.remove('is-current'); B.el.classList.add('is-current'); paint(); return; }
       busy = true;
-      A.el.classList.add('is-leaving'); A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
-      B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden');
-      paint();
-      const D = 1000, ST = 70, up = dir > 0 ? -1 : 1;
-      const anims = [];
-      A.layers.forEach((L, k) => {
-        const inner = $('.lms__in', L), img = $('img', L);
-        anims.push(inner.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${up * 101}%)` }], { duration: D, delay: k * ST, easing: EX, fill: 'both' }));
-        if (img) img.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 40}%)` }], { duration: D, delay: k * ST, easing: EX, fill: 'both' });
+      const right = dir > 0, D = SET.duration, ST = SET.stagger;
+      const o = (delay, dur = D) => ({ duration: dur, delay, easing: QUINT, fill: 'both' });
+      const sortFigs = (figs) => right ? figs.slice().sort((a, b) => a.sort - b.sort) : figs.slice().sort((a, b) => b.sort - a.sort);
+      A.el.style.zIndex = 100; B.el.style.zIndex = 101;
+      // уходящий слайд: фото по очереди уезжают шторкой
+      sortFigs(A.figs).forEach((f, pos) => {
+        f.el.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${right ? -101 : 101}%)` }], o(pos * ST));
+        f.slideEl.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${right ? 101 : -101}%)` }], o(pos * ST));
       });
-      B.layers.forEach((L, k) => {
-        const inner = $('.lms__in', L), img = $('img', L);
-        anims.push(inner.animate([{ transform: `translateY(${-up * 101}%)` }, { transform: 'translateY(0)' }], { duration: D, delay: 200 + k * ST, easing: EX, fill: 'both' }));
-        if (img) img.animate([{ transform: `translateY(${up * 40}%)` }, { transform: 'translateY(0)' }], { duration: D, delay: 200 + k * ST, easing: EX, fill: 'both' });
+      const tOut = D * SET.stagger / 1000;   // как в образце: duration * staggerFactor
+      A.text.animate([{ opacity: 1 }, { opacity: 0 }], o(tOut));
+      shuffle([...A.letters, ...A.subLetters]).forEach((l, i) => l.animate([{ opacity: 1 }, { opacity: 0 }], o(tOut + i * 40, 50)));
+      A.extra.forEach((x) => x.animate([{ opacity: 0.7 }, { opacity: 0 }], o(tOut, 100)));
+      // приходящий слайд
+      const tIn = ST * (A.figs.length - 1);
+      B.el.classList.add('is-current');
+      sortFigs(B.figs).forEach((f, pos) => {
+        f.el.animate([{ transform: `translateX(${right ? 101 : -101}%)` }, { transform: 'translateX(0)' }], o(tIn + pos * ST));
+        f.slideEl.animate([{ transform: `translateX(${right ? -101 : 101}%)` }, { transform: 'translateX(0)' }], o(tIn + pos * ST));
       });
-      // завершаем по таймеру — смена не «залипает», даже если анимацию прервали или вкладка была свёрнута
-      const total = 200 + (B.layers.length - 1) * ST + D + 60;
+      B.text.animate([{ opacity: 0 }, { opacity: 1 }], o(tIn));
+      const letters = shuffle([...B.letters, ...B.subLetters]);
+      letters.forEach((l, i) => l.animate([{ opacity: 0 }, { opacity: 1 }], o(tIn + i * 40, 50)));
+      B.extra.forEach((x) => x.animate([{ opacity: 0 }, { opacity: 0.7 }], o(tIn + 50 + 40 * (letters.length - 1), 500)));
+      const total = Math.max(tIn + ST * (B.figs.length - 1) + D, tIn + 50 + 40 * letters.length + 500) + 60;
       setTimeout(() => {
-        A.el.classList.remove('is-leaving');
-        [A, B].forEach((S) => S.layers.forEach((L) => { $('.lms__in', L).getAnimations().forEach((a) => a.cancel()); const im = $('img', L); if (im) im.getAnimations().forEach((a) => a.cancel()); }));
+        A.el.classList.remove('is-current');
+        [A, B].forEach((S) => {
+          S.el.style.zIndex = '';
+          [...S.figs.flatMap((f) => [f.el, f.slideEl]), S.text, ...S.letters, ...S.subLetters, ...S.extra].forEach((e) => e.getAnimations().forEach((an) => an.cancel()));
+        });
         busy = false; paint();
-        if (want !== cur) go(want > cur ? 1 : -1);   // прокрутили дальше, пока шла смена — догоняем по одному слайду
+        if (want !== cur) go(want > cur ? 1 : -1);   // прокрутили дальше — догоняем по одному слайду
       }, total);
     };
-    // слайд выбирается прокруткой: сцена стоит на экране, каждые «полэкрана» прокрутки — следующая страница
-    const trackEl = lms.parentElement;
+    // слайд выбирается прокруткой: сцена стоит на экране, каждые 70% высоты экрана — следующий
+    const trackEl = lm.parentElement;
     const onScroll = () => {
       const tr = trackEl.getBoundingClientRect();
-      const span = tr.height - lms.offsetHeight;
+      const span = tr.height - lm.offsetHeight;
       if (span <= 0) return;
       const p = Math.min(0.999, Math.max(0, -tr.top / span));
       want = Math.floor(p * slides.length);
       if (want !== cur && !busy) go(want > cur ? 1 : -1);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    window.addEventListener('resize', paint);
-    (document.fonts ? document.fonts.ready : Promise.resolve()).then(paint);
-    new IntersectionObserver(([e]) => { if (e.isIntersecting) paint(); }).observe(lms);
+    window.addEventListener('resize', () => { onScroll(); paint(); });
+    // точка — переход к своей странице: прокручиваем к нужному участку дорожки
+    dots.forEach((d, i) => d.addEventListener('click', () => {
+      const tr = trackEl.getBoundingClientRect(), span = tr.height - lm.offsetHeight;
+      window.scrollTo({ top: window.scrollY + tr.top + span * (i + 0.5) / slides.length, behavior: 'smooth' });
+    }));
   }
 
   $('#year').textContent = new Date().getFullYear();
