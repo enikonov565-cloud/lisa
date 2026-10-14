@@ -1579,6 +1579,65 @@
   applyFocus(document);
   new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach((nd) => { if (nd.nodeType === 1) applyFocus(nd); }))).observe(document.body, { childList: true, subtree: true });
 
+  /* ---------- первый экран: Shapes Slideshow (Codrops, demo 1) ----------
+     круг сжимается → уезжает → следующий въезжает с другой стороны → круг раскрывается */
+  const shapes = $('.shapes');
+  if (shapes) {
+    const slides = $$('.shapes__slide', shapes).map((el) => ({ el, wrap: $('.shapes__wrap', el), img: $('.shapes__img', el) }));
+    const curEl = $('.shapes__cur', shapes);
+    const pad = (n) => String(n + 1).padStart(2, '0');
+    const BIG = 'circle(50% at 50% 50%)', SMALL = 'circle(15% at 50% 50%)';
+    const P3 = 'cubic-bezier(.215, .61, .355, 1)';       // power3.out
+    const P2IO = 'cubic-bezier(.455, .03, .515, .955)';   // power2.inOut
+    const EXIO = 'cubic-bezier(.87, 0, .13, 1)';          // expo.inOut
+    const SHIFT = 160;                                    // % — круг целиком уходит за край экрана
+    let cur = 0, busy = false, timer = 0, hold = false, visible = true;
+    const go = (dir) => {
+      if (busy || slides.length < 2) return;
+      busy = true;
+      const from = slides[cur];
+      cur = (cur + (dir > 0 ? 1 : -1) + slides.length) % slides.length;
+      const to = slides[cur];
+      curEl.textContent = pad(cur);
+      from.el.removeAttribute('aria-hidden'); to.el.removeAttribute('aria-hidden');
+      const s = dir > 0 ? 1 : -1;
+      const o = { fill: 'both' };
+      if (reduced) {
+        from.el.classList.remove('is-current'); to.el.classList.add('is-current');
+        from.el.setAttribute('aria-hidden', 'true'); busy = false; return;
+      }
+      to.el.classList.add('is-current');
+      to.el.style.zIndex = 1; from.el.style.zIndex = 0;
+      [from.wrap, from.img, to.wrap, to.img].forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
+      // уходящий: круг сжимается, затем уезжает, картинка внутри — навстречу
+      from.wrap.animate([{ clipPath: BIG }, { clipPath: SMALL }], { duration: 1200, easing: P3, ...o });
+      from.wrap.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${-s * SHIFT}%)` }], { duration: 1300, delay: 700, easing: P2IO, ...o });
+      from.img.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${s * 8}%)` }], { duration: 1300, delay: 700, easing: P2IO, ...o });
+      // приходящий: маленький круг въезжает с другой стороны и раскрывается
+      const open = to.wrap.animate([{ clipPath: SMALL }, { clipPath: BIG }], { duration: 1700, delay: 1500, easing: EXIO, ...o });
+      to.wrap.animate([{ transform: `translateY(${s * SHIFT}%)` }, { transform: 'translateY(0)' }], { duration: 1300, delay: 700, easing: P2IO, ...o });
+      to.img.animate([{ transform: `translateY(${-s * 8}%)` }, { transform: 'translateY(0)' }], { duration: 1300, delay: 700, easing: P2IO, ...o });
+      open.finished.then(() => {
+        from.el.classList.remove('is-current'); from.el.setAttribute('aria-hidden', 'true');
+        from.el.style.zIndex = ''; to.el.style.zIndex = '';
+        [from.wrap, from.img].forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
+        to.wrap.getAnimations().forEach((a) => a.cancel()); to.img.getAnimations().forEach((a) => a.cancel());
+        busy = false; plan();
+      });
+    };
+    // сама листает каждые несколько секунд; пауза под курсором и вне экрана
+    const plan = () => { clearTimeout(timer); if (!reduced && !hold && visible && !document.hidden) timer = setTimeout(() => go(1), 4500); };
+    $('.shapes__btn--next', shapes).addEventListener('click', () => { clearTimeout(timer); go(1); });
+    $('.shapes__btn--prev', shapes).addEventListener('click', () => { clearTimeout(timer); go(-1); });
+    shapes.addEventListener('mouseenter', () => { hold = true; clearTimeout(timer); });
+    shapes.addEventListener('mouseleave', () => { hold = false; if (!busy) plan(); });
+    document.addEventListener('visibilitychange', () => { if (!busy) plan(); });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (!busy) plan(); }).observe(shapes);
+    // появление: круг мягко раскрывается из точки
+    if (!reduced) slides[0].wrap.animate([{ clipPath: 'circle(0% at 50% 50%)' }, { clipPath: BIG }], { duration: 1800, delay: 150, easing: EXIO, fill: 'backwards' });
+    plan();
+  }
+
   $('#year').textContent = new Date().getFullYear();
 
   /* ---------------- типографика ----------------

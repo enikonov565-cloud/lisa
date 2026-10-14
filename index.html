@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610092256">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610141520">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -91,8 +91,15 @@
             </li>
           </ul>
         </div>
-        <figure class="hero__photo">
-          <img src="assets/img/hero-portrait.jpg?v=2" width="1500" height="1500" alt="Студийный портрет женщины с рыжими волосами на тёмном фоне — работа Лиссы Миляевой" fetchpriority="high">
+        <figure class="hero__photo shapes" aria-roledescription="слайдшоу" aria-label="Работы Лиссы Миляевой">
+          <div class="shapes__slide is-current"><div class="shapes__wrap"><img class="shapes__img" src="assets/img/depth-1.jpg?v=3" width="640" height="640" alt="Портрет девушки в твидовом жакете на тёмно-бордовом фоне" style="object-position:center 30%" fetchpriority="high"></div></div>
+          <div class="shapes__slide" aria-hidden="true"><div class="shapes__wrap"><img class="shapes__img" src="assets/img/depth-2.jpg?v=3" width="640" height="640" alt="Девушка с длинными светлыми волосами в холодном синем контровом свете" style="object-position:center 35%" loading="eager"></div></div>
+          <div class="shapes__slide" aria-hidden="true"><div class="shapes__wrap"><img class="shapes__img" src="assets/img/depth-3.jpg?v=3" width="640" height="640" alt="Силуэт девушки в контровом свете на тёмном фоне" style="object-position:center 40%" loading="eager"></div></div>
+          <nav class="shapes__nav" aria-label="Листать фотографии">
+            <button class="shapes__btn shapes__btn--prev" type="button" aria-label="Предыдущее фото"><svg viewBox="0 0 55 24" aria-hidden="true"><path d="M1.176 11.532a.5.5 0 00-.352.936c5.228 1.96 9.475 5.555 12.752 10.797a.5.5 0 00.848-.53c-3.39-5.424-7.81-9.163-13.248-11.203z"/><path d="M1.176 12.468a.5.5 0 01-.352-.936C6.052 9.572 10.3 5.978 13.576.735a.5.5 0 01.848.53c-3.39 5.424-7.81 9.163-13.248 11.203z"/><path d="M1 12.5a.5.5 0 110-1h53a.5.5 0 110 1H1z"/></svg></button>
+            <button class="shapes__btn shapes__btn--next" type="button" aria-label="Следующее фото"><svg viewBox="0 0 55 24" aria-hidden="true"><path d="M53.824 11.532a.5.5 0 01.352.936c-5.228 1.96-9.475 5.555-12.752 10.797a.5.5 0 01-.848-.53c3.39-5.424 7.81-9.163 13.248-11.203z"/><path d="M53.824 12.468a.5.5 0 00.352-.936C48.948 9.572 44.7 5.978 41.424.735a.5.5 0 00-.848.53c3.39 5.424 7.81 9.163 13.248 11.203z"/><path d="M54 12.5a.5.5 0 100-1H1a.5.5 0 100 1h53z"/></svg></button>
+            <span class="shapes__count" aria-live="polite"><span class="shapes__cur">01</span> — <span class="shapes__total">03</span></span>
+          </nav>
         </figure>
       </div>
 
@@ -591,9 +598,8 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610092256" defer></script>
+  <script src="assets/js/main.js?v=202610141520" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/depth-gallery.bundle.js?v=202610092256" defer></script>
-  <script src="assets/js/ribbon-glow.js?v=202610092256" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610141520" defer></script>
 </body>
 </html>
