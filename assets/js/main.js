@@ -1808,6 +1808,12 @@
       const el = document.createElement('p');
       el.className = 'genre__name'; el.setAttribute('aria-hidden', 'true');
       el.innerHTML = parts.map((p) => '<span>' + [...p].map((ch) => '<span class="gc">' + ch + '</span>').join('') + '</span>').join('');
+      // кнопка «детали» — как «смотреть работы» на первом экране; открывает описание (переворот карточки)
+      const cta = document.createElement('button');
+      cta.type = 'button'; cta.className = 'genre__cta gc'; cta.tabIndex = -1;
+      cta.innerHTML = 'детали <span class="lk-arrow" aria-hidden="true">→</span>';
+      cta.addEventListener('click', (e) => { e.stopPropagation(); $('.genre__front .genre__toggle', card).click(); });
+      el.appendChild(cta);
       card.appendChild(el);
       return { card, el, chars: $$('.gc', el), img: $('.genre__img', card) };
     });

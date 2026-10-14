@@ -2029,3 +2029,29 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) { .genres.is-h .genre__name { display: block; } }
 /* названия категорий — шрифтом с засечками на любой ширине */
 .genre__title, .genre__back-title { font-family: var(--display); font-weight: 400; }
+/* «детали» на карточках — как «смотреть работы»: слово со стрелкой, по тонкой линии бежит блик */
+@media (min-width: 1024px) {
+  .genre__cta {
+    --lk: var(--ink); --lk-line: rgba(76, 67, 67, .3);
+    position: relative; display: inline-flex; align-items: center; gap: 1.2rem;
+    margin: 2.4rem 0 0 23%; padding: 0 0 .8rem;
+    border: 0; background: none; cursor: pointer; pointer-events: auto;
+    font-family: var(--sans); font-weight: 400; font-size: max(2rem, 14px); letter-spacing: .02em; line-height: 1.2;
+    text-transform: none; color: var(--lk);
+    transition: color .4s var(--ease);
+  }
+  .genre__cta.on-card { --lk: var(--milk); --lk-line: rgba(250, 245, 238, .4); text-shadow: 0 0 .4em rgba(43, 35, 35, .35); }
+  .genre__cta::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lk) 50%, transparent) no-repeat, var(--lk-line);
+    background-size: 38% 100%, 100% 100%; background-position: -60% 0, 0 0;
+    animation: lkRun 2.6s linear infinite;
+    transition: opacity .45s ease;
+  }
+  .genre__cta:hover::after { opacity: 0; }
+  .genre__cta:active::after { opacity: 1; transition-duration: .8s; }
+  .genre__cta .lk-arrow { display: inline-block; transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+  .genre__cta:hover .lk-arrow { transform: translateX(.8rem); }
+  .genre__name .genre__cta.gc.on-card { color: var(--milk); }
+}
+@media (prefers-reduced-motion: reduce) { .genre__cta::after { animation: none; background: var(--lk-line); } }
