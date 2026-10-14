@@ -1857,3 +1857,64 @@ body::before {
 .hero--shapes .hero__bar .shapes__link.on-photo { --lk: var(--milk); --lk-line: rgba(250, 245, 238, .4); text-shadow: 0 0 .5em rgba(43, 35, 35, .55), 0 0 .15em rgba(43, 35, 35, .45); }
 .hero--shapes .hero__bar .shapes__link { transition: color .35s var(--ease), text-shadow .35s var(--ease); }
 @media (max-width: 1023px) { .shapes__under { font-size: 2.4rem; } }
+
+/* ==========================================================================
+   «КТО Я» — Thumbnail to Full Width (Codrops, MIT):
+   сначала маленькое фото в центре экрана с подписью и стрелкой «нажмите»;
+   по нажатию фото раскрывается во всю ширину, выезжают заголовок и подзаголовок, ниже — текст
+   ========================================================================== */
+.ab { position: relative; padding-top: var(--sec); --thumb: min(30rem, 60vw); }
+.ab.is-thumb { height: 100svh; min-height: 62rem; overflow: hidden; }
+.ab__inner { max-width: 128rem; margin: 0 auto; padding: 0 var(--pad); }
+.ab__num { display: inline-block; font-size: 1.6rem; font-weight: 500; letter-spacing: .08em; will-change: transform; }
+.ab__title, .ab__sub { overflow: hidden; }
+.ab__title {
+  margin: 1.2rem 0 1.6rem; padding: .04em 0 .14em;
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(7rem, 10vw, 16rem); line-height: 1; letter-spacing: -.01em;
+}
+.ab__sub { margin: 0 0 6rem; padding-bottom: .12em; font-family: var(--display); font-size: 2.8rem; line-height: 1.25; }
+.ab__blk { display: block; transform-origin: 0 100%; }
+.ab.is-thumb .ab__blk { transform: translateY(115%); }
+.ab__intro {
+  position: relative;
+  width: calc(100% - 2 * var(--pad)); height: min(62svh, 66rem);
+  margin: 0 auto;
+  border-radius: var(--radius); overflow: hidden;
+  background: rgba(76, 67, 67, .12);
+  outline: none;
+}
+.ab.is-thumb .ab__intro { width: var(--thumb); height: var(--thumb); cursor: pointer; }
+.ab__intro:focus-visible { box-shadow: 0 0 0 .3rem var(--orange); }
+.ab__imgwrap { position: absolute; inset: 0; will-change: transform; }
+.ab__imgwrap img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }   /* в широкой полосе — лицо, голова не срезана */
+.ab.is-thumb .ab__imgwrap img { object-position: 50% 50%; }
+/* подпись под маленьким фото: слева «Кто я», справа «нажмите» со стрелкой, которая зовёт вверх */
+.ab__cap {
+  position: absolute; left: 0; top: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 1.5rem; letter-spacing: .08em; text-transform: uppercase;
+  pointer-events: none;
+}
+.ab:not(.is-thumb) .ab__cap { display: none; }
+.ab__captitle { font-weight: 500; }
+.ab__hint { display: inline-flex; align-items: center; gap: .8rem; text-transform: lowercase; color: var(--orange); }
+.ab__hint svg { width: 1.2rem; height: 1.8rem; animation: abHint 1.8s cubic-bezier(.45, 0, .2, 1) infinite; }
+@keyframes abHint { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-.6rem); } }
+.ab__body {
+  display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 6rem;
+  padding-top: 8rem;
+}
+.ab.is-thumb .ab__body { visibility: hidden; }
+.ab__para { margin: 0; }
+.ab__para--main { grid-column: 1 / span 2; display: flex; flex-direction: column; gap: 3rem; text-align: right; }
+.ab__para--side { grid-column: 3; }
+.ab__para--side strong { font-weight: 500; }
+@media (prefers-reduced-motion: reduce) { .ab__hint svg { animation: none; } }
+@media (max-width: 1023px) {
+  .ab__body { grid-template-columns: 1fr; row-gap: 3rem; padding-top: 5rem; }
+  .ab__para--main, .ab__para--side { grid-column: 1; text-align: left; }
+  .ab__para--side { order: -1; }
+  .ab__sub { font-size: 1.85rem; margin-bottom: 4rem; white-space: nowrap; }   /* подзаголовок — ровно две строки */
+  .ab__intro { height: min(50svh, 56rem); }
+}
