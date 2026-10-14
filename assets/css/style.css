@@ -1940,7 +1940,7 @@ body::before {
    ========================================================================== */
 :root { --t-h1: clamp(3.4rem, 4.4vw, 8.4rem); --t-h2: 3.2rem; --t-h3: max(2.4rem, 15px); --t-text: max(2rem, 14px); }
 .h1, .ab__title, .wcontent__title {
-  font-family: var(--sans); font-weight: 200; font-style: normal;
+  font-family: var(--display); font-weight: 400; font-style: normal;   /* заголовки страниц — шрифтом с засечками, размер прежний */
   font-size: var(--t-h1); line-height: .98; letter-spacing: 0;
   text-transform: uppercase;
 }
