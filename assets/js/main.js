@@ -1666,11 +1666,20 @@
        Положение круга берём из живых значений (сжатие, сдвиг, перетекание), поэтому цвет едет вместе с ним */
     const bar = $('.hero__bar', hero);
     $$('.fall__char', bar).forEach((el) => el.classList.add('ac'));
-    $('.rot__badge', bar).classList.add('ac');
-    $$('.hero__prefix', bar).forEach((el) => {
+    $$('.hero__prefix', hero).forEach((el) => {
       el.innerHTML = [...el.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="ac">' + ch + '</span>').join('');
     });
-    const marks = [...$$('.ac', bar), ...$$('.hero__div', bar)];
+    const marks = [...$$('.ac', hero), ...$$('.hero__div', bar), $('.shapes__link', bar)];
+    // имя стоит ровно под заголовком слайда, с тем же отступом, что был у кнопки
+    const under = $('.shapes__under', hero);
+    const placeUnder = () => {
+      const head = $('.shapes__slide.is-current figcaption .shapes__head', hero) || $('figcaption .shapes__head', hero);
+      const hr = head.getBoundingClientRect(), sr = hero.getBoundingClientRect();
+      under.style.top = Math.round(hr.bottom - sr.top + parseFloat(getComputedStyle(document.documentElement).fontSize) * 2.4) + 'px';
+    };
+    placeUnder();
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(placeUnder);
+    window.addEventListener('resize', placeUnder);
     const circleOf = (s) => {
       const m = /circle\(\s*([\d.]+)%\s+at\s+([\d.]+)%\s+([\d.]+)%/.exec(getComputedStyle(s.wrap).clipPath || '');
       if (!m) return null;
@@ -1681,7 +1690,10 @@
     let acRun = false;
     const paintBar = () => {
       const circles = slides.filter((s) => s.el.classList.contains('is-current')).map(circleOf).filter(Boolean);
-      marks.forEach((el) => {
+      // буквы меняющегося слова пересоздаются при каждой смене — берём их заново
+      const rotChars = $$('.rot__char', hero);
+      rotChars.forEach((ch) => ch.classList.add('ac'));
+      [...marks, ...rotChars].forEach((el) => {
         const rc = el.getBoundingClientRect();
         const x = rc.left + rc.width / 2, y = rc.top + rc.height / 2;
         el.classList.toggle('on-photo', circles.some((q) => Math.hypot(x - q.x, y - q.y) < q.r));
@@ -1692,19 +1704,15 @@
       const was = acRun; acRun = e.isIntersecting;
       if (acRun && !was) requestAnimationFrame(acLoop);
     }).observe(hero);
-    // наведение на ссылку: круг перетекает под заголовок
-    slides.forEach((s) => {
-      const link = $('figcaption .shapes__link', s.el);
-      // светлая копия кнопки (внутри круга) повторяет всё, что происходит с настоящей
-      const both = $$('.shapes__link', s.el);
-      const mark = (cls, on) => both.forEach((l) => l.classList.toggle(cls, on));
-      link.addEventListener('mouseenter', () => mark('is-hover', true));
-      link.addEventListener('mouseleave', () => { mark('is-hover', false); mark('is-clicked', false); });
-      link.addEventListener('blur', () => mark('is-clicked', false));
-      link.addEventListener('click', () => mark('is-clicked', true));
-      link.addEventListener('mouseenter', () => { if (busy || reduced) return; stop([s.wrap]); tw(s.wrap, [{ clipPath: getComputedStyle(s.wrap).clipPath }, { clipPath: CLIP.hover }], { duration: 1000, easing: E.expo }); });
-      link.addEventListener('mouseleave', () => { if (busy || reduced) return; stop([s.wrap]); tw(s.wrap, [{ clipPath: getComputedStyle(s.wrap).clipPath }, { clipPath: CLIP.initial }], { duration: 1000, easing: E.expo }); });
-    });
+    // кнопка «смотреть работы»: при наведении круг текущего слайда перетекает под заголовок
+    const link = $('.shapes__link', bar);
+    link.addEventListener('mouseenter', () => link.classList.add('is-hover'));
+    link.addEventListener('mouseleave', () => link.classList.remove('is-hover', 'is-clicked'));
+    link.addEventListener('blur', () => link.classList.remove('is-clicked'));
+    link.addEventListener('click', () => link.classList.add('is-clicked'));
+    const flow = (to) => { if (busy || reduced) return; const s = slides[cur]; stop([s.wrap]); tw(s.wrap, [{ clipPath: getComputedStyle(s.wrap).clipPath }, { clipPath: to }], { duration: 1000, easing: E.expo }); };
+    link.addEventListener('mouseenter', () => flow(CLIP.hover));
+    link.addEventListener('mouseleave', () => flow(CLIP.initial));
     // появление первого экрана: круг раскрывается, строки выезжают
     if (!reduced) {
       const s = slides[0];

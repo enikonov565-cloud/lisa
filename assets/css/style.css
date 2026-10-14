@@ -1776,7 +1776,7 @@ body::before {
   --lk: var(--ink); --lk-line: rgba(76, 67, 67, .3);
   position: relative;
   display: inline-flex; align-items: center; gap: 1.4rem;
-  margin-top: 2.8rem; padding: 0 0 .9rem;
+  margin: 0; padding: 0 0 .9rem;
   font-family: var(--sans); font-weight: 400;
   font-size: clamp(1.8rem, 1.5vw, 2.6rem); letter-spacing: .02em; line-height: 1.2;
   color: var(--lk); white-space: nowrap;
@@ -1847,3 +1847,13 @@ body::before {
 }
 .hero--shapes .rot__badge.on-photo { color: var(--milk); text-shadow: 0 0 .5em rgba(43, 35, 35, .55), 0 0 .15em rgba(43, 35, 35, .45); }
 .hero--shapes .rot__content b { font-family: var(--display); font-style: italic; font-weight: 400; font-size: 1.12em; }
+
+/* имя с меняющимся словом — сразу под заголовком слайда (место бывшей кнопки) */
+.shapes__under {
+  position: absolute; left: var(--pad); top: 60%; z-index: 2;
+  font-size: 3.2rem; line-height: 1.21; white-space: nowrap;
+}
+/* кнопка внизу слева: цвет текста и линии — по тому, что под ней */
+.hero--shapes .hero__bar .shapes__link.on-photo { --lk: var(--milk); --lk-line: rgba(250, 245, 238, .4); text-shadow: 0 0 .5em rgba(43, 35, 35, .55), 0 0 .15em rgba(43, 35, 35, .45); }
+.hero--shapes .hero__bar .shapes__link { transition: color .35s var(--ease), text-shadow .35s var(--ease); }
+@media (max-width: 1023px) { .shapes__under { font-size: 2.4rem; } }
