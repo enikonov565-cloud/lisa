@@ -1810,20 +1810,25 @@
       el.innerHTML = parts.map((p) => '<span>' + [...p].map((ch) => '<span class="gc">' + ch + '</span>').join('') + '</span>').join('');
       // кнопка «детали» — как «смотреть работы» на первом экране; открывает описание (переворот карточки)
       const cta = document.createElement('button');
-      cta.type = 'button'; cta.className = 'genre__cta gc'; cta.tabIndex = -1;
-      cta.innerHTML = 'детали <span class="lk-arrow" aria-hidden="true">→</span>';
+      cta.type = 'button'; cta.className = 'genre__cta'; cta.tabIndex = -1;
+      cta.innerHTML = [...'детали'].map((ch) => '<span class="gc">' + ch + '</span>').join('') + ' <span class="lk-arrow gc" aria-hidden="true">→</span>';
       cta.addEventListener('click', (e) => { e.stopPropagation(); $('.genre__front .genre__toggle', card).click(); });
       el.appendChild(cta);
       card.appendChild(el);
-      return { card, el, chars: $$('.gc', el), img: $('.genre__img', card) };
+      return { card, el, cta, chars: $$('.gc', el), img: $('.genre__img', card) };
     });
     // буквы над фото — светлые, над фоном — тёмные (положение названия относительно карточки постоянно)
-    const paintNames = () => names.forEach(({ chars, img }) => {
+    const paintNames = () => names.forEach(({ chars, img, cta }) => {
       const ir = img.getBoundingClientRect();
       chars.forEach((ch) => {
         const r = ch.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
         ch.classList.toggle('on-card', x > ir.left && x < ir.right && y > ir.top && y < ir.bottom);
       });
+      // линия под «детали»: слева от края фото — тёмная, на фото — светлая
+      const cr = cta.getBoundingClientRect();
+      const inY = cr.bottom > ir.top && cr.bottom < ir.bottom;
+      const split = inY ? Math.min(cr.width, Math.max(0, ir.left - cr.left)) : cr.width;
+      cta.style.setProperty('--split', split + 'px');
     });
     let dist = 0, cur = 0, run = false, on = false, offTitle = 0;
     const layout = () => {

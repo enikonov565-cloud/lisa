@@ -2040,10 +2040,12 @@ main > section[hidden] { display: none !important; }
     text-transform: none; color: var(--lk);
     transition: color .4s var(--ease);
   }
-  .genre__cta.on-card { --lk: var(--milk); --lk-line: rgba(250, 245, 238, .4); text-shadow: 0 0 .4em rgba(43, 35, 35, .35); }
   .genre__cta::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--lk) 50%, transparent) no-repeat, var(--lk-line);
+    /* блик — светлый, база линии двухцветная: до края фото тёмная, на фото светлая */
+    background:
+      linear-gradient(90deg, transparent, rgba(255, 255, 255, .95) 50%, transparent) no-repeat,
+      linear-gradient(90deg, rgba(76, 67, 67, .35) 0 var(--split, 100%), rgba(250, 245, 238, .55) var(--split, 100%) 100%);
     background-size: 38% 100%, 100% 100%; background-position: -60% 0, 0 0;
     animation: lkRun 2.6s linear infinite;
     transition: opacity .45s ease;
@@ -2052,6 +2054,5 @@ main > section[hidden] { display: none !important; }
   .genre__cta:active::after { opacity: 1; transition-duration: .8s; }
   .genre__cta .lk-arrow { display: inline-block; transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
   .genre__cta:hover .lk-arrow { transform: translateX(.8rem); }
-  .genre__name .genre__cta.gc.on-card { color: var(--milk); }
 }
 @media (prefers-reduced-motion: reduce) { .genre__cta::after { animation: none; background: var(--lk-line); } }
