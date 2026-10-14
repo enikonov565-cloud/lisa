@@ -1785,43 +1785,39 @@ body::before {
   position: relative; z-index: 2;
   margin: 0; padding: 0 var(--pad) 3.2rem;
 }
-.hero--shapes .hero__name,
-.hero--shapes .hero__genres,
-.shapes__btn,
-.shapes__count {
-  background: rgba(250, 245, 238, .78);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
-          backdrop-filter: blur(12px) saturate(1.2);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 .9rem 1.8rem -.9rem rgba(76, 67, 67, .3);
-}
-.hero--shapes .hero__name { padding: .6rem .8rem .6rem 2rem; border-radius: var(--radius); }
-.hero--shapes .hero__genres { padding: .4rem 2rem; border-radius: var(--radius); }
-.shapes__nav { display: flex; align-items: center; gap: 1.2rem; }
+/* нижняя строка без подложек: цвет каждой буквы и значка подстраивается под то, что под ним —
+   над фото молочный с мягкой тенью, над фоном страницы — обычный тёмный */
+.hero--shapes .ac { color: var(--ink); transition: color .35s var(--ease), text-shadow .35s var(--ease), background-color .35s var(--ease); }
+.hero--shapes .ac.on-photo { color: var(--milk); text-shadow: 0 0 .5em rgba(43, 35, 35, .55), 0 0 .15em rgba(43, 35, 35, .45); }
+.hero--shapes .hero__div img { transition: filter .35s var(--ease); }
+.hero--shapes .hero__div.on-photo img { filter: brightness(0) invert(.96) drop-shadow(0 0 .3rem rgba(43, 35, 35, .6)); }
+.shapes__nav { display: flex; align-items: center; gap: 2.4rem; }
 .shapes__btn {
-  width: 8.4rem; height: 4.6rem; padding: 1.1rem 1.4rem;
-  border: 0; border-radius: var(--radius); cursor: pointer;
-  color: var(--ink);
-  transition: color .5s var(--ease), background-color .5s var(--ease), transform .6s var(--ease);
+  width: 1.8rem; height: 2.9rem; padding: 0;
+  border: 0; background: none; cursor: pointer;
+  transition: color .35s var(--ease), transform .6s var(--ease);
 }
-.shapes__btn svg { display: block; width: 100%; height: 100%; fill: currentColor; }
-.shapes__btn:hover { background-color: var(--brick); color: var(--milk); }
+.shapes__btn svg { display: block; width: 100%; height: 100%; fill: currentColor; overflow: visible; }
+.shapes__btn.on-photo svg { filter: drop-shadow(0 0 .3rem rgba(43, 35, 35, .6)); }
+.shapes__btn:hover { color: var(--orange); }
 .shapes__btn--prev:hover { transform: translateX(-.4rem); }
 .shapes__btn--next:hover { transform: translateX(.4rem); }
-/* счётчик — овал, как в образце (без обводки) */
-.shapes__count {
-  display: inline-flex; align-items: center; gap: 1rem;
-  margin-left: 1.2rem; padding: 1.4rem 2.8rem;
-  border-radius: 50%;
-  font-size: 2rem; letter-spacing: .06em; white-space: nowrap;
+/* точки вместо цифр: текущая — длинная капля, остальные — точки */
+.shapes__dots { display: flex; align-items: center; gap: 1rem; }
+.shapes__dot {
+  width: 1rem; height: 1rem; padding: 0;
+  border: 0; border-radius: 1rem; cursor: pointer;
+  background-color: currentColor; opacity: .45;
+  transition: width .6s var(--ease), opacity .4s var(--ease), color .35s var(--ease);
 }
-.shapes__cur { display: inline-block; min-width: 2ch; text-align: right; }
+.shapes__dot.is-on { width: 3.2rem; opacity: 1; }
+.shapes__dot:hover { opacity: .85; }
+.shapes__dot.on-photo { box-shadow: 0 0 .6rem rgba(43, 35, 35, .45); }
 @media (max-width: 1023px) {
   .hero.hero--shapes { height: 100svh; min-height: 56rem; padding: 0; }
   .hero--shapes .hero__bar { padding: 0 var(--pad) 2.4rem; row-gap: 1.2rem; }
   .hero--shapes .hero__genres { order: 3; width: 100%; justify-content: space-between; }
   .shapes__nav { margin-left: auto; }
-  .shapes__btn { width: 6.4rem; height: 4rem; padding: .9rem 1.1rem; }
-  .shapes__count { padding: 1rem 2rem; font-size: 1.8rem; }
   .shapes__cap { justify-content: flex-start; padding-top: 14rem; }
   .shapes__wrap { clip-path: circle(58% at 50% 60%); }
   .shapes__img { left: 0; width: 100%; top: 6%; height: 100%; }   /* кадр целиком по ширине, голова не срезана */

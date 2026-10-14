@@ -1589,7 +1589,7 @@
       el, wrap: $('.shapes__wrap', el), img: $('.shapes__img', el),
       rows: $$('.text-row > span', el), links: $$('.shapes__link', el),
     }));
-    const curEl = $('.shapes__cur', hero);
+    const dots = $$('.shapes__dot', hero);
     const pad = (n) => String(n + 1).padStart(2, '0');
     const narrow = window.matchMedia('(max-width: 1023px)').matches;   // на телефоне круг — по центру под заголовком
     const CLIP = narrow
@@ -1611,13 +1611,15 @@
     const stop = (els) => els.forEach((e) => e.getAnimations().forEach((an) => { try { an.commitStyles(); } catch (x) {} an.cancel(); }));
     let cur = 0, busy = false;
     slides.forEach((s, i) => { s.wrap.style.clipPath = CLIP.initial; });
-    const navigate = (dir) => {
+    const navigate = (dir, to) => {
       if (busy) return;
+      const next = to != null ? to : (cur + dir + slides.length) % slides.length;
+      if (next === cur) return;
       busy = true;
       const A = slides[cur];
-      cur = (cur + dir + slides.length) % slides.length;
+      cur = next;
       const B = slides[cur];
-      curEl.textContent = pad(cur);
+      dots.forEach((d, i) => { d.classList.toggle('is-on', i === cur); if (i === cur) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
       if (reduced) {
         A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
         B.el.classList.add('is-current'); B.el.removeAttribute('aria-hidden');
@@ -1658,6 +1660,36 @@
     };
     $('.shapes__btn--next', hero).addEventListener('click', () => navigate(1));
     $('.shapes__btn--prev', hero).addEventListener('click', () => navigate(-1));
+    dots.forEach((d, i) => d.addEventListener('click', () => navigate(i > cur ? 1 : -1, i)));
+
+    /* цвет нижней строки подстраивается под круг с фото: буква внутри круга — светлая, снаружи — тёмная.
+       Положение круга берём из живых значений (сжатие, сдвиг, перетекание), поэтому цвет едет вместе с ним */
+    const bar = $('.hero__bar', hero);
+    $$('.hero__prefix, .hero__genres a', bar).forEach((el) => {
+      el.innerHTML = [...el.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="ac">' + ch + '</span>').join('');
+    });
+    const marks = [...$$('.ac', bar), ...$$('.hero__div', bar)];
+    const circleOf = (s) => {
+      const m = /circle\(\s*([\d.]+)%\s+at\s+([\d.]+)%\s+([\d.]+)%/.exec(getComputedStyle(s.wrap).clipPath || '');
+      if (!m) return null;
+      const rc = s.wrap.getBoundingClientRect();
+      const w = s.wrap.offsetWidth, hh = s.wrap.offsetHeight;
+      return { x: rc.left + w * m[2] / 100, y: rc.top + hh * m[3] / 100, r: Math.hypot(w, hh) / Math.SQRT2 * m[1] / 100 };
+    };
+    let acRun = false;
+    const paintBar = () => {
+      const circles = slides.filter((s) => s.el.classList.contains('is-current')).map(circleOf).filter(Boolean);
+      marks.forEach((el) => {
+        const rc = el.getBoundingClientRect();
+        const x = rc.left + rc.width / 2, y = rc.top + rc.height / 2;
+        el.classList.toggle('on-photo', circles.some((q) => Math.hypot(x - q.x, y - q.y) < q.r));
+      });
+    };
+    const acLoop = () => { paintBar(); if (acRun) requestAnimationFrame(acLoop); };
+    new IntersectionObserver(([e]) => {
+      const was = acRun; acRun = e.isIntersecting;
+      if (acRun && !was) requestAnimationFrame(acLoop);
+    }).observe(hero);
     // наведение на ссылку: круг перетекает под заголовок
     slides.forEach((s) => {
       const link = $('figcaption .shapes__link', s.el);
