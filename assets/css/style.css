@@ -1865,7 +1865,7 @@ body::before {
    ========================================================================== */
 .ab { position: relative; padding-top: var(--sec); --thumb: min(40rem, 72vw); }
 .ab.is-thumb { height: 100svh; min-height: 62rem; overflow: hidden; }
-.ab__inner { max-width: 128rem; margin: 0 auto; padding: 0 var(--pad); }
+.ab__inner { padding: 0 var(--pad); }   /* заголовки и тексты — по полям страницы, как фото */
 .ab__num { display: inline-block; font-size: 1.6rem; font-weight: 500; letter-spacing: .08em; will-change: transform; }
 .ab__title, .ab__sub { overflow: hidden; }
 .ab__title {
