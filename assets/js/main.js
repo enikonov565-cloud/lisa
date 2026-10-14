@@ -1929,13 +1929,14 @@
   if (lms) {
     const slides = $$('.lms__slide', lms).map((el) => ({
       el,
-      layers: [...$$('.lms__ph', el), $('.lms__text', el), $('.lms__title', el)],
+      layers: [...$$('.lms__ph', el), $('.lms__title', el), $('.lms__text', el)],
       title: $('.lms__title', el),
     }));
     slides.forEach((s) => {
-      const t = $('.lms__in', s.title);
-      t.innerHTML = [...t.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="lt">' + ch + '</span>').join('');
-      s.chars = $$('.lt', t);
+      $$('.lms__main, .lms__sub', s.title).forEach((t) => {
+        t.innerHTML = [...t.textContent].map((ch) => ch === ' ' ? ' ' : '<span class="lt">' + ch + '</span>').join('');
+      });
+      s.chars = $$('.lt', s.title);
     });
     const curEl = $('.lms__cur', lms);
     const EX = 'cubic-bezier(.77, 0, .175, 1)';
