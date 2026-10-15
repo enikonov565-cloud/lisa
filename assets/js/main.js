@@ -898,8 +898,11 @@
   let pinned = null, pickT = 0, overTile = null;
   // фото выбранного направления фиксируются: пока курсор над одним из них, меню не переключается,
   // а нажатие открывает это фото крупно (фото лежат под строками — попадание считаем по их рамкам)
+  // над словами названия/описания раздела — всегда переключаем раздел, даже если под ними фото
+  const onWord = (x, y) => items.find((m) => [m.title, m.desc].some((el) => { const r = el.getBoundingClientRect(); return r.width && x > r.left - 8 && x < r.right + 8 && y > r.top - 6 && y < r.bottom + 6; })) || null;
   const tileAt = (x, y) => {
     if (!pinned || tMode !== 'menu') return null;
+    if (onWord(x, y)) return null;
     return pinned.tiles.find((t) => {
       if (t.style.display === 'none' || parseFloat(getComputedStyle(t).opacity) < 0.5) return false;
       const r = t.getBoundingClientRect();
@@ -912,9 +915,11 @@
     if (t !== overTile) {
       if (overTile) overTile.classList.remove('is-hover');
       overTile = t;
-      if (t) { t.classList.add('is-hover'); clearTimeout(pickT); }
+      if (t) { t.classList.add('is-hover'); clearTimeout(pickT); pickFor = undefined; }
       stage.classList.toggle('on-tile', !!t);
     }
+    // ушли с фото на слова другого раздела — переключаемся
+    if (!t) { const m = onWord(e.clientX, e.clientY); if (m && m !== pinned) pick(m); }
   });
   stage.addEventListener('click', (e) => {
     const t = overTile || tileAt(e.clientX, e.clientY);
@@ -923,10 +928,14 @@
     const idx = Number(t.dataset.w);
     if (idx >= 0) openWork(idx, null, t);
   }, true);
+  let pickFor = undefined;
   const pick = (it, wait = 220) => {
-    clearTimeout(pickT);
     if (overTile && it) return;   // курсор на фото — направление не меняется
+    if (it && it === pickFor) return;   // уже ждём переключения на этот раздел
+    pickFor = it;
+    clearTimeout(pickT);
     pickT = setTimeout(() => {
+      pickFor = undefined;
       if (overTile && it) return;
       if (tMode !== 'menu' || tBusy || pinned === it) return;
       if (pinned) hideTiles(pinned);
