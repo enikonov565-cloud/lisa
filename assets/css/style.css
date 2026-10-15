@@ -2633,3 +2633,19 @@ main > section[hidden] { display: none !important; }
   .invite__col:nth-child(2), .invite__col:nth-child(3) { display: none; }
   .invite__col--r:nth-child(4) { grid-column: 3; }
 }
+
+/* приглашение: ленты — объёмные колёса (вся лента изогнута в барабан, вращается целиком) */
+.invite__col { position: relative; perspective: 160rem; margin-top: 0 !important; }
+.invite__wheel { position: absolute; inset: 0; transform-style: preserve-3d; }
+.invite__col--l .invite__wheel { transform: translateZ(calc(var(--r, 60rem) * -1)) rotateY(16deg); }   /* колёса чуть развёрнуты к центру */
+.invite__col--r .invite__wheel { transform: translateZ(calc(var(--r, 60rem) * -1)) rotateY(-16deg); }
+.invite__drum { position: absolute; left: 0; right: 0; top: 50%; height: 0; transform-style: preserve-3d; will-change: transform; }
+.invite__drum .invite__ph {
+  position: absolute; left: 0; right: 0; top: calc(var(--h, 25rem) / -2); height: var(--h, 25rem);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+}
+.invite__drum .invite__ph img { height: 100%; aspect-ratio: auto; }
+/* общая перспектива из центра экрана: оба колеса смотрят на середину, не наезжая на текст */
+.invite__grid { perspective: 220rem; perspective-origin: 50% 50%; }
+.invite__col { perspective: none; transform-style: preserve-3d; }
+.invite__col--l .invite__wheel, .invite__col--r .invite__wheel { transform: translateZ(calc(var(--r, 60rem) * -1)); }

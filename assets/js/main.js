@@ -1410,8 +1410,9 @@
       cDlg.showModal();
     };
     cta.addEventListener('click', (e) => { e.preventDefault(); openContact('', cta); });
-    /* приглашение: колонки фото из каталога плывут бесконечно — соседние навстречу друг другу,
-       при первом показе колонки въезжают сверху и снизу по очереди (как в Sticky Grid Scroll) */
+    /* приглашение: боковые ленты фото из каталога — объёмные колёса: вся лента целиком изогнута
+       в барабан и медленно вращается, соседние — навстречу друг другу;
+       при первом показе колёса въезжают сверху и снизу по очереди (как в Sticky Grid Scroll) */
     (() => {
       const grid = $('.invite__grid');
       if (!grid) return;
@@ -1419,30 +1420,44 @@
       const cols = [];
       for (let c = 0; c < COLS; c++) {
         const own = pics.filter((_, k) => k % COLS === c);
+        const list = own.concat(own);   // дважды — колесо плотнее и крупнее
         const col = document.createElement('div');
         col.className = 'invite__col invite__col--' + (c < COLS / 2 ? 'l' : 'r');
-        const track = document.createElement('div');
-        track.className = 'invite__track';
-        // дважды подряд — бесшовный круг
-        track.innerHTML = own.concat(own).map((w) => `<span class="invite__ph"><img src="${w.src}" alt="" loading="lazy" style="object-position:${focusOf(w.src)}"></span>`).join('');
-        col.appendChild(track); grid.appendChild(col); cols.push({ col, track, up: c % 2 === 0 });
+        col.innerHTML = '<div class="invite__wheel"><div class="invite__drum">' +
+          list.map((w) => `<span class="invite__ph"><img src="${w.src}" alt="" loading="lazy" style="object-position:${focusOf(w.src)}"></span>`).join('') +
+          '</div></div>';
+        grid.appendChild(col);
+        cols.push({ col, drum: $('.invite__drum', col), items: $$('.invite__ph', col), up: c % 2 === 0, off: c * 17 });
       }
+      // радиус барабана — по размеру фото, чтобы лента замыкалась в кольцо без зазоров
+      const layout = () => cols.forEach(({ col, drum, items, off }) => {
+        const w = col.clientWidth;
+        if (!w) return;
+        const h = w * 1.25, gap = Math.max(12, w * .1), n = items.length;
+        const step = 360 / n;
+        const r = (h + gap) / 2 / Math.tan(Math.PI / n);
+        drum.style.setProperty('--h', h + 'px');
+        items.forEach((it, i) => { it.style.transform = `rotateX(${off + i * step}deg) translateZ(${r.toFixed(1)}px)`; });
+        col.style.setProperty('--r', r.toFixed(1) + 'px');
+      });
+      layout();
+      window.addEventListener('resize', layout);
+      new ResizeObserver(layout).observe(grid);
       if (reduced) return;
       let started = false;
       const start = () => {
         if (started) return; started = true;
-        cols.forEach(({ col, track, up }, c) => {
-          // въезд колонки: чётные — снизу, нечётные — сверху, по очереди
+        cols.forEach(({ col, drum, up }, c) => {
           col.animate([{ transform: `translateY(${up ? 60 : -60}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
             { duration: 2600, delay: 220 * (c % 2 ? COLS - c : c), easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
-          // бесконечное медленное течение: половина ленты = один круг
-          track.animate(up ? [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }] : [{ transform: 'translateY(-50%)' }, { transform: 'translateY(0)' }],
-            { duration: 90000 + c * 9000, iterations: Infinity, easing: 'linear' });
+          // медленное бесконечное вращение всего колеса
+          drum.animate(up ? [{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(360deg)' }] : [{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(-360deg)' }],
+            { duration: 110000 + c * 10000, iterations: Infinity, easing: 'linear' });
         });
       };
       new IntersectionObserver(([e]) => {
         if (e.isIntersecting) start();
-        cols.forEach(({ track }) => track.getAnimations().forEach((an) => (e.isIntersecting ? an.play() : an.pause())));
+        cols.forEach(({ drum }) => drum.getAnimations().forEach((an) => (e.isIntersecting ? an.play() : an.pause())));
       }).observe(grid);
     })();
 
