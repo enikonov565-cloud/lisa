@@ -2434,3 +2434,5 @@ main > section[hidden] { display: none !important; }
 }
 .wmenu__title { font-size: calc(2rem + 2.2vw); }
 @media (max-width: 1023px) { .wmenu__title { font-size: 4rem; } }
+/* «Мой подход и гарантии»: крупные названия — шрифтом названий на фото из «О чём мои кадры» (заглавные, с засечками) */
+.lm__title .lm__tl { text-transform: uppercase; letter-spacing: .01em; }
