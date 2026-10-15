@@ -1728,8 +1728,9 @@
     window.addEventListener('resize', layout);
     // наведение: фото чуть приближается внутри рамки
     const zoom = (s) => { if (opened || reduced) return; wrapI.getAnimations().forEach((an) => an.cancel()); wrapI.animate([{ transform: getComputedStyle(wrapI).transform === 'none' ? 'scale(1)' : getComputedStyle(wrapI).transform }, { transform: `scale(${s})` }], { duration: 1000, easing: EXPO, fill: 'forwards' }); };
-    intro.addEventListener('mouseenter', () => zoom(1.2));
-    intro.addEventListener('mouseleave', () => zoom(1));
+    // только для мыши: на телефоне «наведение» съедало первое касание — фото открывалось лишь со второго
+    intro.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') zoom(1.2); });
+    intro.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') zoom(1); });
     const open = () => {
       if (opened) return;
       opened = true;
@@ -1762,6 +1763,7 @@
       Promise.all(anims.map((an) => an.finished)).then(() => wrapI.getAnimations().forEach((an) => an.cancel()));
     };
     intro.addEventListener('click', open);
+    cap.addEventListener('click', open);   // подпись «Привет, я Лисса» тоже открывает
     // ссылка на скрытую пока страницу (меню, футер, кнопки) — сначала раскрываем «Кто я»
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a[href^="#"]');

@@ -1909,7 +1909,7 @@ body::before {
   transition: opacity .5s var(--ease), transform .6s var(--ease);
 }
 .ab__hint svg { width: 1.7rem; height: 1.7rem; animation: abHint 2.4s cubic-bezier(.45, 0, .2, 1) infinite; }
-.ab__intro:hover .ab__hint { transform: scale(1.12); }
+@media (hover: hover) { .ab__intro:hover .ab__hint { transform: scale(1.12); } }
 .ab:not(.is-thumb) .ab__hint { opacity: 0; transform: scale(.6); }
 @keyframes abHint { 0%, 60%, 100% { transform: scale(1); } 30% { transform: scale(1.18); } }
 /* текст — по левому краю, весь блок прижат к правому полю страницы (по краю фото) */
@@ -2677,4 +2677,10 @@ main > section[hidden] { display: none !important; }
   .lm__slide .lm__sub { margin-top: .8rem; }
   .lm__slide .lm__text { padding: 0; margin-top: 2rem; gap: 2rem; }
   .lm .lt.on-photo { color: inherit !important; text-shadow: none !important; }
+}
+/* подпись под маленьким фото «Кто я» нажимается так же, как фото */
+.ab.is-thumb .ab__cap { pointer-events: auto; cursor: pointer; }
+/* приглашение на телефоне: без крутящихся колёс с фото — только Лисса на чёрном и текст */
+@media (max-width: 1023px) {
+  .invite__grid { display: none; }
 }
