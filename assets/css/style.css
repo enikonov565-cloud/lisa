@@ -2562,3 +2562,5 @@ main > section[hidden] { display: none !important; }
 .sv__thumb button:hover ~ .sv__tname, .sv__thumb.is-active .sv__tname { transform: translateY(-.8rem); }
 .sv__thumb button { position: relative; z-index: 1; }
 @media (max-width: 1023px) { .sv__tname { display: none; } }
+/* фоновая надпись «О чём мои кадры» не выходит за свой раздел (не наплывает на «Мой подход и гарантии») */
+.genres { overflow: clip; }
