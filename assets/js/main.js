@@ -522,206 +522,72 @@
     extrasDlg.addEventListener('close', () => extrasBtn.focus({ preventScroll: true }));
   }
 
-  /* ---------------- services ---------------- */
+  /* ---------------- services: большой экран + маленькие фото направлений внизу ----------------
+     наведение (или нажатие) на маленькое фото — большой экран плавно сменяет кадр, название, цену и состав */
   const list = $('#svc-list');
-  // цвет обратной стороны плашки у каждой услуги — как в бегущей строке и карточках
-  const SVC_COLORS = [
-    ['var(--milk)', 'var(--orange)'],          // репортажное фото
-    ['#e8925a', 'var(--ink-deep)'],             // архитектура
-    ['var(--olive, #8a8d3c)', 'var(--ink-deep)'], // стрит
-    ['#c4643a', 'var(--milk)'],                 // студийный портрет
-    ['var(--orange)', 'var(--milk)'],           // уличный портрет
-  ];
+  const svBg = $('.sv__bg');
   const card = {
-    kicker: $('#svc-kicker'), price: $('#svc-price'),
+    kicker: $('#svc-kicker'), text: $('#svc-text'), price: $('#svc-price'),
     includes: $('#svc-includes'), order: $('#svc-order'),
   };
   list.innerHTML = SERVICES.map((s, i) => `
-    <li class="svc__item rv" style="--d:${i * 0.06}s" tabindex="0" data-i="${i}" aria-label="${s.title}, ${s.price}">
-      <span class="flip" style="--back:${SVC_COLORS[i][0]};--back-ink:${SVC_COLORS[i][1]}"><span class="flip__inner"><span class="chip flip__face flip__front">${s.title}</span><span class="chip flip__face flip__back" aria-hidden="true">${s.title}</span></span></span>
-      <p>${s.text}</p>
+    <li class="sv__thumb" style="--i:${i}">
+      <button type="button" data-i="${i}" aria-label="${s.title}, ${s.price}">
+        <img src="${s.img}" alt="${s.alt}" loading="lazy">
+      </button>
+      <span class="sv__thumb-name" aria-hidden="true">${s.title}</span>
     </li>`).join('');
-
-  /* фото услуги: «Cursor Image Gallery» — сдвиг кадров, стрелка-курсор, точки */
-  const svcGallery = (() => {
-    const box = $('.svc-photo');
-    const track = $('.svc-photo__track', box);
-    const cursor = $('.svc-cursor', box);
-    const dotsBox = $('.svc-dots', box);
-    const DUR = 600;
-    const EASE = 'cubic-bezier(0.42, 0, 0.58, 1)';
-    const count = SERVICES.length;
-    let index = -1;
-    let layer = null;
-    let sliding = false;
-    let queued = null;
-    let side = 'none';
-    let pointer = null;
-    dotsBox.innerHTML = SERVICES.map(() => '<span></span>').join('');
-    const dots = $$('span', dotsBox);
-    SERVICES.forEach((s) => { const im = new Image(); im.src = s.img; });   // заранее, чтобы сдвиг был без пустоты
-    const make = (i, x) => {
-      const el = document.createElement('div');
-      el.className = 'svc-photo__layer';
-      el.style.backgroundImage = 'url("' + SERVICES[i].img + '")';
-      el.style.backgroundPosition = focusOf(SERVICES[i].img);
-      el.style.transform = 'translateX(' + x + ')';
-      track.appendChild(el);
-      return el;
-    };
-    const sideFor = (relX, w) => {
-      if (w <= 0) return 'none';
-      if (relX < w / 2) return index > 0 ? 'left' : 'none';
-      return index < count - 1 ? 'right' : 'none';
-    };
-    const paintSide = () => {
-      box.classList.toggle('has-side', side !== 'none');
-      box.classList.toggle('side-left', side === 'left');
-    };
-    // «падающие буквы» (как «репортаж · портрет · архитектура · стрит» на главном экране)
-    const fallPrice = (el) => {
-      const text = el.textContent.trim();
-      el.setAttribute("aria-label", text);
-      el.innerHTML = "<span class=\"fall__word\" aria-hidden=\"true\">" +
-        Array.from(text).map((c) => (/\s/.test(c) ? "<span class=\"fall__sp\"></span>" : "<span class=\"fall__char\">" + c + "</span>")).join("") + "</span>";
-      if (reduced || !("animate" in Element.prototype)) return;
-      $$(".fall__char", el).forEach((c, i) => {
-        c.style.opacity = "0";
-        c.animate(
-          [{ transform: "translateY(" + FALL.startY + ")", opacity: 0, filter: "blur(3px)" },
-           { transform: "translateY(0)", opacity: 1, filter: "blur(0)" }],
-          { duration: FALL.inDur, delay: i * FALL.stagger * 1.6, easing: FALL.easeIn, fill: "forwards" },
-        );
-      });
-    };
-    // первый показ цены — когда плашка попадает на экран
-    const priceEl = $(".svc-card__price");
-    if (priceEl && "IntersectionObserver" in window) {
-      const pio = new IntersectionObserver(([e]) => { if (e.isIntersecting) { fallPrice(priceEl); pio.disconnect(); } }, { threshold: 0.6 });
-      pio.observe(priceEl);
-    }
-    const cardParts = () => $$('.svc-card__kicker, .svc-card__price, .svc-card__list');
-    const swapCard = (fill, dir) => {
-      // половина сдвига фото — старый текст уходит, вторая половина — новый въезжает с той же стороны
-      const parts = cardParts();
-      const half = DUR / 2;
-      parts.forEach((p) => p.animate(
-        p.classList.contains("svc-card__price")
-          ? [{ opacity: 1, transform: "translateY(0)", filter: "blur(0)" }, { opacity: 0, transform: "translateY(.35em)", filter: "blur(3px)" }]   // цена растворяется, как жанры
-          : [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 2) + 'rem)' }],
-        { duration: half, easing: 'cubic-bezier(0.42, 0, 1, 1)', fill: 'forwards' },
-      ));
-      // по таймеру, а не по .finished: текст обновится, даже если анимации браузер приостановил
-      setTimeout(() => {
-        fill();
-        cardParts().forEach((p) => {
-          p.getAnimations().forEach((a) => a.cancel());
-          if (p.classList.contains("svc-card__price")) { fallPrice(p); return; }   // цена — буквами, как жанры на главном экране
-          p.animate(
-            [{ opacity: 0, transform: 'translateX(' + (dir * 2) + 'rem)' }, { opacity: 1, transform: 'translateX(0)' }],
-            { duration: half, easing: 'cubic-bezier(0, 0, 0.58, 1)' },
-          );
-        });
-      }, half);
-    };
-    let queuedFill = null;
-    const go = (i, fill) => {
-      if (i === index || i < 0 || i >= count) return;
-      dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
-      box.setAttribute('aria-label', SERVICES[i].alt);
-      if (!layer || reduced) {                       // первый кадр или без анимаций
-        if (layer) layer.remove();
-        layer = make(i, '0%');
-        index = i;
-        if (fill) fill();
-        return;
-      }
-      if (sliding) { queued = i; queuedFill = fill; return; }
-      sliding = true;
-      const dir = i > index ? 1 : -1;
-      if (fill) swapCard(fill, dir);
-      const from = layer;
-      const to = make(i, (dir * 100) + '%');
-      void to.offsetWidth;
-      from.style.transition = to.style.transition = 'transform ' + DUR + 'ms ' + EASE;
-      from.style.transform = 'translateX(' + (-dir * 100) + '%)';
-      to.style.transform = 'translateX(0%)';
-      index = i;
-      setTimeout(() => {
-        from.remove();
-        to.style.transition = '';
-        layer = to;
-        sliding = false;
-        if (pointer) { side = sideFor(pointer.x, pointer.w); paintSide(); }
-        if (queued !== null && queued !== index) { const q = queued, f = queuedFill; queued = null; queuedFill = null; go(q, f); } else { queued = null; queuedFill = null; }
-      }, DUR + 40);
-    };
-    box.addEventListener('pointermove', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      const r = box.getBoundingClientRect();
-      pointer = { x: e.clientX - r.left, w: r.width };
-      cursor.style.left = (e.clientX - r.left) + 'px';
-      cursor.style.top = (e.clientY - r.top) + 'px';
-      side = sideFor(pointer.x, pointer.w);
-      paintSide();
-    });
-    box.addEventListener('pointerleave', () => { pointer = null; side = 'none'; paintSide(); });
-    box.addEventListener('click', (e) => {
-      const r = box.getBoundingClientRect();
-      const s = sideFor(e.clientX - r.left, r.width);
-      if (s === 'left') showService(index - 1);
-      else if (s === 'right') showService(index + 1);
-    });
-    // свайп на телефоне
-    let sx = null;
-    box.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
-    box.addEventListener('touchend', (e) => {
-      if (sx === null) return;
-      const dx = e.changedTouches[0].clientX - sx;
-      if (Math.abs(dx) > 40) showService(Math.min(count - 1, Math.max(0, index + (dx < 0 ? 1 : -1))));
-      sx = null;
-    });
-    return { go };
-  })();
-
+  SERVICES.forEach((s) => { const im = new Image(); im.src = s.img; });   // заранее — смена без пустоты
+  let svLayer = null;
+  const svParts = () => [card.kicker, card.text, card.price, card.includes];
   let activeSvc = -1;
   const showService = (i) => {
-    if (i === activeSvc) return;
+    if (i === activeSvc || i < 0 || i >= SERVICES.length) return;
+    const first = activeSvc < 0;
     activeSvc = i;
     const s = SERVICES[i];
-    $$('.svc__item', list).forEach((el) => {
-      const on = Number(el.dataset.i) === i;
-      el.classList.toggle('is-active', on);
-      const f = $('.flip', el);
-      if (f) {
-        if (on && !reduced) f.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-0.6rem)', offset: 0.3 }, { transform: 'translateY(0)', offset: 0.6 }, { transform: 'translateY(-0.2rem)', offset: 0.8 }, { transform: 'translateY(0)' }], { duration: 800, easing: 'cubic-bezier(.33, 0, .3, 1)' });
-        f.classList.toggle('is-flipped', on);
-      }
-    });
+    $$('.sv__thumb', list).forEach((el, k) => el.classList.toggle('is-active', k === i));
     card.order.dataset.type = s.title;
+    // большой кадр: новый слой проявляется поверх старого с мягким приближением
+    const layer = document.createElement('div');
+    layer.className = 'sv__layer';
+    layer.style.backgroundImage = 'url("' + s.img + '")';
+    layer.style.backgroundPosition = focusOf(s.img);
+    svBg.appendChild(layer);
+    const old = svLayer; svLayer = layer;
+    if (!reduced && !first) {
+      layer.animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1100, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' });
+      if (old) setTimeout(() => old.remove(), 1150);
+    } else if (old) old.remove();
+    // текст: старый уходит, новый приходит
     const fill = () => {
-      card.kicker.textContent = s.title.toLowerCase();
+      card.kicker.textContent = s.title;
+      card.text.textContent = s.text;
       card.price.textContent = s.price;
       card.includes.innerHTML = s.includes.map((t) => `<li>${t}</li>`).join('');
-      if (window.siteTypograph) window.siteTypograph(card.includes);   // правило переносов и для новых строк
+      if (window.siteTypograph) { window.siteTypograph(card.includes); window.siteTypograph(card.text); }
     };
-    svcGallery.go(i, fill);   // фото и текст карточки меняются одновременно
+    if (reduced || first) { fill(); return; }
+    svParts().forEach((p, k) => {
+      p.getAnimations().forEach((an) => an.cancel());
+      p.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-.6rem)' }], { duration: 260, delay: k * 30, easing: 'ease-in', fill: 'forwards' });
+    });
+    clearTimeout(showService.t);
+    showService.t = setTimeout(() => {
+      fill();
+      svParts().forEach((p, k) => {
+        p.getAnimations().forEach((an) => an.cancel());
+        p.animate([{ opacity: 0, transform: 'translateY(.8rem)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: k * 70, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+      });
+    }, 320);
   };
-  $$('.svc__item', list).forEach((el) => {
-    const i = Number(el.dataset.i);
-    el.addEventListener('mouseenter', () => showService(i));
-    el.addEventListener('focus', () => showService(i));
-    el.addEventListener('click', () => showService(i));
-    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showService(i); } });
+  $$('.sv__thumb button', list).forEach((btn) => {
+    const i = Number(btn.dataset.i);
+    btn.addEventListener('mouseenter', () => showService(i));
+    btn.addEventListener('focus', () => showService(i));
+    btn.addEventListener('click', () => showService(i));
   });
   showService(0);
-  // новые .rv в списке услуг
-  if ('IntersectionObserver' in window && !reduced) {
-    const io2 = new IntersectionObserver((en) => en.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io2.unobserve(e.target); } }), { rootMargin: '0px 0px -60px 0px' });
-    $$('.rv', list).forEach((el) => io2.observe(el));
-  } else {
-    $$('.rv', list).forEach((el) => el.classList.add('in'));
-  }
 
   // жанры в hero → открыть нужную услугу
   $$('[data-svc]').forEach((a) => a.addEventListener('click', () => showService(Number(a.dataset.svc))));

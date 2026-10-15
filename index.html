@@ -12,7 +12,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610151459">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610151543">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -356,41 +356,28 @@
           <p class="note rv" style="--d:.1s">Прозрачные цены без скрытых доплат. Точную смету соберу под вашу задачу после брифа.</p>
         </div>
 
-        <div class="services__grid">
-          <div class="services__col">
-          <ol class="svc" id="svc-list">
-            <!-- заполняется из данных в main.js, ниже — базовая разметка для браузеров без JS -->
-            <li class="svc__item"><span class="chip">Репортажное фото</span><p>события, праздники и живые моменты без постановки</p></li>
-            <li class="svc__item"><span class="chip">Архитектура</span><p>здания, интерьеры, линии города и свет</p></li>
-            <li class="svc__item"><span class="chip">Стрит-фотография</span><p>случайные моменты, которые больше не повторятся</p></li>
-            <li class="svc__item"><span class="chip">Студийный портрет</span><p>свет, характер, персональный и деловой образ</p></li>
-            <li class="svc__item"><span class="chip">Уличный портрет</span><p>естественный свет и живой город вокруг героя</p></li>
-          </ol>
-            <button class="extras-btn" type="button" aria-haspopup="dialog" aria-controls="extras-dialog">
-              можно добавить <span class="extras-btn__plus" aria-hidden="true">+</span>
-            </button>
+        <!-- большой экран с выбранным направлением, внизу — маленькие фото направлений (наведение переключает) -->
+        <div class="sv">
+          <div class="sv__stage">
+            <div class="sv__bg" aria-hidden="true"></div>
+            <div class="sv__info" aria-live="polite">
+              <p class="sv__name" id="svc-kicker">Репортажное фото</p>
+              <p class="sv__text" id="svc-text">события, праздники и живые моменты без постановки</p>
+              <p class="sv__price" id="svc-price">от 12 000 ₽</p>
+              <ul class="sv__list" id="svc-includes">
+                <li>до 3 часов на событии</li>
+                <li>60 кадров в обработке</li>
+                <li>готовые файлы за 5 дней</li>
+              </ul>
+              <div class="sv__actions">
+                <a class="shapes__link sv__order" href="#contact" id="svc-order">заказать съёмку <span class="lk-arrow" aria-hidden="true">→</span></a>
+                <button class="extras-btn" type="button" aria-haspopup="dialog" aria-controls="extras-dialog">
+                  можно добавить <span class="extras-btn__plus" aria-hidden="true">+</span>
+                </button>
+              </div>
+            </div>
+            <ul class="sv__thumbs" id="svc-list" aria-label="Направления"></ul>
           </div>
-
-          <figure class="svc-photo" role="img" aria-label="">
-            <div class="svc-photo__track"></div>
-            <span class="svc-cursor" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="24" height="24"><polyline points="9 6 15 12 9 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <div class="svc-dots" aria-hidden="true"></div>
-          </figure>
-          <aside class="svc-card" aria-live="polite">
-            <p class="svc-card__kicker" id="svc-kicker">репортажное фото</p>
-            <p class="svc-card__price" id="svc-price">от 12 000 ₽</p>
-            <ul class="svc-card__list" id="svc-includes">
-              <li>2 часа съёмки</li>
-              <li>30 кадров в авторской обработке</li>
-              <li>готовые файлы за 7 дней</li>
-            </ul>
-            <a class="svc-order" href="#contact" id="svc-order" aria-label="Заказать съёмку">
-              <span class="svc-order__label" aria-hidden="true">заказать съёмку</span>
-              <span class="svc-order__arrow" aria-hidden="true">→</span>
-            </a>
-          </aside>
         </div>
 
         <dialog class="extras-dialog" id="extras-dialog" aria-labelledby="extras-title">
@@ -627,8 +614,8 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610151459" defer></script>
+  <script src="assets/js/main.js?v=202610151543" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
-  <script src="assets/js/ribbon-glow.js?v=202610151459" defer></script>
+  <script src="assets/js/ribbon-glow.js?v=202610151543" defer></script>
 </body>
 </html>
