@@ -2436,3 +2436,26 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 1023px) { .wmenu__title { font-size: 4rem; } }
 /* «Мой подход и гарантии»: крупные названия — шрифтом названий на фото из «О чём мои кадры» (заглавные, с засечками) */
 .lm__title .lm__tl { text-transform: uppercase; letter-spacing: .01em; }
+/* === «О чём мои кадры»: расположение карточек по образцу ThumbHoverSVGFilter (Codrops) —
+   все карточки одним рядом во всю ширину, нечётные чуть ниже (зигзаг); переворот и надписи прежние === */
+@media (min-width: 1024px) {
+  .genres.is-v .genres__grid {
+    display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: flex-start;
+    row-gap: 0; padding: 22rem 0 14rem 9vw;
+  }
+  .genres.is-v .genre,
+  .genres.is-v .genre:nth-child(odd),
+  .genres.is-v .genre:nth-child(even) {
+    flex: none; width: clamp(18rem, 14vw, 30rem);
+    margin: 0 !important; justify-self: auto; translate: none !important;
+  }
+  .genres.is-v .genre:nth-child(odd) { margin-top: 10vh !important; }
+  .genres.is-v .genre__name { font-size: calc(1.6rem + 1.6vw); }
+}
+@media (min-width: 1024px) {
+  .genres.is-v .genres__grid { padding: 22rem var(--pad) 14rem calc(var(--pad) + 5vw); }   /* ряд — в полях страницы */
+  .genres.is-v .genre { width: clamp(18rem, 14.5vw, 30rem); }
+  .genres.is-v .genre__name { font-size: calc(1rem + 1.35vw); left: -20%; }   /* под маленькие карточки, без наезда на соседей */
+  .genres.is-v .genre__name > span + span { margin-left: 14%; }
+}
+@media (min-width: 1024px) { .genres.is-v .genre__cta { margin-left: 14%; } }
