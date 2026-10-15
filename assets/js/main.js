@@ -714,7 +714,7 @@
     group.className = 'wtiles__group';
     // кадры направления: обложка первой, потом остальные — каждый фрагмент из своего фото
     const pics = WORKS.filter((w) => w.cat === cat).sort((a, b) => (b.src === WCAT[cat].cover) - (a.src === WCAT[cat].cover)).slice(0, 4);
-    group.innerHTML = pics.map((w) => `<div class="wtile" style="background-image:url('${w.src}');background-position:${focusOf(w.src)}"></div>`).join('');
+    group.innerHTML = pics.map((w) => `<div class="wtile" data-w="${WORKS.indexOf(w)}" style="background-image:url('${w.src}');background-position:${focusOf(w.src)}"></div>`).join('');
     wtiles.appendChild(group);
     group.style.setProperty('--tw', 'clamp(30rem, 30vw, 54rem)');   /* вдвое крупнее */
     const descEl = $('.wmenu__desc', el);
@@ -895,10 +895,39 @@
   };
   // фиксация на слове: курсор задержался на слове — оно выбрано и держится,
   // промежутки между словами и случайные пролёты курсора ничего не сбрасывают
-  let pinned = null, pickT = 0;
+  let pinned = null, pickT = 0, overTile = null;
+  // фото выбранного направления фиксируются: пока курсор над одним из них, меню не переключается,
+  // а нажатие открывает это фото крупно (фото лежат под строками — попадание считаем по их рамкам)
+  const tileAt = (x, y) => {
+    if (!pinned || tMode !== 'menu') return null;
+    return pinned.tiles.find((t) => {
+      if (t.style.display === 'none' || parseFloat(getComputedStyle(t).opacity) < 0.5) return false;
+      const r = t.getBoundingClientRect();
+      return x > r.left && x < r.right && y > r.top && y < r.bottom;
+    }) || null;
+  };
+  stage.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const t = tileAt(e.clientX, e.clientY);
+    if (t !== overTile) {
+      if (overTile) overTile.classList.remove('is-hover');
+      overTile = t;
+      if (t) { t.classList.add('is-hover'); clearTimeout(pickT); }
+      stage.classList.toggle('on-tile', !!t);
+    }
+  });
+  stage.addEventListener('click', (e) => {
+    const t = overTile || tileAt(e.clientX, e.clientY);
+    if (!t) return;
+    e.preventDefault(); e.stopPropagation();
+    const idx = Number(t.dataset.w);
+    if (idx >= 0) openWork(idx, null, t);
+  }, true);
   const pick = (it, wait = 220) => {
     clearTimeout(pickT);
+    if (overTile && it) return;   // курсор на фото — направление не меняется
     pickT = setTimeout(() => {
+      if (overTile && it) return;
       if (tMode !== 'menu' || tBusy || pinned === it) return;
       if (pinned) hideTiles(pinned);
       pinned = it;

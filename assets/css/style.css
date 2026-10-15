@@ -2564,3 +2564,8 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 1023px) { .sv__tname { display: none; } }
 /* фоновая надпись «О чём мои кадры» не выходит за свой раздел (не наплывает на «Мой подход и гарантии») */
 .genres { overflow: clip; }
+
+/* «Любимые кадры»: фото направления под курсором — откликается и открывается по нажатию */
+.wstage.on-tile, .wstage.on-tile .wmenu__item { cursor: zoom-in; }
+.wtile { transition: box-shadow .5s var(--ease), filter .5s var(--ease); }
+.wtile.is-hover { box-shadow: 0 2.4rem 4.8rem -2rem rgba(76, 67, 67, .55); filter: brightness(1.06); }
