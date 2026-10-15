@@ -2649,3 +2649,10 @@ main > section[hidden] { display: none !important; }
 .invite__grid { perspective: 220rem; perspective-origin: 50% 50%; }
 .invite__col { perspective: none; transform-style: preserve-3d; }
 .invite__col--l .invite__wheel, .invite__col--r .invite__wheel { transform: translateZ(calc(var(--r, 60rem) * -1)); }
+/* колёса шире: на большом экране — за счёт полей у края, на ноутбуке — свободного места больше */
+@media (min-width: 1600px) {
+  .invite__grid { grid-template-columns: repeat(2, clamp(12rem, 12vw, 26rem)) 1fr repeat(2, clamp(12rem, 12vw, 26rem)); column-gap: 1.2rem; padding: 0 .8rem; }
+}
+@media (min-width: 1024px) and (max-width: 1599px) {
+  .invite__grid { grid-template-columns: clamp(14rem, 18vw, 30rem) 1fr clamp(14rem, 18vw, 30rem); padding: 0 1.6rem; }
+}
