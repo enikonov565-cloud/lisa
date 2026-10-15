@@ -535,9 +535,20 @@
       <button type="button" data-i="${i}" aria-label="${s.title}, ${s.price}">
         <img src="${s.img}" alt="${s.alt}" loading="lazy">
       </button>
-      <span class="sv__thumb-name" aria-hidden="true">${s.title}</span>
+      <p class="sv__tname" aria-hidden="true">${(() => { const m = /^(\S+-)(.+)$/.exec(s.title) || /^(\S+)\s+(.+)$/.exec(s.title); return (m ? [m[1], m[2]] : [s.title]).map((p) => '<span>' + [...p].map((ch) => '<span class="gc">' + ch + '</span>').join('') + '</span>').join(''); })()}</p>
     </li>`).join('');
   SERVICES.forEach((s) => { const im = new Image(); im.src = s.img; });   // заранее — смена без пустоты
+  // названия на маленьких фото: буквы над фото — светлые, над фоном — тёмные (как на карточках «О чём мои кадры»)
+  const paintThumbs = () => $$('.sv__thumb', list).forEach((li) => {
+    const ir = $('button', li).getBoundingClientRect();
+    $$('.gc', li).forEach((ch) => {
+      const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height / 2;
+      ch.classList.toggle('on-card', x > ir.left && x < ir.right && y > ir.top && y < ir.bottom);
+    });
+  });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(paintThumbs);
+  window.addEventListener('resize', paintThumbs);
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) paintThumbs(); }).observe(list);
   let svLayer = null;
   const svParts = () => [card.kicker, card.text, card.price, card.includes];
   let activeSvc = -1;
@@ -547,6 +558,7 @@
     activeSvc = i;
     const s = SERVICES[i];
     $$('.sv__thumb', list).forEach((el, k) => el.classList.toggle('is-active', k === i));
+    setTimeout(paintThumbs, 750);   // после подъёма выбранного фото
     card.order.dataset.type = s.title;
     // большой кадр: новый слой проявляется поверх старого с мягким приближением
     const layer = document.createElement('div');
