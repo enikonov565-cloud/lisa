@@ -1288,10 +1288,13 @@
     const contentIn = wpContent.animate([{ opacity: 0, transform: 'translateY(25px)' }, { opacity: 1, transform: 'none' }],
       { duration: 1000, delay: lead * 2, easing: EZ.expoOut, fill: 'both' });
     wpContent.style.opacity = '';
-    setTimeout(() => { wBusy = false; wOpen = true; $('.wpanel__close', wp).focus({ preventScroll: true }); }, lead * 2 + 600);
+    wantClose = false;
+    setTimeout(() => { wBusy = false; wOpen = true; $('.wpanel__close', wp).focus({ preventScroll: true }); if (wantClose) { wantClose = false; closeWork(); } }, lead * 2 + 600);
     contentIn.finished.catch(() => {});
   };
+  let wantClose = false;
   const closeWork = (instant) => {
+    if (!wOpen && wBusy && !instant) { wantClose = true; return; }   // нажали «закрыть», пока фото ещё раскрывается — закроем сразу после
     if (!wOpen || (wBusy && !instant)) return;
     wBusy = true;
     const items = shownItems();
@@ -1326,7 +1329,9 @@
     closeWork(true);
     if (openContact) openContact(type);
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && wOpen && lb.hidden) closeWork(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && (wOpen || wBusy) && lb.hidden) closeWork(); });
+  // нажатие по фону вокруг фото и текста — тоже возврат
+  wp.addEventListener('click', (e) => { if (e.target === wp || e.target === wpVeil) closeWork(); });
   $('.lightbox__close', lb).addEventListener('click', closeLb);
   $('.lightbox__nav--prev', lb).addEventListener('click', () => step(-1));
   $('.lightbox__nav--next', lb).addEventListener('click', () => step(1));
