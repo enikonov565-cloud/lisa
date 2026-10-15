@@ -2470,3 +2470,4 @@ main > section[hidden] { display: none !important; }
 .lm__tl:not(.lm__tl--main) { display: none !important; }
 /* текст на обороте карточек «О чём мои кадры» — мельче, по размеру карточки */
 .genre__text { font-size: max(1.8rem, 13px) !important; line-height: 1.3; }
+@media (min-width: 1024px) { .genres.is-v .genres__grid { padding-bottom: 2rem; } }   /* меньше пустоты перед «Мой подход и гарантии» */
