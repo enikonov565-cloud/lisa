@@ -2569,3 +2569,67 @@ main > section[hidden] { display: none !important; }
 .wstage.on-tile, .wstage.on-tile .wmenu__item { cursor: zoom-in; }
 .wtile { transition: box-shadow .5s var(--ease), filter .5s var(--ease); }
 .wtile.is-hover { box-shadow: 0 2.4rem 4.8rem -2rem rgba(76, 67, 67, .55); filter: brightness(1.06); }
+
+/* ==========================================================================
+   ПРИГЛАШЕНИЕ: Лисса на чёрном фоне, по бокам бесконечно плывут колонки фото каталога
+   ========================================================================== */
+.invite--dark {
+  background: #0c0a0a; box-shadow: none;
+  min-height: min(96vh, 100rem); padding: 8rem 6rem;
+}
+.invite--dark .invite__pic, .invite--dark .invite__bg { display: none; }
+.invite__hero {
+  position: absolute; left: 50%; top: 0; z-index: 0; height: 100%; width: auto; max-width: none; aspect-ratio: 1;
+  transform: translateX(-50%); object-fit: cover; pointer-events: none;
+  /* кадр растворяется в чёрном фоне — без видимых краёв */
+  -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+}
+/* под текстом — лёгкая тень, чтобы светлые буквы читались на светлых прядях */
+.invite--dark::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 34% 46% at 50% 56%, rgba(12, 10, 10, .55), transparent 100%);
+}
+.invite__grid {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  display: grid; grid-template-columns: repeat(2, clamp(12rem, 11vw, 22rem)) 1fr repeat(2, clamp(12rem, 11vw, 22rem));
+  column-gap: 2.4rem; padding: 0 3.2rem;
+  /* колонки мягко уходят в темноту сверху и снизу */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+}
+.invite__col { overflow: visible; }
+.invite__col--r:nth-child(3) { grid-column: 4; }
+.invite__col--r:nth-child(4) { grid-column: 5; }
+.invite__col:nth-child(2) { margin-top: -12rem; }
+.invite__col:nth-child(3) { margin-top: -6rem; }
+.invite__track { display: flex; flex-direction: column; gap: 2.4rem; padding-bottom: 2.4rem; will-change: transform; }
+.invite__ph { display: block; border-radius: var(--radius); overflow: hidden; }
+.invite__ph img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius); filter: saturate(.9) brightness(.92); }
+
+/* текст — светлый на тёмном */
+.invite--dark .invite__body { z-index: 2; }
+.invite--dark .invite__kicker { background: rgba(250, 245, 238, .12); color: #f3dccb; }
+.invite--dark .invite__title { color: var(--milk); }
+.invite--dark .invite__text { color: rgba(250, 245, 238, .85); }
+.invite--dark .invite__or { color: rgba(250, 245, 238, .75); }
+.invite--dark .cdlg__links a { background-color: rgba(250, 245, 238, .14); color: var(--milk); }
+.invite--dark .cdlg__links a:hover { background-color: var(--brick); }
+.invite--dark .process-btn { background-color: rgba(250, 245, 238, .14); color: var(--milk); }
+
+@media (max-width: 1023px) {
+  .invite--dark { padding: 8rem 2rem; }
+  .invite__grid { grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 1.2rem; padding: 0 1.2rem; opacity: .22; }
+  .invite__col--r:nth-child(3) { grid-column: 3; }
+  .invite__col--r:nth-child(4) { grid-column: 4; }
+  .invite--dark::before { background: rgba(12, 10, 10, .35); }
+}
+/* заголовок приглашения — ровно две строки */
+.invite--dark .invite__body { max-width: none; }
+@media (min-width: 1024px) { .invite--dark .invite__title { white-space: nowrap; } }
+/* на узких экранах по бокам — по одной колонке, чтобы центр оставался свободным */
+@media (min-width: 1024px) and (max-width: 1599px) {
+  .invite__grid { grid-template-columns: clamp(12rem, 13vw, 22rem) 1fr clamp(12rem, 13vw, 22rem); }
+  .invite__col:nth-child(2), .invite__col:nth-child(3) { display: none; }
+  .invite__col--r:nth-child(4) { grid-column: 3; }
+}

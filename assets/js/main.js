@@ -1410,6 +1410,42 @@
       cDlg.showModal();
     };
     cta.addEventListener('click', (e) => { e.preventDefault(); openContact('', cta); });
+    /* приглашение: колонки фото из каталога плывут бесконечно — соседние навстречу друг другу,
+       при первом показе колонки въезжают сверху и снизу по очереди (как в Sticky Grid Scroll) */
+    (() => {
+      const grid = $('.invite__grid');
+      if (!grid) return;
+      const COLS = 4, pics = WORKS.slice();
+      const cols = [];
+      for (let c = 0; c < COLS; c++) {
+        const own = pics.filter((_, k) => k % COLS === c);
+        const col = document.createElement('div');
+        col.className = 'invite__col invite__col--' + (c < COLS / 2 ? 'l' : 'r');
+        const track = document.createElement('div');
+        track.className = 'invite__track';
+        // дважды подряд — бесшовный круг
+        track.innerHTML = own.concat(own).map((w) => `<span class="invite__ph"><img src="${w.src}" alt="" loading="lazy" style="object-position:${focusOf(w.src)}"></span>`).join('');
+        col.appendChild(track); grid.appendChild(col); cols.push({ col, track, up: c % 2 === 0 });
+      }
+      if (reduced) return;
+      let started = false;
+      const start = () => {
+        if (started) return; started = true;
+        cols.forEach(({ col, track, up }, c) => {
+          // въезд колонки: чётные — снизу, нечётные — сверху, по очереди
+          col.animate([{ transform: `translateY(${up ? 60 : -60}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
+            { duration: 2600, delay: 220 * (c % 2 ? COLS - c : c), easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+          // бесконечное медленное течение: половина ленты = один круг
+          track.animate(up ? [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }] : [{ transform: 'translateY(-50%)' }, { transform: 'translateY(0)' }],
+            { duration: 90000 + c * 9000, iterations: Infinity, easing: 'linear' });
+        });
+      };
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) start();
+        cols.forEach(({ track }) => track.getAnimations().forEach((an) => (e.isIntersecting ? an.play() : an.pause())));
+      }).observe(grid);
+    })();
+
     $$('.invite__btn, .js-contact').forEach((b) => b.addEventListener('click', (e) => {
       e.preventDefault();
       if (b.classList.contains('js-contact')) document.documentElement.classList.remove('menu-open');
