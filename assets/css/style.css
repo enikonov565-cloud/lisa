@@ -13,8 +13,8 @@
 
 :root {
   /* цвета из Figma */
-  --peach: #eed5c4;      /* смягчённый фон (в Figma #dea988) */
-  --peach-rgb: 238, 213, 196;
+  --peach: #f6e7d5;      /* светлый тёплый фон с лёгкой рыжиной — в тон лисе логотипа */
+  --peach-rgb: 246, 231, 213;
   --ink: #4c4343;        /* «василиса» */
   --ink-deep: #180f01;   /* «7» */
   --orange: #df600f;     /* «василиса 4» */
@@ -54,7 +54,7 @@ button { cursor: pointer; background: none; border: 0; }
 body {
   position: relative;
   min-height: 100vh;
-  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #f4e2d6 0%, rgba(244, 226, 214, 0) 60%) fixed;
+  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #fbf1e4 0%, rgba(251, 241, 228, 0) 60%) fixed;
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -1460,7 +1460,7 @@ body::before {
   position: fixed; inset: 0; z-index: -1;   /* фон на весь экран и при прокрутке панели */
   background:
     radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, .45), transparent 60%),
-    linear-gradient(180deg, #f3dccd 0%, var(--peach) 100%);
+    linear-gradient(180deg, #faeedf 0%, var(--peach) 100%);
 }
 .wpanel__img {
   grid-area: img;
