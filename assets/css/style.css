@@ -2459,3 +2459,12 @@ main > section[hidden] { display: none !important; }
   .genres.is-v .genre__name > span + span { margin-left: 14%; }
 }
 @media (min-width: 1024px) { .genres.is-v .genre__cta { margin-left: 14%; } }
+/* === «Мой подход и гарантии»: равные видимые зазоры (по замерам шрифтов) ===
+   название (заглавные, засечки) → продолжение (курсив) → пояснение (Inter): от линии букв до линии букв — одинаково,
+   2.4rem; отступы считаются от реальных высот букв, а не от рамок строк */
+.lm__copy { --g: 2.4rem; }
+.lm__copy .lm__sub,
+.lm__copy .lm__title.has-desc .lm__sub { margin-top: calc(var(--g) - .135 * var(--t-h1) - .43 * var(--t-h3)); }
+.lm__copy .lm__text { margin-top: calc(var(--g) - .25 * var(--t-h3) - .31 * var(--t-text)); }
+/* контурные копии названия не нужны (название неподвижно) — без них нет «двоения» края букв */
+.lm__tl:not(.lm__tl--main) { display: none !important; }
