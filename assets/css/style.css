@@ -2659,3 +2659,22 @@ main > section[hidden] { display: none !important; }
 
 /* «Кто я»: отступ от главного экрана — одно поле, без двойного */
 .about { padding-top: 0; }
+
+/* «Мой подход и гарантии» на телефоне — одна лента: все четыре блока друг под другом (фото → название → пояснение → кнопка) */
+@media (max-width: 1023px) {
+  .lm-track { height: auto; }
+  .lm { position: relative; top: auto; height: auto; min-height: 0; margin: 0 var(--pad); display: flex; flex-direction: column; gap: 6rem; }
+  .lm__dots { display: none; }
+  .lm__slide, .lm__slide.is-current {
+    position: relative; inset: auto; top: auto; opacity: 1; pointer-events: auto; z-index: auto;
+    display: flex; flex-direction: column; gap: 0; overflow: visible;
+  }
+  .lm__slide .lm__fig--box { display: none; }
+  .lm__slide .lm__fig--main { width: 100%; aspect-ratio: 4 / 5; height: auto; }
+  .lm__fig--main .lm__img { left: 0; top: 0; width: 100%; height: 100%; transform: none !important; }
+  .lm__copy { position: relative; display: flex; flex-direction: column; align-items: flex-start; margin-top: 3.2rem; }
+  .lm__slide .lm__title { height: auto; margin: 0; font-size: 5.6rem; }
+  .lm__slide .lm__sub { margin-top: .8rem; }
+  .lm__slide .lm__text { padding: 0; margin-top: 2rem; gap: 2rem; }
+  .lm .lt.on-photo { color: inherit !important; text-shadow: none !important; }
+}

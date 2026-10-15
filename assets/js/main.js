@@ -1965,7 +1965,16 @@
     };
     // слайд выбирается прокруткой: сцена стоит на экране, каждые 70% высоты экрана — следующий
     const trackEl = lm.parentElement;
+    // на телефоне — одна лента: все блоки видны сразу, пролистывание не переключает их
+    const mqLm = window.matchMedia('(min-width: 1024px)');
+    const syncFeed = () => slides.forEach((s, i) => {
+      if (!mqLm.matches) s.el.removeAttribute('aria-hidden');
+      else if (i !== cur) s.el.setAttribute('aria-hidden', 'true');
+    });
+    syncFeed();
+    mqLm.addEventListener('change', syncFeed);
     const onScroll = () => {
+      if (!mqLm.matches) return;
       const tr = trackEl.getBoundingClientRect();
       const span = tr.height - lm.offsetHeight;
       if (span <= 0) return;
