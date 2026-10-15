@@ -2426,3 +2426,11 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) {
   .lm__slide--layout-2 .lm__copy { grid-row-start: 7; }   /* не упирается в фото сверху */
 }
+/* «Любимые кадры»: названия разделов — тем же шрифтом, что названия на фото в «О чём мои кадры»
+   (шрифт с засечками, заглавные, без наклона) */
+.wmenu__title, .wcontent__title, .wcard__title h4, .wmini__title {
+  font-family: var(--display); font-weight: 400; font-style: normal;
+  text-transform: uppercase; letter-spacing: .01em; line-height: 1;
+}
+.wmenu__title { font-size: calc(2rem + 2.2vw); }
+@media (max-width: 1023px) { .wmenu__title { font-size: 4rem; } }
