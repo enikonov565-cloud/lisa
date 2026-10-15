@@ -2656,3 +2656,6 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) and (max-width: 1599px) {
   .invite__grid { grid-template-columns: clamp(14rem, 18vw, 30rem) 1fr clamp(14rem, 18vw, 30rem); padding: 0 1.6rem; }
 }
+
+/* «Кто я»: отступ от главного экрана — одно поле, без двойного */
+.about { padding-top: 0; }

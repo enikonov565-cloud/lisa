@@ -1742,6 +1742,10 @@
       ab.classList.remove('is-thumb');
       intro.style.transform = '';
       const r1 = intro.getBoundingClientRect();
+      // экран плавно встаёт ровно на большое фото: по центру видимой области под шапкой
+      const hb = ($('#header') ? $('#header').getBoundingClientRect().bottom : 0);
+      const toY = window.scrollY + r1.top - hb - Math.max(0, (window.innerHeight - hb - r1.height) / 2);
+      window.scrollTo({ top: Math.max(0, toY), behavior: reduced ? 'auto' : 'smooth' });
       intro.removeAttribute('role'); intro.removeAttribute('tabindex'); intro.removeAttribute('aria-label');
       if (reduced) return;
       const D = 1200;
