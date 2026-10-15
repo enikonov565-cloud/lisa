@@ -2468,3 +2468,5 @@ main > section[hidden] { display: none !important; }
 .lm__copy .lm__text { margin-top: calc(var(--g) - .25 * var(--t-h3) - .31 * var(--t-text)); }
 /* контурные копии названия не нужны (название неподвижно) — без них нет «двоения» края букв */
 .lm__tl:not(.lm__tl--main) { display: none !important; }
+/* текст на обороте карточек «О чём мои кадры» — мельче, по размеру карточки */
+.genre__text { font-size: max(1.8rem, 13px) !important; line-height: 1.3; }
