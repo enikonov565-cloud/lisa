@@ -909,8 +909,14 @@
       return x > r.left && x < r.right && y > r.top && y < r.bottom;
     }) || null;
   };
+  // движение мыши обрабатываем не чаще одного раза за кадр
+  let mvRaf = 0, mvE = null;
   stage.addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse') return;
+    mvE = e;
+    if (!mvRaf) mvRaf = requestAnimationFrame(() => { mvRaf = 0; onMove(mvE); });
+  });
+  const onMove = (e) => {
     const t = tileAt(e.clientX, e.clientY);
     if (t !== overTile) {
       if (overTile) overTile.classList.remove('is-hover');
@@ -920,7 +926,7 @@
     }
     // ушли с фото на слова другого раздела — переключаемся
     if (!t) { const m = onWord(e.clientX, e.clientY); if (m && m !== pinned) pick(m); }
-  });
+  };
   stage.addEventListener('click', (e) => {
     const t = overTile || tileAt(e.clientX, e.clientY);
     if (!t) return;

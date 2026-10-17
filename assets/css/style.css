@@ -2684,3 +2684,8 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 1023px) {
   .invite__grid { display: none; }
 }
+/* «Любимые кадры»: плавнее при наведении — у букв плавно меняется только цвет (тень — сразу),
+   у фото под курсором — только тень, без фильтра яркости (он перерисовывал весь кадр) */
+.char, .wch { transition: color .7s var(--ease); }
+.wtile { transition: box-shadow .5s var(--ease); }
+.wtile.is-hover { filter: none; }
