@@ -101,9 +101,10 @@
   // одно слово / строка — один цвет: все буквы группы берут тон большинства (без двуцветности)
   // шапка над тёмным главным экраном — все её надписи белые; ниже, на светлом фоне, — обычные
   (() => {
-    const hdr = $('#header'), heroEl = $('.hero--shapes');
-    if (!hdr || !heroEl) return;
-    const upd = () => hdr.classList.toggle('on-hero', heroEl.getBoundingClientRect().bottom > hdr.offsetHeight / 2);
+    const hdr = $('#header'), darks = $$('.hero--shapes, .genres, .services');
+    if (!hdr || !darks.length) return;
+    // шапка светлая, пока под её серединой тёмный раздел (главный экран, «О чём мои кадры», «Выбирайте по душе»)
+    const upd = () => { const y = hdr.offsetHeight / 2; hdr.classList.toggle('on-hero', darks.some((s) => { if (s.hidden) return false; const r = s.getBoundingClientRect(); return r.top <= y && r.bottom > y; })); };
     window.addEventListener('scroll', upd, { passive: true });
     window.addEventListener('resize', upd);
     upd();
