@@ -909,9 +909,9 @@
     it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1500, delay: 380 + i * 140, easing: EZ_SOFT, fill: 'both' }));
     items.forEach((m) => m.el.classList.toggle('is-pinned', m === it));
-    adaptText(it);
+    // выбранный раздел — всегда чёрный (без подстройки под фото); остальные — приглушённые
     clearTimeout(it.adaptT);
-    it.adaptT = setTimeout(() => adaptText(it), 1450);   // после сдвига названия — сверяем ещё раз
+    clearText();
   };
   const hideTiles = (it) => {
     if (curHover === it) curHover = null;
