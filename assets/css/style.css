@@ -2884,3 +2884,6 @@ main > section[hidden] { display: none !important; }
   .invite--dark .invite__btn { min-height: 5rem; }
   .invite--dark .invite__process { min-height: 5rem; }
 }
+/* «Любимые кадры»: выбранный раздел — тёмный (и пока курсор на его фото), остальные — приглушённые */
+.wmenu__item.is-pinned .wmenu__title { color: var(--ink-deep); }
+.wmenu__item.is-pinned .wmenu__desc { opacity: 1; }
