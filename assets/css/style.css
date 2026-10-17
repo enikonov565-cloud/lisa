@@ -2689,9 +2689,15 @@ main > section[hidden] { display: none !important; }
 .char, .wch { transition: color .7s var(--ease); }
 .wtile { transition: box-shadow .5s var(--ease); }
 .wtile.is-hover { filter: none; }
-/* «Мой подход и гарантии»: между соседними фото всегда одинаковый зазор (по 1.2rem с каждой стороны → 2.4rem между кадрами) */
+/* «Мой подход и гарантии»: размеры всех фото прежние — одинаковые зазоры (2.4rem) только сдвигом кадров */
 @media (min-width: 1024px) {
-  .lm__slide .lm__fig { margin: 1.2rem; }
+  .lm__slide--layout-1 .lm__fig--main { translate: -2.4rem 0; }
+  .lm__slide--layout-1 .lm__fig:nth-child(2) { translate: -4.8rem 0; }
+  .lm__slide--layout-2 .lm__fig:nth-child(2) { translate: 2.4rem 0; }
+  .lm__slide--layout-3 .lm__fig:nth-child(2) { translate: 2.4rem 0; }
+  .lm__slide--layout-3 .lm__fig:nth-child(3) { translate: -2.4rem -2.4rem; }
+  .lm__slide--layout-4 .lm__fig:nth-child(2) { translate: -2.4rem 0; }
+  .lm__slide--layout-4 .lm__fig:nth-child(3) { translate: 0 2.4rem; }
 }
 
 /* ==========================================================================
