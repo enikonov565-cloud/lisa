@@ -98,6 +98,12 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // одно слово / строка — один цвет: все буквы группы берут тон большинства (без двуцветности)
+  const unifyTone = (els, cls) => {
+    if (!els.length) return;
+    const on = els.filter((e) => e.classList.contains(cls)).length * 2 >= els.length;
+    els.forEach((e) => e.classList.toggle(cls, on));
+  };
 
   /* ---------------- header ---------------- */
   const header = $('#header');
@@ -545,6 +551,7 @@
       const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height / 2;
       ch.classList.toggle('on-card', x > ir.left && x < ir.right && y > ir.top && y < ir.bottom);
     });
+    $$('.sv__tname > span', li).forEach((w) => unifyTone($$('.gc', w), 'on-card'));
   });
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(paintThumbs);
   window.addEventListener('resize', paintThumbs);
@@ -845,6 +852,15 @@
         p.els.push(el);
         if (k >= 0) pts.forEach(([x, y]) => { if (boxAt(x, y) === k) { p.sum += tone(x, y); p.cnt++; } });
       });
+      // одно слово — один цвет: берём участок, где больше всего букв, и красим им всё слово
+      if (parts.size > 1) {
+        let mainK = null, most = -1;
+        parts.forEach((p, k) => { if (p.els.length > most) { most = p.els.length; mainK = k; } });
+        const all = []; parts.forEach((p) => all.push(...p.els));
+        const keep = parts.get(mainK);
+        parts.clear();
+        parts.set(mainK, { els: all, sum: keep.sum, cnt: keep.cnt });
+      }
       parts.forEach((p, k) => {
         let col = '';
         if (k >= 0 && p.cnt && boxes[k].rec.grid) {
@@ -1681,6 +1697,29 @@
         const x = rc.left + rc.width / 2, y = rc.top + rc.height / 2;
         el.classList.toggle('on-photo', circles.some((q) => Math.hypot(x - q.x, y - q.y) < q.r));
       });
+      // буквы одной надписи (кнопка, имя, меняющееся слово) — одним цветом
+      const groups = new Map();
+      [...marks, ...rotChars].forEach((el) => {
+        const g = el.closest('.shapes__link, .rot, .hero__prefix, .hero__name') || el.parentElement;
+        if (!groups.has(g)) groups.set(g, []);
+        groups.get(g).push(el);
+      });
+      groups.forEach((els) => unifyTone(els, 'on-photo'));
+      // строки заголовка: целиком светлые, если строка в основном на фото, иначе целиком тёмные
+      slides.forEach((s) => {
+        const cap = $$('figcaption .text-row', s.el), lite = $$('.shapes__cap--light .text-row', s.el);
+        const q = s.el.classList.contains('is-current') ? circleOf(s) : null;
+        cap.forEach((row, i) => {
+          const rc = $(':scope > span', row).getBoundingClientRect();
+          let inside = 0;
+          for (let k = 0; k < 24; k++) {
+            const x = rc.left + rc.width * (k + 0.5) / 24, y = rc.top + rc.height / 2;
+            if (q && Math.hypot(x - q.x, y - q.y) < q.r) inside++;
+          }
+          const light = inside >= 12;
+          [row, lite[i]].forEach((rw) => { if (rw) { rw.classList.toggle('is-light', light); rw.classList.toggle('is-dark', !light); } });
+        });
+      });
     };
     const acLoop = () => { paintBar(); if (acRun) requestAnimationFrame(acLoop); };
     new IntersectionObserver(([e]) => {
@@ -1808,10 +1847,13 @@
         const r = ch.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
         ch.classList.toggle('on-card', x > ir.left && x < ir.right && y > ir.top && y < ir.bottom);
       });
-      // линия под «детали»: слева от края фото — тёмная, на фото — светлая
+      // каждая строка названия и «детали» — одним цветом
+      [...cta.parentElement.children].filter((n) => n !== cta).forEach((row) => unifyTone($$('.gc', row), 'on-card'));
+      const ctaChars = $$('.gc', cta);
+      unifyTone(ctaChars, 'on-card');
+      // линия под «детали» — того же цвета, что и слово
       const cr = cta.getBoundingClientRect();
-      const inY = cr.bottom > ir.top && cr.bottom < ir.bottom;
-      const split = inY ? Math.min(cr.width, Math.max(0, ir.left - cr.left)) : cr.width;
+      const split = ctaChars.length && ctaChars[0].classList.contains('on-card') ? 0 : cr.width;
       cta.style.setProperty('--split', split + 'px');
     });
     // две колонки карточек, при прокрутке колонки мягко плывут вверх-вниз навстречу друг другу
@@ -1900,6 +1942,9 @@
         const b = ch.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height * 0.6;
         ch.classList.toggle('on-photo', rects.some((r) => x > r.left && x < r.right && y > r.top && y < r.bottom));
       });
+      unifyTone(s.letters, 'on-photo');
+      unifyTone(s.subLetters, 'on-photo');
+      $$('.lm__desc, .lm__link', s.el).forEach((g) => unifyTone($$('.lt', g), 'on-photo'));
     };
     // «плавание» за курсором: каждый слой со своей скоростью (как TiltFx в образце)
     const mouse = { x: innerWidth / 2, y: innerHeight / 2 };

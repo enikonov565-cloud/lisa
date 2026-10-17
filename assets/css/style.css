@@ -2729,3 +2729,7 @@ main > section[hidden] { display: none !important; }
 /* главный экран: заголовок целиком одним шрифтом с засечками, без наклона; размер прежний */
 .shapes__head { font-family: var(--display); font-weight: 400; letter-spacing: .01em; }
 .shapes__head em { font-family: inherit; font-style: normal; font-weight: inherit; font-size: 1em; }
+
+/* главный экран: строка заголовка — одним цветом (светлая на фото, тёмная на фоне), с мягким ореолом */
+.shapes__head .text-row.is-light { color: var(--milk); text-shadow: 0 0 .35em rgba(43, 35, 35, .5); }
+.shapes__head .text-row.is-dark { color: var(--ink); text-shadow: 0 0 .35em rgba(250, 243, 236, .75); }
