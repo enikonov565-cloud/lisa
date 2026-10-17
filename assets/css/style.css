@@ -2887,7 +2887,3 @@ main > section[hidden] { display: none !important; }
 /* «Любимые кадры»: выбранный раздел — тёмный (и пока курсор на его фото), остальные — приглушённые */
 .wmenu__item.is-pinned .wmenu__title { color: var(--ink-deep); }
 .wmenu__item.is-pinned .wmenu__desc { opacity: 1; }
-/* «Кто я»: исходник фото — 640 px; раскрытое фото не шире 96rem (≈960 px на 1920), чтобы не расплывалось */
-@media (min-width: 1024px) {
-  .ab:not(.is-thumb) .ab__intro { width: min(calc(100% - 2 * var(--pad)), 96rem); }
-}
