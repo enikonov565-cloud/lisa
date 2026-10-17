@@ -2821,7 +2821,7 @@ main > section[hidden] { display: none !important; }
 }
 /* «Выбирайте по душе»: большое фото направления — во всю высоту экрана (от верха раздела до низа) */
 @media (min-width: 1024px) {
-  .services .sv__bg { top: auto; bottom: 0; height: calc(100vh - var(--sec)); height: calc(100svh - var(--sec)); z-index: 0; }   /* во весь экран, кроме верхнего поля раздела */
+  .services .sv__bg { top: auto; bottom: 0; height: 100vh; height: 100svh; z-index: 0; }   /* во всю высоту экрана — до верхнего края раздела */
   .services .sec-head { position: relative; z-index: 1; }
 }
 /* «Выбирайте по душе»: подписи маленьких фото — мельче и под фото, по центру */
