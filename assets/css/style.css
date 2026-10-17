@@ -2632,3 +2632,6 @@ main > section[hidden] { display: none !important; }
 .wmenu__item.is-pinned .wmenu__title { color: var(--ink-deep); }
 .wstage.has-tiles .wmenu__item:not(.is-pinned) { opacity: .35; }
 .wstage .wmenu__item { transition: opacity .5s var(--ease); }
+/* подпись под маленьким фото «Кто я»: приветствие и подсказка, что фото раскрывается */
+.ab__cap { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: .6rem; }
+.ab__capnote { font-weight: 300; color: rgba(76, 67, 67, .75); }
