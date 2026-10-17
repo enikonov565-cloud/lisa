@@ -13,8 +13,8 @@
 
 :root {
   /* цвета из Figma */
-  --peach: #c99f78;      /* тёплый фон с рыжиной — в тон лисе логотипа (тёмный) */
-  --peach-rgb: 201, 159, 120;
+  --peach: #dcbd9c;      /* тёплый фон с лёгкой рыжиной — в тон лисе логотипа */
+  --peach-rgb: 220, 189, 156;
   --ink: #4c4343;        /* «василиса» */
   --ink-deep: #180f01;   /* «7» */
   --orange: #df600f;     /* «василиса 4» */
@@ -54,7 +54,7 @@ button { cursor: pointer; background: none; border: 0; }
 body {
   position: relative;
   min-height: 100vh;
-  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #d4ae89 0%, rgba(212, 174, 137, 0) 60%) fixed;
+  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #e5cbae 0%, rgba(229, 203, 174, 0) 60%) fixed;
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -1460,7 +1460,7 @@ body::before {
   position: fixed; inset: 0; z-index: -1;   /* фон на весь экран и при прокрутке панели */
   background:
     radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, .45), transparent 60%),
-    linear-gradient(180deg, #d3ac87 0%, var(--peach) 100%);
+    linear-gradient(180deg, #e4c9ab 0%, var(--peach) 100%);
 }
 .wpanel__img {
   grid-area: img;
@@ -2748,3 +2748,5 @@ main > section[hidden] { display: none !important; }
 .wmenu__desc { color: var(--ink-deep); }
 .wmenu__desc .wch { color: inherit; }
 @media (max-width: 1023px) { .wmenu__title { color: var(--ink-deep); } }
+/* главный экран — свой, более тёмный тёплый фон (на нём белые тексты); остальные экраны — светлее */
+.hero--shapes { background-color: #a8784f; }
