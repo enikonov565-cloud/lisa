@@ -883,6 +883,8 @@
       });
     };
     items.forEach((m) => {
+      // цвет под фото подбирается только у выбранного раздела; остальные — приглушённые, не «загораются»
+      if (m !== it) { m.chars.forEach((c) => { c.style.color = ''; c.style.textShadow = ''; }); $$('.wch', m.desc).forEach((c) => { c.style.color = ''; }); return; }
       const title = $('.wmenu__title', m.el);
       const [tx, ty] = m === it ? shift(title) : [0, 0];
       const [dx, dy] = m === it ? shift(m.desc) : [0, 0];
@@ -906,6 +908,7 @@
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
     it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1500, delay: 380 + i * 140, easing: EZ_SOFT, fill: 'both' }));
+    items.forEach((m) => m.el.classList.toggle('is-pinned', m === it));
     adaptText(it);
     clearTimeout(it.adaptT);
     it.adaptT = setTimeout(() => adaptText(it), 1450);   // после сдвига названия — сверяем ещё раз
@@ -914,6 +917,7 @@
     if (curHover === it) curHover = null;
     clearTimeout(it.adaptT);
     clearText();
+    it.el.classList.remove('is-pinned');
     stage.classList.remove('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 1100, easing: EZ_SOFT, fill: 'forwards' });

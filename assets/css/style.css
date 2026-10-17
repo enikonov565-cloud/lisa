@@ -2884,3 +2884,6 @@ main > section[hidden] { display: none !important; }
   .invite--dark .invite__btn { min-height: 5rem; }
   .invite--dark .invite__process { min-height: 5rem; }
 }
+.wmenu__item.is-pinned .wmenu__title { color: var(--ink-deep); }
+.wstage.has-tiles .wmenu__item:not(.is-pinned) { opacity: .35; }
+.wstage .wmenu__item { transition: opacity .5s var(--ease); }
