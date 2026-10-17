@@ -2869,3 +2869,18 @@ main > section[hidden] { display: none !important; }
   .invite--dark .invite__btn { margin-top: 3.2rem; }
   .invite__hero { object-position: 50% 0%; }
 }
+/* приглашение — выравнивание по одной оси: надписи кнопок по центру, значки «+» и «→» не сдвигают их;
+   обе кнопки одной ширины */
+@media (min-width: 1024px) {
+  .invite--dark .invite__process, .invite--dark .invite__btn {
+    position: relative; width: 32rem; box-sizing: border-box; justify-content: center;
+    padding-left: 5rem !important; padding-right: 5rem !important;
+  }
+  .invite--dark .invite__process .extras-btn__plus,
+  .invite--dark .invite__btn .invite__btn-arrow { position: absolute; right: .6rem; top: 50%; translate: 0 -50%; margin: 0; }
+}
+@media (min-width: 1024px) {
+  .invite--dark .invite__process, .invite--dark .invite__btn { width: 36rem; white-space: nowrap; padding-left: 4.8rem !important; padding-right: 4.8rem !important; }
+  .invite--dark .invite__btn { min-height: 5rem; }
+  .invite--dark .invite__process { min-height: 5rem; }
+}
