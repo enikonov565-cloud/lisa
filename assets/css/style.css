@@ -2689,3 +2689,7 @@ main > section[hidden] { display: none !important; }
 .char, .wch { transition: color .7s var(--ease); }
 .wtile { transition: box-shadow .5s var(--ease); }
 .wtile.is-hover { filter: none; }
+/* «Мой подход и гарантии»: между соседними фото всегда одинаковый зазор (по 1.2rem с каждой стороны → 2.4rem между кадрами) */
+@media (min-width: 1024px) {
+  .lm__slide .lm__fig { margin: 1.2rem; }
+}
