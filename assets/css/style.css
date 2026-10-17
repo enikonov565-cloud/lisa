@@ -13,8 +13,8 @@
 
 :root {
   /* цвета из Figma */
-  --peach: #dcbd9c;      /* тёплый фон с лёгкой рыжиной — в тон лисе логотипа (ещё темнее) */
-  --peach-rgb: 220, 189, 156;
+  --peach: #c99f78;      /* тёплый фон с рыжиной — в тон лисе логотипа (тёмный) */
+  --peach-rgb: 201, 159, 120;
   --ink: #4c4343;        /* «василиса» */
   --ink-deep: #180f01;   /* «7» */
   --orange: #df600f;     /* «василиса 4» */
@@ -54,7 +54,7 @@ button { cursor: pointer; background: none; border: 0; }
 body {
   position: relative;
   min-height: 100vh;
-  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #e5cbae 0%, rgba(229, 203, 174, 0) 60%) fixed;
+  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #d4ae89 0%, rgba(212, 174, 137, 0) 60%) fixed;
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -1460,7 +1460,7 @@ body::before {
   position: fixed; inset: 0; z-index: -1;   /* фон на весь экран и при прокрутке панели */
   background:
     radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, .45), transparent 60%),
-    linear-gradient(180deg, #e4c9ab 0%, var(--peach) 100%);
+    linear-gradient(180deg, #d3ac87 0%, var(--peach) 100%);
 }
 .wpanel__img {
   grid-area: img;
@@ -2737,3 +2737,14 @@ main > section[hidden] { display: none !important; }
 .on-photo, .on-card, .text-row.is-light, .text-row.is-dark, .shapes__cap--light .shapes__link,
 .char, .wch, .lt, .gc, .lm__title .lt, .sv__tname .gc, .genre__name .gc, .wpanel__cat, .wpanel__title { text-shadow: none !important; }
 .lm__dot.on-photo, .shapes__dot.on-photo { box-shadow: none !important; }
+/* главный экран: все тексты белые (молочные) — заголовок, имя, меняющееся слово, кнопка, точки */
+.hero--shapes .shapes__head .text-row, .hero--shapes .shapes__head .text-row.is-dark { color: var(--milk) !important; }
+.hero--shapes .hero__name, .hero--shapes .hero__name *, .hero--shapes .ac, .hero--shapes .rot__char { color: var(--milk) !important; }
+.hero--shapes .shapes__link, .hero--shapes .hero__bar .shapes__link { --lk: var(--milk) !important; --lk-line: rgba(250, 245, 238, .45) !important; }
+.hero--shapes .shapes__dot { background-color: var(--milk) !important; }
+/* тёмный фон: в «Любимых кадрах» цветные названия (кирпичный и цвета направлений) сливались — делаем тёмными */
+.wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title, .wcontent__title { color: var(--ink-deep); }
+.wcard__title h4 { color: var(--ink-deep); }
+.wmenu__desc { color: var(--ink-deep); }
+.wmenu__desc .wch { color: inherit; }
+@media (max-width: 1023px) { .wmenu__title { color: var(--ink-deep); } }
