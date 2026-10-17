@@ -2693,3 +2693,40 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) {
   .lm__slide .lm__fig { margin: 1.2rem; }
 }
+
+/* ==========================================================================
+   КНОПКИ — ПЛОСКИЕ: без теней, бликов, градиентов, «основания» и подъёма при наведении.
+   Цвет текста всегда контрастный фону:
+   рыжая кнопка — тёмный текст; при наведении кирпичный фон — молочный текст;
+   светлая кнопка — тёмный текст; при наведении кирпичный фон — молочный текст.
+   ========================================================================== */
+.cta3d__cap, .btn-cta, .genre__more, .extras-btn, .wcontent__back, .wcar__arrow, .invite__btn,
+.footer__top, .reach__copy, .reach__go, .extras-dialog__cta, .wpanel__btn, .wpanel__order,
+.cdlg__links a, .menu__svc a, .extras-btn__plus, .invite__btn-arrow {
+  box-shadow: none !important; background-image: none !important; text-shadow: none !important; animation: none !important;
+}
+.cta3d { padding-bottom: 0; }
+.cta3d__base { display: none; }
+.invite__btn::after { display: none; }   /* бегущий блик */
+.cta3d:hover .cta3d__cap, .cta3d.is-pressed .cta3d__cap,
+.btn-cta:hover, .btn-cta:active, .genre__more:hover, .extras-btn:hover, .extras-btn:active, .wcontent__back:hover, .wcar__arrow:hover,
+.invite__btn:hover, .invite__btn:active, .footer__top:hover, .reach__copy:hover, .reach__go:hover, .extras-dialog__cta:hover,
+.extras-dialog[open] .extras-dialog__cta:hover, .wpanel__btn:hover, .wpanel__order:hover, .cdlg__links a:hover, .invite .cdlg__links a:hover, .menu__svc a:hover {
+  transform: none !important; box-shadow: none !important;
+}
+/* рыжие кнопки: тёмный текст (контраст ~5,4:1) */
+.cta3d__cap, .btn-cta, .invite__btn, .footer__top, .reach__go, .extras-dialog__cta, .wpanel__order { color: var(--ink-deep) !important; }
+.invite__btn-arrow { background: rgba(24, 15, 1, .12); color: inherit !important; }
+.extras-btn__plus { color: var(--ink-deep) !important; }
+/* наведение — кирпичный фон и молочный текст (контраст ~4,9:1) для всех плашек-кнопок */
+.btn-cta:hover, .invite__btn:hover, .footer__top:hover, .reach__go:hover, .extras-dialog__cta:hover, .extras-dialog[open] .extras-dialog__cta:hover, .wpanel__order:hover,
+.genre__more:hover, .extras-btn:hover, .wcontent__back:hover, .wcar__arrow:hover, .reach__copy:hover, .wpanel__btn:hover,
+.cdlg__links a:hover, .invite .cdlg__links a:hover, .menu__svc a:hover, .invite .process-btn:hover {
+  background-color: var(--brick) !important; color: var(--milk) !important;
+}
+.btn-cta:hover *, .invite__btn:hover *, .reach__go:hover *, .extras-dialog__cta:hover *, .wpanel__order:hover *,
+.genre__more:hover *, .extras-btn:hover *, .wcontent__back:hover *, .wcar__arrow:hover *, .reach__copy:hover *, .wpanel__btn:hover *,
+.cdlg__links a:hover *, .menu__svc a:hover * { color: inherit !important; }
+.extras-btn:hover .extras-btn__plus { background-color: var(--milk) !important; color: var(--brick) !important; }
+/* кнопка в шапке: при наведении проявляется молочная сторона — на ней тёмный текст */
+.cta3d__reveal { color: var(--ink) !important; }
