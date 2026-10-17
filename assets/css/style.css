@@ -2838,3 +2838,7 @@ main > section[hidden] { display: none !important; }
 /* «Любимые кадры»: у букв названий нет отдельного слоя — сотни слоёв тормозили прокрутку и наведение */
 .char { will-change: auto; }
 .wtile { contain: layout style; }
+/* приглашение: одна главная кнопка (в Telegram) и под ней спокойная ссылка «как проходит съёмка» */
+.invite .invite__btn { text-decoration: none; }
+.invite .invite__process { margin-top: 2.8rem; background-color: transparent !important; padding-left: 1.2rem; padding-right: 1.2rem; }
+.invite .invite__process:hover { background-color: rgba(250, 245, 238, .14) !important; color: var(--milk) !important; }

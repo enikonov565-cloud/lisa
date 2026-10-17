@@ -1405,7 +1405,9 @@
     <li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener" aria-label="Написать в Telegram"><b>✈</b>telegram</a></li>
     <li><a href="tel:${tel}" data-reach="phone"><b>☏</b>позвонить</a></li>
     <li><a href="mailto:${CONTACTS.email}" data-reach="email"><b>✉</b>почта</a></li>`;
-  $('#contact-links').innerHTML = linksHTML;
+  if ($('#contact-links')) $('#contact-links').innerHTML = linksHTML;
+  // «связаться со мной» в приглашении — сразу в Telegram
+  if ($('#invite-tg')) $('#invite-tg').href = 'https://t.me/' + CONTACTS.telegram;
   $('#footer-contacts').insertAdjacentHTML('beforeend', `
     <a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>@${CONTACTS.telegram}</a>
     <a href="tel:${tel}" data-reach="phone"><b>☏</b>${CONTACTS.phone}</a>
@@ -1494,7 +1496,7 @@
       }).observe(grid);
     })();
 
-    $$('.invite__btn, .js-contact').forEach((b) => b.addEventListener('click', (e) => {
+    $$('.js-contact').forEach((b) => b.addEventListener('click', (e) => {
       e.preventDefault();
       if (b.classList.contains('js-contact')) document.documentElement.classList.remove('menu-open');
       openContact('', b);
