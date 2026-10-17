@@ -2824,3 +2824,12 @@ main > section[hidden] { display: none !important; }
   .services .sv__bg { top: auto; bottom: 0; height: 100vh; height: 100svh; z-index: 0; }
   .services .sec-head { position: relative; z-index: 1; }
 }
+/* «Выбирайте по душе»: подписи маленьких фото — мельче и под фото, по центру */
+@media (min-width: 1024px) {
+  .sv__tname {
+    position: static; left: auto; bottom: auto; margin: 0; transform: none !important;
+    font-size: max(1.5rem, 12px); line-height: 1.15; letter-spacing: .04em; text-align: center; white-space: nowrap;
+  }
+  .sv__tname > span { display: block; }
+  .sv__tname > span + span { margin-left: 0; }
+}
