@@ -2777,4 +2777,12 @@ main > section[hidden] { display: none !important; }
 }
 @media (max-width: 1023px) { .genre > .genre__cta { display: none; } }
 /* название стоит там же, где было, когда «детали» шли под ним (место «детали» сохраняем отступом) */
-@media (min-width: 1024px) { .genre__name { padding-bottom: 5.6rem; } }
+@media (min-width: 1024px) { .genre__name { padding-bottom: 7.6rem; } }   /* чуть выше — не слипается с «детали» */
+/* «О чём мои кадры»: тёмный тёплый фон, как у главного экрана; заголовок и тексты — светлые */
+.genres { background-color: #a8784f; }
+.genres #genres-title, .genres .genres__head .note { color: var(--milk); }
+.genres.is-h #genres-title, .genres.is-v #genres-title { color: var(--milk); opacity: .22; }
+@media (min-width: 1024px) {
+  .genre__name .gc, .genre__name .gc.on-card, .genre:hover .genre__name .gc.on-card { color: var(--milk) !important; }
+}
+@media (max-width: 1023px) { .genres .genre__title { color: var(--milk); } }
