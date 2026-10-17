@@ -754,17 +754,17 @@
     const SCALES = [1.05, 0.85, 0.95, 0.75, 0.9];
     const GAP = 28;
     const hit = (a, b) => a.l < b.r + GAP && a.r + GAP > b.l && a.t < b.b + GAP && a.b + GAP > b.t;
-    // кадры не заходят под тексты: обходят все названия разделов и подпись выбранного (там, где текст остановится)
+    // Репортаж: кадры обходят название и подпись направления (там, где текст остановится)
     const keep = [];
-    [...items.map((m) => m.title), it.desc].forEach((el) => {
+    if (it.cat === 'Репортаж') [it.title, it.desc].forEach((el) => {
       const rc = el.getBoundingClientRect();
       const tr = getComputedStyle(el).transform;
       const m = new DOMMatrixReadOnly(tr === 'none' ? undefined : tr);
       const l = rc.left - m.m41 - st.left, t = rc.top - m.m42 - st.top;
-      keep.push({ l: l - 16, t: t - 12, r: l + rc.width + 16, b: t + rc.height + 12 });
+      keep.push({ l, t, r: l + rc.width, b: t + rc.height });
     });
     let k = 1, placed = [];
-    for (let attempt = 0; attempt < 14; attempt++, k *= 0.9) {
+    for (let attempt = 0; attempt < 8; attempt++, k *= 0.9) {
       placed = [];
       for (let i = 0; i < it.tiles.length; i++) {
         const w = base * SCALES[(i + it.k) % SCALES.length] * k, h = w * 0.75;
@@ -906,14 +906,14 @@
     it.title.animate([{ transform: 'translateX(3rem)' }, { transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
     it.desc.animate([{ opacity: 0, transform: 'translateY(40%)' }, { opacity: 1, transform: 'none' }], { duration: 1400, easing: EZ_SOFT, fill: 'forwards' });
     it.tiles.forEach((t, i) => t.animate([{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1500, delay: 380 + i * 140, easing: EZ_SOFT, fill: 'both' }));
-    clearText();
-    items.forEach((m) => m.el.classList.toggle('is-pinned', m === it));
+    adaptText(it);
+    clearTimeout(it.adaptT);
+    it.adaptT = setTimeout(() => adaptText(it), 1450);   // после сдвига названия — сверяем ещё раз
   };
   const hideTiles = (it) => {
     if (curHover === it) curHover = null;
     clearTimeout(it.adaptT);
     clearText();
-    it.el.classList.remove('is-pinned');
     stage.classList.remove('has-tiles');
     kill([it.title, it.desc, ...it.tiles]);
     it.title.animate([{ transform: 'none' }, { transform: 'translateX(3rem)' }], { duration: 1100, easing: EZ_SOFT, fill: 'forwards' });
