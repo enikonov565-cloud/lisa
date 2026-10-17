@@ -2852,3 +2852,9 @@ main > section[hidden] { display: none !important; }
   .invite--dark .invite__btn { margin-top: auto; }
   .invite--dark .invite__process { margin-top: 3.2rem; }
 }
+/* «связаться со мной» — самой нижней, «как проходит съёмка» над ней */
+@media (min-width: 1024px) {
+  .invite--dark .invite__process { margin-top: auto; }
+  .invite--dark .invite__btn { margin-top: 3.2rem; }
+}
+@media (max-width: 1023px) { .invite .invite__btn { margin-top: 2.4rem; } }
