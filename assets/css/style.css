@@ -2759,12 +2759,8 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) {
   .genres.is-h #genres-title, .genres.is-v #genres-title { font-family: var(--display); font-weight: 400; letter-spacing: 0; }
 }
-/* «О чём мои кадры»: название категории — над фото, тёмным; «детали» — внутри фото, внизу слева, светлым */
+/* «О чём мои кадры»: «детали» — внутри фото, внизу слева, светлым (названия категорий — как прежде, поверх карточки) */
 @media (min-width: 1024px) {
-  .genres.is-h .genre__name, .genres.is-v .genre__name {
-    left: 0; right: auto; top: auto; bottom: calc(100% + 1.2rem);
-  }
-  .genre__name .gc, .genre__name .gc.on-card, .genre:hover .genre__name .gc.on-card { color: var(--ink) !important; }
   .genre > .genre__cta {
     position: absolute; left: 1.6rem; bottom: 1.6rem; z-index: 3; margin: 0 !important;
     --lk: var(--milk); color: var(--milk);
@@ -2780,3 +2776,5 @@ main > section[hidden] { display: none !important; }
   .genre.is-flipped > .genre__cta { opacity: 0; pointer-events: none; }
 }
 @media (max-width: 1023px) { .genre > .genre__cta { display: none; } }
+/* название стоит там же, где было, когда «детали» шли под ним (место «детали» сохраняем отступом) */
+@media (min-width: 1024px) { .genre__name { padding-bottom: 5.6rem; } }
