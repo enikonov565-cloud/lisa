@@ -13,8 +13,8 @@
 
 :root {
   /* цвета из Figma */
-  --peach: #f6e7d5;      /* светлый тёплый фон с лёгкой рыжиной — в тон лисе логотипа */
-  --peach-rgb: 246, 231, 213;
+  --peach: #ead3ba;      /* тёплый фон с лёгкой рыжиной — в тон лисе логотипа (темнее) */
+  --peach-rgb: 234, 211, 186;
   --ink: #4c4343;        /* «василиса» */
   --ink-deep: #180f01;   /* «7» */
   --orange: #df600f;     /* «василиса 4» */
@@ -54,7 +54,7 @@ button { cursor: pointer; background: none; border: 0; }
 body {
   position: relative;
   min-height: 100vh;
-  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #fbf1e4 0%, rgba(251, 241, 228, 0) 60%) fixed;
+  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #f1dfca 0%, rgba(241, 223, 202, 0) 60%) fixed;
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -1460,7 +1460,7 @@ body::before {
   position: fixed; inset: 0; z-index: -1;   /* фон на весь экран и при прокрутке панели */
   background:
     radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, .45), transparent 60%),
-    linear-gradient(180deg, #faeedf 0%, var(--peach) 100%);
+    linear-gradient(180deg, #f0ddc7 0%, var(--peach) 100%);
 }
 .wpanel__img {
   grid-area: img;
@@ -2733,3 +2733,7 @@ main > section[hidden] { display: none !important; }
 /* главный экран: строка заголовка — одним цветом (светлая на фото, тёмная на фоне), с мягким ореолом */
 .shapes__head .text-row.is-light { color: var(--milk); text-shadow: 0 0 .35em rgba(43, 35, 35, .5); }
 .shapes__head .text-row.is-dark { color: var(--ink); text-shadow: 0 0 .35em rgba(250, 243, 236, .75); }
+/* без ореолов: у текстов над фото и фоном — только цвет, без свечения */
+.on-photo, .on-card, .text-row.is-light, .text-row.is-dark, .shapes__cap--light .shapes__link,
+.char, .wch, .lt, .gc, .lm__title .lt, .sv__tname .gc, .genre__name .gc, .wpanel__cat, .wpanel__title { text-shadow: none !important; }
+.lm__dot.on-photo, .shapes__dot.on-photo { box-shadow: none !important; }
