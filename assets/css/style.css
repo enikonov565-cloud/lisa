@@ -2330,8 +2330,8 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 1023px) { .lm__text .lm__link { align-self: flex-start; } }
 /* === раскладка текстов без наползаний: название → продолжение → пояснение → кнопка внизу, один левый край === */
 @media (min-width: 1024px) {
-  .lm { top: 9rem; height: calc(100vh - 9rem); height: calc(100svh - 9rem); min-height: 56rem; }   /* сцена под шапкой, верх фото не закрыт */
-  .lm-track { height: calc(4 * 70vh + 100vh - 9rem); }
+  .lm { top: 13rem; height: calc(100vh - 13rem); height: calc(100svh - 13rem); min-height: 54rem; }   /* сцена ниже шапки — с воздухом сверху */
+  .lm-track { height: calc(4 * 70vh + 100vh - 13rem); }
   .lm__title { font-size: min(9vw, 16vh); height: auto; grid-row-end: span 3; }
   .lm__sub { margin-top: .6rem; }
   .lm__text { grid-row-end: 21 !important; grid-column-end: span 6 !important; padding: 0 0 2.4rem; text-align: left; align-items: flex-start; }
