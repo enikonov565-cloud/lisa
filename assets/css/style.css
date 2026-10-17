@@ -2736,8 +2736,8 @@ main > section[hidden] { display: none !important; }
 .extras-btn:hover .extras-btn__plus { background-color: var(--milk) !important; color: var(--brick) !important; }
 /* кнопка в шапке: при наведении проявляется молочная сторона — на ней тёмный текст */
 .cta3d__reveal { color: var(--ink) !important; }
-/* «Мой подход и гарантии»: мелкие кадры — того же размера, что остальные маленькие фото (3×5 клеток) */
+/* «Мой подход и гарантии»: самые мелкие кадры крупнее (примерно в 1,5 раза), но размеры по-прежнему разные — композиция сохраняется */
 @media (min-width: 1024px) {
-  .lm__slide--layout-2 .lm__fig:nth-child(3) { grid-row: 11 / span 5 !important; grid-column: 18 / span 3 !important; translate: 0 -2.4rem; }
-  .lm__slide--layout-3 .lm__fig:nth-child(3) { grid-row: 11 / span 5 !important; grid-column: 15 / span 3 !important; translate: -2.4rem -2.4rem; }
+  .lm__slide--layout-2 .lm__fig:nth-child(3) { grid-row: 8 / span 3 !important; grid-column: 19 / span 2 !important; }
+  .lm__slide--layout-3 .lm__fig:nth-child(3) { grid-row: 12 / span 4 !important; grid-column: 15 / span 3 !important; translate: -2.4rem -2.4rem; }
 }
