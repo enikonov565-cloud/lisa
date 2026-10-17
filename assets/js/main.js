@@ -99,6 +99,15 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // одно слово / строка — один цвет: все буквы группы берут тон большинства (без двуцветности)
+  // шапка над тёмным главным экраном — все её надписи белые; ниже, на светлом фоне, — обычные
+  (() => {
+    const hdr = $('#header'), heroEl = $('.hero--shapes');
+    if (!hdr || !heroEl) return;
+    const upd = () => hdr.classList.toggle('on-hero', heroEl.getBoundingClientRect().bottom > hdr.offsetHeight / 2);
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+  })();
   const unifyTone = (els, cls) => {
     if (!els.length) return;
     const on = els.filter((e) => e.classList.contains(cls)).length * 2 >= els.length;

@@ -2750,3 +2750,8 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 1023px) { .wmenu__title { color: var(--ink-deep); } }
 /* главный экран — свой, более тёмный тёплый фон (на нём белые тексты); остальные экраны — светлее */
 .hero--shapes { background-color: #a8784f; }
+/* шапка над тёмным главным экраном: бургер, буквы логотипа и надпись кнопки — белые */
+.header.on-hero .burger span { background: var(--milk); }
+.header.on-hero .logo__word img { filter: brightness(0) invert(1); }
+.header.on-hero .cta3d__face { color: var(--milk); }
+.header .burger span, .header .logo__word img, .header .cta3d__face { transition: background-color .4s var(--ease), filter .4s var(--ease), color .4s var(--ease), transform .5s var(--ease), width .5s var(--ease), opacity .3s; }
