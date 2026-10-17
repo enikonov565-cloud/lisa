@@ -2755,3 +2755,7 @@ main > section[hidden] { display: none !important; }
 .header.on-hero .logo__word img { filter: brightness(0) invert(1); }
 .header.on-hero .cta3d__face { color: var(--milk); }
 .header .burger span, .header .logo__word img, .header .cta3d__face { transition: background-color .4s var(--ease), filter .4s var(--ease), color .4s var(--ease), transform .5s var(--ease), width .5s var(--ease), opacity .3s; }
+/* «О чём мои кадры»: фоновый заголовок — шрифтом с засечками, размер прежний */
+@media (min-width: 1024px) {
+  .genres.is-h #genres-title, .genres.is-v #genres-title { font-family: var(--display); font-weight: 400; letter-spacing: 0; }
+}
