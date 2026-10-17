@@ -2786,3 +2786,12 @@ main > section[hidden] { display: none !important; }
   .genre__name .gc, .genre__name .gc.on-card, .genre:hover .genre__name .gc.on-card { color: var(--milk) !important; }
 }
 @media (max-width: 1023px) { .genres .genre__title { color: var(--milk); } }
+/* после «Кто я» — обычный отступ между разделами, текст не прилипает к тёмному «О чём мои кадры» */
+.about { padding-bottom: var(--sec); }
+/* «О чём мои кадры» на компьютере — ровно на высоту экрана: заголовок сверху (отступ раздела),
+   ряд карточек по центру оставшейся высоты, поля по бокам — как на всём сайте */
+@media (min-width: 1024px) {
+  .genres.is-v { min-height: 100vh; min-height: 100svh; padding-top: var(--sec); padding-bottom: 0; display: flex; flex-direction: column; }
+  .genres.is-v .genres__sticky, .genres.is-v .wrap { flex: 1; display: flex; flex-direction: column; }
+  .genres.is-v .genres__grid { flex: 1; align-items: center; padding-top: 16rem; padding-bottom: calc(var(--sec) + 4rem); }
+}
