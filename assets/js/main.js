@@ -1845,19 +1845,19 @@
       cta.type = 'button'; cta.className = 'genre__cta'; cta.tabIndex = -1;
       cta.innerHTML = [...'детали'].map((ch) => '<span class="gc">' + ch + '</span>').join('') + ' <span class="lk-arrow gc" aria-hidden="true">→</span>';
       cta.addEventListener('click', (e) => { e.stopPropagation(); $('.genre__front .genre__toggle', card).click(); });
-      el.appendChild(cta);
       card.appendChild(el);
+      card.appendChild(cta);   // «детали» — внутри фото, название — над фото
       return { card, el, cta, chars: $$('.gc', el), img: $('.genre__img', card) };
     });
     // буквы над фото — светлые, над фоном — тёмные (положение названия относительно карточки постоянно)
-    const paintNames = () => names.forEach(({ chars, img, cta }) => {
+    const paintNames = () => names.forEach(({ el, chars, img, cta }) => {
       const ir = img.getBoundingClientRect();
       chars.forEach((ch) => {
         const r = ch.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
         ch.classList.toggle('on-card', x > ir.left && x < ir.right && y > ir.top && y < ir.bottom);
       });
       // каждая строка названия и «детали» — одним цветом
-      [...cta.parentElement.children].filter((n) => n !== cta).forEach((row) => unifyTone($$('.gc', row), 'on-card'));
+      $$(':scope > span', el).forEach((row) => unifyTone($$('.gc', row), 'on-card'));
       const ctaChars = $$('.gc', cta);
       unifyTone(ctaChars, 'on-card');
       // линия под «детали» — того же цвета, что и слово

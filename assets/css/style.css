@@ -2759,3 +2759,24 @@ main > section[hidden] { display: none !important; }
 @media (min-width: 1024px) {
   .genres.is-h #genres-title, .genres.is-v #genres-title { font-family: var(--display); font-weight: 400; letter-spacing: 0; }
 }
+/* «О чём мои кадры»: название категории — над фото, тёмным; «детали» — внутри фото, внизу слева, светлым */
+@media (min-width: 1024px) {
+  .genres.is-h .genre__name, .genres.is-v .genre__name {
+    left: 0; right: auto; top: auto; bottom: calc(100% + 1.2rem);
+  }
+  .genre__name .gc, .genre__name .gc.on-card, .genre:hover .genre__name .gc.on-card { color: var(--ink) !important; }
+  .genre > .genre__cta {
+    position: absolute; left: 1.6rem; bottom: 1.6rem; z-index: 3; margin: 0 !important;
+    --lk: var(--milk); color: var(--milk);
+    transition: opacity .5s var(--ease), color .4s var(--ease);
+  }
+  .genre > .genre__cta .gc { color: var(--milk) !important; }
+  .genre > .genre__cta::after {
+    background:
+      linear-gradient(90deg, transparent, rgba(255, 255, 255, .95) 50%, transparent) no-repeat,
+      rgba(250, 245, 238, .55);
+    background-size: 38% 100%, 100% 100%; background-position: -60% 0, 0 0;
+  }
+  .genre.is-flipped > .genre__cta { opacity: 0; pointer-events: none; }
+}
+@media (max-width: 1023px) { .genre > .genre__cta { display: none; } }
