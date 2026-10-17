@@ -2726,3 +2726,6 @@ main > section[hidden] { display: none !important; }
 .extras-btn:hover .extras-btn__plus { background-color: var(--milk) !important; color: var(--brick) !important; }
 /* кнопка в шапке: при наведении проявляется молочная сторона — на ней тёмный текст */
 .cta3d__reveal { color: var(--ink) !important; }
+/* главный экран: заголовок целиком одним шрифтом с засечками, без наклона; размер прежний */
+.shapes__head { font-family: var(--display); font-weight: 400; letter-spacing: .01em; }
+.shapes__head em { font-family: inherit; font-style: normal; font-weight: inherit; font-size: 1em; }
