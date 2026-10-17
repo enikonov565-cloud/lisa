@@ -2842,3 +2842,13 @@ main > section[hidden] { display: none !important; }
 .invite .invite__btn { text-decoration: none; }
 .invite .invite__process { margin-top: 2.8rem; background-color: transparent !important; padding-left: 1.2rem; padding-right: 1.2rem; }
 .invite .invite__process:hover { background-color: rgba(250, 245, 238, .14) !important; color: var(--milk) !important; }
+/* приглашение: содержимое разнесено по высоте — заголовок с текстом вверху, кнопки внизу экрана */
+@media (min-width: 1024px) {
+  .invite--dark { place-items: stretch center; }
+  .invite--dark .invite__body { height: 100%; padding: 6rem 0 2rem; box-sizing: border-box; }
+  .invite--dark .invite__kicker { margin-bottom: 3.2rem; }
+  .invite--dark .invite__title { margin-bottom: 3.2rem; }
+  .invite--dark .invite__text { margin-bottom: 0; }
+  .invite--dark .invite__btn { margin-top: auto; }
+  .invite--dark .invite__process { margin-top: 3.2rem; }
+}
