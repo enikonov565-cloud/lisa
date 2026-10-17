@@ -13,8 +13,8 @@
 
 :root {
   /* цвета из Figma */
-  --peach: #dcbd9c;      /* тёплый фон с лёгкой рыжиной — в тон лисе логотипа */
-  --peach-rgb: 220, 189, 156;
+  --peach: #efdcc6;      /* тёплый светлый фон с лёгкой рыжиной — в тон лисе логотипа */
+  --peach-rgb: 239, 220, 198;
   --ink: #4c4343;        /* «василиса» */
   --ink-deep: #180f01;   /* «7» */
   --orange: #df600f;     /* «василиса 4» */
@@ -54,7 +54,7 @@ button { cursor: pointer; background: none; border: 0; }
 body {
   position: relative;
   min-height: 100vh;
-  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #e5cbae 0%, rgba(229, 203, 174, 0) 60%) no-repeat;   /* без «fixed» — фон не перерисовывается при каждой прокрутке */
+  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #f6e9da 0%, rgba(246, 233, 218, 0) 60%) no-repeat;   /* без «fixed» — фон не перерисовывается при каждой прокрутке */
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -1460,7 +1460,7 @@ body::before {
   position: fixed; inset: 0; z-index: -1;   /* фон на весь экран и при прокрутке панели */
   background:
     radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, .45), transparent 60%),
-    linear-gradient(180deg, #e4c9ab 0%, var(--peach) 100%);
+    linear-gradient(180deg, #f5e7d7 0%, var(--peach) 100%);
 }
 .wpanel__img {
   grid-area: img;
@@ -2887,3 +2887,7 @@ main > section[hidden] { display: none !important; }
 /* «Любимые кадры»: выбранный раздел — тёмный (и пока курсор на его фото), остальные — приглушённые */
 .wmenu__item.is-pinned .wmenu__title { color: var(--ink-deep); }
 .wmenu__item.is-pinned .wmenu__desc { opacity: 1; }
+/* «Кто я»: исходник фото — 640 px; раскрытое фото не шире 96rem (≈960 px на 1920), чтобы не расплывалось */
+@media (min-width: 1024px) {
+  .ab:not(.is-thumb) .ab__intro { width: min(calc(100% - 2 * var(--pad)), 96rem); }
+}
