@@ -2819,3 +2819,8 @@ main > section[hidden] { display: none !important; }
   .sv__thumb:nth-child(4) { margin-bottom: 9rem; rotate: 7deg; }
   .sv__thumb:nth-child(5) { margin-bottom: 0; rotate: 14deg; }
 }
+/* «Выбирайте по душе»: большое фото направления — во всю высоту экрана (от верха раздела до низа) */
+@media (min-width: 1024px) {
+  .services .sv__bg { top: auto; bottom: 0; height: 100vh; height: 100svh; z-index: 0; }
+  .services .sec-head { position: relative; z-index: 1; }
+}
