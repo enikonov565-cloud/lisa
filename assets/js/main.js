@@ -886,8 +886,9 @@
       const title = $('.wmenu__title', m.el);
       const [tx, ty] = m === it ? shift(title) : [0, 0];
       const [dx, dy] = m === it ? shift(m.desc) : [0, 0];
-      $$('.wword', title).forEach((w) => paintWord($$('.char', w), tx, ty));
-      $$('.wdw', m.desc).forEach((w) => paintWord($$('.wch', w), dx, dy));
+      // название целиком и подпись целиком — каждое одним цветом
+      paintWord($$('.char', title), tx, ty);
+      paintWord($$('.wch', m.desc), dx, dy);
     });
   };
   const clearText = () => items.forEach((m) => { m.chars.forEach((c) => { c.style.color = ''; c.style.textShadow = ''; }); $$('.wch', m.desc).forEach((w) => { w.style.color = ''; w.style.textShadow = ''; }); });

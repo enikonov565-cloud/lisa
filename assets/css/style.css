@@ -54,7 +54,7 @@ button { cursor: pointer; background: none; border: 0; }
 body {
   position: relative;
   min-height: 100vh;
-  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #e5cbae 0%, rgba(229, 203, 174, 0) 60%) fixed;
+  background: var(--peach) radial-gradient(120% 80% at 70% 0%, #e5cbae 0%, rgba(229, 203, 174, 0) 60%) no-repeat;   /* без «fixed» — фон не перерисовывается при каждой прокрутке */
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -69,7 +69,7 @@ body::before {
   position: fixed; inset: 0; z-index: -1;
   background: url("../img/texture.jpg") center / cover no-repeat;
   opacity: .06;
-  filter: blur(1.5px) grayscale(.4);
+  filter: grayscale(.4);   /* без размытия — дешевле при прокрутке */
   pointer-events: none;
 }
 
@@ -2835,3 +2835,6 @@ main > section[hidden] { display: none !important; }
 }
 /* поле снизу у «Мой подход и гарантии» — фото не прилегает к следующему разделу */
 .approach { padding-bottom: var(--sec); }
+/* «Любимые кадры»: у букв названий нет отдельного слоя — сотни слоёв тормозили прокрутку и наведение */
+.char { will-change: auto; }
+.wtile { contain: layout style; }
