@@ -2637,3 +2637,7 @@ main > section[hidden] { display: none !important; }
 .ab__capnote { font-weight: 300; color: rgba(76, 67, 67, .75); }
 /* «Любимые кадры»: выбранный раздел (при наведении) — рыжий */
 .wmenu__item:hover .wmenu__title, .wmenu__item:focus-visible .wmenu__title, .wmenu__item.is-pinned .wmenu__title { color: var(--orange); }
+/* «Выбирайте по душе»: большое фото справа — до самого края экрана, без поля */
+@media (min-width: 1024px) {
+  .services .sv__bg { right: calc(-1 * var(--pad)); border-top-right-radius: 0; border-bottom-right-radius: 0; }
+}
