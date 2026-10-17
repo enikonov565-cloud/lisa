@@ -1927,9 +1927,11 @@
     };
     new IntersectionObserver(([e]) => { const was = lmSeen; lmSeen = e.isIntersecting; if (lmSeen && !was) { paint(); requestAnimationFrame(tiltLoop); } }).observe(lm);
 
-    const go = (dir) => {
+    const go = (dir, target) => {
       if (busy) return;
-      const next = cur + dir;
+      const next = target != null ? target : cur + dir;
+      if (next === cur) return;
+      dir = next > cur ? 1 : -1;
       if (next < 0 || next >= slides.length) return;
       const A = slides[cur], B = slides[next];
       cur = next; setDots();
@@ -1968,7 +1970,7 @@
           [...S.figs.flatMap((f) => [f.el, f.slideEl]), S.text, ...S.letters, ...S.subLetters, ...S.extra].forEach((e) => e.getAnimations().forEach((an) => an.cancel()));
         });
         busy = false; paint();
-        if (want !== cur) go(want > cur ? 1 : -1);   // прокрутили дальше — догоняем по одному слайду
+        if (want !== cur) go(0, want);   // пока шёл переход, прокрутили дальше — сразу к нужному слайду, без перелистывания по одному
       }, total);
     };
     // слайд выбирается прокруткой: сцена стоит на экране, каждые 70% высоты экрана — следующий
@@ -1988,7 +1990,7 @@
       if (span <= 0) return;
       const p = Math.min(0.999, Math.max(0, -tr.top / span));
       want = Math.floor(p * slides.length);
-      if (want !== cur && !busy) go(want > cur ? 1 : -1);
+      if (want !== cur && !busy) go(0, want);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => { onScroll(); paint(); });
