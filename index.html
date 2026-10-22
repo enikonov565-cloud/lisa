@@ -17,8 +17,8 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610172013">
-  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="assets/css/style.css?v=202610221454">
+  <script>document.documentElement.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion-wait');setTimeout(function(){document.documentElement.classList.remove('motion-wait')},4000)}</script>
 </head>
 <body>
 
@@ -195,7 +195,7 @@
           <h2 class="h1 rv" id="genres-title">О чём мои кадры</h2>
         </div>
         <div class="genres__grid">
-          <div class="genre rv" style="--accent:#c4643a;--accent-ink:var(--milk);--d:0.00s">
+          <div class="genre" style="--accent:#c4643a;--accent-ink:var(--milk)">
             <div class="genre__inner">
               <div class="genre__face genre__front">
                 <figure class="genre__img"><img src="assets/img/w/studio-gaze.jpg" loading="lazy" alt="Портрет девушки в мягком свете на тёмном фоне"></figure>
@@ -214,7 +214,7 @@
               </div>
             </div>
           </div>
-          <div class="genre rv" style="--accent:var(--orange);--accent-ink:var(--milk);--d:0.08s">
+          <div class="genre" style="--accent:var(--orange);--accent-ink:var(--milk)">
             <div class="genre__inner">
               <div class="genre__face genre__front">
                 <figure class="genre__img"><img src="assets/img/w/street-lilac.jpg" loading="lazy" alt="Девушка в красном среди цветущей сирени"></figure>
@@ -233,7 +233,7 @@
               </div>
             </div>
           </div>
-          <div class="genre rv" style="--accent:var(--milk);--accent-ink:var(--orange);--d:0.16s">
+          <div class="genre" style="--accent:var(--milk);--accent-ink:var(--orange)">
             <div class="genre__inner">
               <div class="genre__face genre__front">
                 <figure class="genre__img"><img src="assets/img/w/report-tractor.jpg" loading="lazy" alt="Трактор расчищает заснеженную аллею после снегопада"></figure>
@@ -252,7 +252,7 @@
               </div>
             </div>
           </div>
-          <div class="genre rv" style="--accent:#e8925a;--accent-ink:var(--ink-deep);--d:0.24s">
+          <div class="genre" style="--accent:#e8925a;--accent-ink:var(--ink-deep)">
             <div class="genre__inner">
               <div class="genre__face genre__front">
                 <figure class="genre__img"><img src="assets/img/w/arch-tower.jpg" loading="lazy" alt="Сталинская высотка в облаках над городской эстакадой"></figure>
@@ -271,7 +271,7 @@
               </div>
             </div>
           </div>
-          <div class="genre rv" style="--accent:var(--olive, #8a8d3c);--accent-ink:var(--ink-deep);--d:0.32s">
+          <div class="genre" style="--accent:var(--olive, #8a8d3c);--accent-ink:var(--ink-deep)">
             <div class="genre__inner">
               <div class="genre__face genre__front">
                 <figure class="genre__img"><img src="assets/img/w/city-taxi.jpg" loading="lazy" alt="Оранжевое такси на улице старого города"></figure>
@@ -615,7 +615,12 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610172013" defer></script>
+  <script src="assets/js/main.js?v=202610221454" defer></script>
+  <!-- плавный скролл и анимации: GSAP + ScrollTrigger + Lenis (CDN), настройки — в motion.js -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js" defer></script>
+  <script src="assets/js/motion.js?v=202610221454" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
 </body>
 </html>

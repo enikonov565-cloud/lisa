@@ -98,6 +98,11 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // плавная прокрутка: через Lenis, если он подключён (assets/js/motion.js), иначе — родная
+  const scrollToY = (top, smooth = true) => {
+    if (window.lenis) { window.lenis.resize(); window.lenis.scrollTo(top, { immediate: !smooth || reduced, force: true }); }
+    else window.scrollTo({ top, behavior: smooth && !reduced ? 'smooth' : 'auto' });
+  };
   // одно слово / строка — один цвет: все буквы группы берут тон большинства (без двуцветности)
   // шапка над тёмным главным экраном — все её надписи белые; ниже, на светлом фоне, — обычные
   (() => {
@@ -1016,7 +1021,7 @@
     applyFilter(it.cat);
     const hdr = $('#header');
     const want = stage.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.offsetHeight : 0) - 24;
-    if (Math.abs(window.scrollY - want) > 8) window.scrollTo({ top: want, behavior: reduced ? 'auto' : 'smooth' });
+    if (Math.abs(window.scrollY - want) > 8) scrollToY(want);
     setTimeout(() => { tBusy = false; wback.focus({ preventScroll: true }); }, D + 650);
   };
   const closeCat = () => {
@@ -1616,7 +1621,8 @@
     if (!reduced) {
       const s = slides[0];
       tw(s.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500, delay: 150, easing: E.exio });
-      s.rows.forEach((r, i) => tw(r, [{ transform: 'translateY(160%)' }, { transform: 'translateY(0)' }], { duration: 1500, delay: 100 + (i % 2) * 100, easing: E.exio }));
+      // строки заголовка выезжают через GSAP (assets/js/motion.js); здесь — только если GSAP не ждём
+      if (!document.documentElement.classList.contains('motion-wait')) s.rows.forEach((r, i) => tw(r, [{ transform: 'translateY(160%)' }, { transform: 'translateY(0)' }], { duration: 1500, delay: 100 + (i % 2) * 100, easing: E.exio }));
       s.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000, delay: 400, easing: E.exin }));
     }
   }
@@ -1668,7 +1674,7 @@
       // экран плавно встаёт ровно на большое фото: по центру видимой области под шапкой
       const hb = ($('#header') ? $('#header').getBoundingClientRect().bottom : 0);
       const toY = window.scrollY + r1.top - hb - Math.max(0, (window.innerHeight - hb - r1.height) / 2);
-      window.scrollTo({ top: Math.max(0, toY), behavior: reduced ? 'auto' : 'smooth' });
+      scrollToY(Math.max(0, toY));
       intro.removeAttribute('role'); intro.removeAttribute('tabindex'); intro.removeAttribute('aria-label');
       if (reduced) return;
       const D = 1200;
@@ -1919,7 +1925,7 @@
     // точка — переход к своей странице: прокручиваем к нужному участку дорожки
     dots.forEach((d, i) => d.addEventListener('click', () => {
       const tr = trackEl.getBoundingClientRect(), span = tr.height - lm.offsetHeight;
-      window.scrollTo({ top: window.scrollY + tr.top + span * (i + 0.5) / slides.length, behavior: 'smooth' });
+      scrollToY(window.scrollY + tr.top + span * (i + 0.5) / slides.length);
     }));
   }
 
