@@ -314,14 +314,14 @@
 
     if (!reduced && 'animate' in Element.prototype && texts.length > 1) {
       let busy = false;
-      rotNext = async () => {
-        if (busy) return;
+      rotNext = async (to) => {   // to — номер слова (у каждого фото своё слово)
+        if (busy || to === idx) return;
         busy = true;
         await Promise.all(chars.map((ch, i) => ch.animate(
           [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-120%)', opacity: 0 }],
           { duration: TXT.out, easing: TXT.outEase, fill: 'forwards' },
         ).finished));
-        idx = (idx + 1) % texts.length;
+        idx = to != null ? to % texts.length : (idx + 1) % texts.length;
         chars = render(texts[idx]);
         sr.textContent = texts[idx];
         fit();
@@ -1523,7 +1523,7 @@
       const next = to != null ? to : (cur + dir + slides.length) % slides.length;
       if (next === cur) return;
       busy = true;
-      if (rotNext) rotNext();   // слово рядом с именем меняется вместе с фото
+      if (rotNext) rotNext(next);   // слово рядом с именем меняется вместе с фото — у каждого фото своё
       const A = slides[cur];
       cur = next;
       const B = slides[cur];
