@@ -2944,3 +2944,5 @@ main > section[hidden] { display: none !important; }
 .to-site__btn:hover .lk-arrow { transform: translateX(.6rem); }
 .to-site__btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 @media (max-width: 1023px) { .desk { margin-bottom: 0; } .to-site { padding: 3rem 20px 4rem; } }
+/* «Стол фотографа» — только на компьютере; на телефонах и планшетах страницы нет */
+@media (max-width: 1023px) { .desk { display: none; } }
