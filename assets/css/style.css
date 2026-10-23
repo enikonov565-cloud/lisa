@@ -2666,3 +2666,26 @@ main > section[hidden] { display: none !important; }
       linear-gradient(to bottom, #000 88%, rgba(0,0,0,.9) 90%, rgba(0,0,0,.72) 92%, rgba(0,0,0,.5) 94%, rgba(0,0,0,.28) 96%, rgba(0,0,0,.1) 98%, rgba(0,0,0,0) 100%);
   }
 }
+/* ==== узкие телефоны (до 400 px): тексты не выходят за края ==== */
+@media (max-width: 400px) {
+  /* футер: «навигация» и «услуги» — одна под другой, длинные слова помещаются */
+  .footer__card { grid-template-columns: 1fr !important; }
+  .footer__col { min-width: 0; }
+  /* главный экран: строка заголовка помещается в ширину; подпись с именем может переноситься */
+  .shapes__head { font-size: min(clamp(3.4rem, 5.6vw, 11rem), calc((100vw - 40px) / 14)); }
+  .hero__name { flex-wrap: wrap; row-gap: .4rem; }
+  .shapes__under { max-width: calc(100vw - 2 * var(--pad)); }
+  /* шапка: кнопка компактнее */
+  .cta3d { font-size: 11px; }
+  .cta3d__face, .cta3d__reveal { padding: .6rem 1.2rem; gap: .6rem; }
+  /* «Любимые кадры»: длинные названия переносятся */
+  .wmenu__item { min-width: 0; max-width: 100%; }
+  .wmenu__title { white-space: normal; overflow-wrap: anywhere; }
+  .wmenu__desc { max-width: 100%; }
+}
+@media (max-width: 400px) {
+  .hero__genres { flex-wrap: wrap; row-gap: .4rem; max-width: calc(100vw - 2 * var(--pad)); }
+}
+@media (max-width: 360px) {
+  .cta3d__more { display: none; }   /* на самых узких экранах в шапке — «связаться →» */
+}
