@@ -2683,8 +2683,25 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 360px) {
   .cta3d__more { display: none; }   /* на самых узких экранах в шапке — «связаться →» */
 }
-/* «Выбирайте по душе»: тексты, лежащие на фото (заголовок, подпись сверху, подписи маленьких фото), — фирменным рыжим, читаются на любом кадре */
+/* «Выбирайте по душе»: все тексты одного тёмного цвета; там, где они лежат на фото, —
+   мягкая светлая дымка в цвет фона (сверху — под заголовком и подписью, снизу — под подписями маленьких фото),
+   середина кадра остаётся чистой */
 @media (min-width: 1024px) {
-  .services #services-title, .services .sec-head .note { color: var(--orange); }
-  .services .sv__tname .gc, .services .sv__tname .gc.on-card { color: var(--orange) !important; }
+  .services .sv__bg::after {
+    content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgba(var(--peach-rgb), .9) 0%, rgba(var(--peach-rgb), .78) 9%, rgba(var(--peach-rgb), .45) 17%, rgba(var(--peach-rgb), .15) 23%, rgba(var(--peach-rgb), 0) 28%),
+      linear-gradient(to top, rgba(var(--peach-rgb), .9) 0%, rgba(var(--peach-rgb), .78) 8%, rgba(var(--peach-rgb), .45) 15%, rgba(var(--peach-rgb), .15) 21%, rgba(var(--peach-rgb), 0) 27%);
+  }
+  .services #services-title, .services .sec-head .note { color: var(--ink); }
+  .services .sv__tname .gc, .services .sv__tname .gc.on-card { color: var(--ink) !important; }
+}
+@media (min-width: 1024px) {
+  .services .sv__bg::after {
+    background:
+      linear-gradient(to bottom, rgba(var(--peach-rgb), .92) 0%, rgba(var(--peach-rgb), .86) 19%, rgba(var(--peach-rgb), .5) 25%, rgba(var(--peach-rgb), .15) 30%, rgba(var(--peach-rgb), 0) 34%),
+      linear-gradient(to top, rgba(var(--peach-rgb), .92) 0%, rgba(var(--peach-rgb), .86) 21%, rgba(var(--peach-rgb), .5) 27%, rgba(var(--peach-rgb), .15) 32%, rgba(var(--peach-rgb), 0) 36%),
+      linear-gradient(to right, rgba(var(--peach-rgb), .9) 0%, rgba(var(--peach-rgb), .85) 26%, rgba(var(--peach-rgb), .4) 32%, rgba(var(--peach-rgb), 0) 38%);
+  }
+  .services .sv__text { color: var(--ink); }
 }
