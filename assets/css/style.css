@@ -2683,3 +2683,8 @@ main > section[hidden] { display: none !important; }
 @media (max-width: 360px) {
   .cta3d__more { display: none; }   /* на самых узких экранах в шапке — «связаться →» */
 }
+/* «Выбирайте по душе»: тексты, лежащие на фото (заголовок, подпись сверху, подписи маленьких фото), — фирменным рыжим, читаются на любом кадре */
+@media (min-width: 1024px) {
+  .services #services-title, .services .sec-head .note { color: var(--orange); }
+  .services .sv__tname .gc, .services .sv__tname .gc.on-card { color: var(--orange) !important; }
+}
