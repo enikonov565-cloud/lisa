@@ -2736,3 +2736,9 @@ main > section[hidden] { display: none !important; }
 .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .8rem 2.4rem; }
 .footer__legal { color: inherit; text-decoration: underline; text-underline-offset: .2em; opacity: .8; }
 .footer__legal:hover { opacity: 1; color: var(--brick); }
+/* «Выбирайте по душе»: колонка текста — на всю высоту от заголовка до низа, группы разведены ровно (без большой дыры внизу) */
+@media (min-width: 1024px) {
+  .services .sv__info { top: 8.3rem; bottom: 2.6rem; justify-content: flex-start; }
+  .services .sv__price { margin-top: auto; }
+  .services .sv__actions { margin-top: auto; }
+}
