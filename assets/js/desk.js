@@ -231,5 +231,8 @@
   card.addEventListener('pointerenter', () => { hover = true; plan(); });
   card.addEventListener('pointerleave', () => { hover = false; plan(); });
   document.addEventListener('visibilitychange', plan);
+  // «перейти на сайт» — раскрывает «Кто я» и остальные страницы
+  const toSite = document.querySelector('.to-site__btn');
+  if (toSite) toSite.addEventListener('click', () => { const intro = document.querySelector('.ab__intro'); if (intro) intro.click(); });
   if ('IntersectionObserver' in window) new IntersectionObserver((en) => { inView = en[0].isIntersecting; plan(); }, { threshold: .4 }).observe(sec);
 })();

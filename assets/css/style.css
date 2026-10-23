@@ -2931,3 +2931,16 @@ main > section[hidden] { display: none !important; }
 /* «Стол фотографа»: центр композиции чуть выше */
 .desk__center { top: calc(50% - 4rem); }
 @media (max-width: 1023px) { .desk { margin-bottom: 4rem; } }   /* на телефоне нижние фото не подходят к футеру вплотную */
+/* кнопка «перейти на сайт» — по центру над футером; когда страницы уже открыты, не нужна */
+.to-site { display: flex; justify-content: center; padding: 2rem var(--pad) 4rem; position: relative; z-index: 101; }
+#genres:not([hidden]) ~ .to-site { display: none; }
+.to-site__btn {
+  display: inline-flex; align-items: center; gap: 1.2rem; padding: 1.4rem 3.2rem; border: 0; border-radius: var(--radius); cursor: pointer;
+  background: var(--orange); color: var(--milk); font-family: var(--sans); font-size: max(1.8rem, 14px); line-height: 1.2;
+  transition: background .3s var(--ease);
+}
+.to-site__btn:hover { background: var(--brick); }
+.to-site__btn .lk-arrow { display: inline-block; transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+.to-site__btn:hover .lk-arrow { transform: translateX(.6rem); }
+.to-site__btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+@media (max-width: 1023px) { .desk { margin-bottom: 0; } .to-site { padding: 3rem 20px 4rem; } }
