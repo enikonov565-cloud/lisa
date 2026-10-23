@@ -427,6 +427,8 @@
     const top = svSec.getBoundingClientRect().top;
     svSec.style.setProperty('--sv-off', (svStage.getBoundingClientRect().top - top) + 'px');
     if (svHead) svSec.style.setProperty('--sv-head', (svHead.getBoundingClientRect().bottom - top) + 'px');   // низ заголовка от верха раздела
+    const svInfo = $('.sv__info'), svBg = $('.sv__bg');
+    if (svInfo && svBg) svSec.style.setProperty('--sv-pr', (svInfo.getBoundingClientRect().right - svBg.getBoundingClientRect().left) + 'px');   // правый край плашки от левого края фото
   };
   window.addEventListener('resize', svOff);
   if (svSec) new MutationObserver(svOff).observe(svSec, { attributes: true, attributeFilter: ['hidden'] });
