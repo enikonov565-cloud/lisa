@@ -278,7 +278,8 @@
   /* ---------------- text carousel: «Лисса Миляева — [фотограф]» ----------------
      Буквы по очереди уезжают вверх, пилюля плавно меняет ширину,
      новое слово поднимается снизу. Слова — в data-texts в index.html. */
-  const ROT = { interval: 2600, dur: 450, stagger: 30, ease: 'cubic-bezier(.33, 1, .68, 1)' };
+  const ROT = { interval: 3800, dur: 450, stagger: 30, ease: 'cubic-bezier(.33, 1, .68, 1)' };
+  let rotNext = null;   // смена слова; вызывается слайдшоу первого экрана — всё в одном ритме
   const rot = $('.rot');
   if (rot) {
     const texts = rot.dataset.texts.split('|');
@@ -310,7 +311,7 @@
 
     if (!reduced && 'animate' in Element.prototype && texts.length > 1) {
       let busy = false;
-      setInterval(async () => {
+      rotNext = async () => {
         if (busy) return;
         busy = true;
         await Promise.all(chars.map((ch, i) => ch.animate(
@@ -326,7 +327,9 @@
           { duration: ROT.dur, delay: i * ROT.stagger, easing: ROT.ease, fill: 'backwards' },
         ).finished));
         busy = false;
-      }, ROT.interval);
+      };
+      // без слайдшоу (его нет на странице) — слово меняется само
+      if (!document.querySelector('.shapes__slide + .shapes__slide')) setInterval(rotNext, ROT.interval);
     }
   }
 
@@ -1517,6 +1520,7 @@
       const next = to != null ? to : (cur + dir + slides.length) % slides.length;
       if (next === cur) return;
       busy = true;
+      if (rotNext) rotNext();   // слово рядом с именем меняется вместе с фото
       const A = slides[cur];
       cur = next;
       const B = slides[cur];
@@ -1527,7 +1531,7 @@
         busy = false; return;
       }
       const up = dir > 0 ? 1 : -1;
-      const K = 1.7;   // смена медленная и плавная
+      const K = 1.5;   // смена плавная, этапы идут внахлёст — без пустых пауз
       stop([A.wrap, A.img, ...A.rows, ...A.links, B.wrap, B.img, ...B.rows, ...B.links]);
       // исходное положение приходящего слайда
       B.wrap.style.transform = `translateY(${up * 100}%)`;
@@ -1547,10 +1551,10 @@
       tw(B.wrap, [{ transform: `translateY(${up * 100}%)` }, { transform: 'translateY(0)' }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io });
       tw(B.img, [{ transform: `translateY(${-up * 5}%)` }, { transform: 'translateY(0)' }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io });
       // круг раскрывается, строки выезжают по очереди, ссылка проявляется
-      const open = tw(B.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500 * K, delay: 1200 * K, easing: E.exio });
+      const open = tw(B.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500 * K, delay: 900 * K, easing: E.exio });
       const order = up > 0 ? B.rows : [...B.rows].reverse();
-      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: 1500 * K, delay: 1100 * K + (i % 2) * 100 * K, easing: E.exio }));
-      B.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000 * K, delay: 1400 * K, easing: E.exin }));
+      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: 1300 * K, delay: 150 * K + (i % 2) * 100 * K, easing: E.p3 }));
+      B.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000 * K, delay: 1000 * K, easing: E.exin }));
       open.finished.then(() => {
         A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
         A.el.style.zIndex = ''; B.el.style.zIndex = '';
@@ -1563,10 +1567,17 @@
     };
     // фото меняются сами по кругу; пауза, когда экран не виден
     let autoT = 0, heroSeen = true;
-    const plan = () => { clearTimeout(autoT); if (!reduced && heroSeen && !document.hidden) autoT = setTimeout(() => navigate(1), 5000); };
+    const DWELL = 4000;
+    let midT = 0;
+    const plan = () => {
+      clearTimeout(autoT); clearTimeout(midT);
+      if (reduced || !heroSeen || document.hidden) return;
+      midT = setTimeout(() => { if (rotNext) rotNext(); }, DWELL / 2);
+      autoT = setTimeout(() => navigate(1), DWELL);
+    };
     new IntersectionObserver(([e]) => { heroSeen = e.isIntersecting; if (!busy) plan(); }).observe(hero);
     document.addEventListener('visibilitychange', () => { if (!busy) plan(); });
-    dots.forEach((d, i) => d.addEventListener('click', () => { clearTimeout(autoT); navigate(i > cur ? 1 : -1, i); }));
+    dots.forEach((d, i) => d.addEventListener('click', () => { clearTimeout(autoT); clearTimeout(midT); navigate(i > cur ? 1 : -1, i); }));
 
     /* цвет нижней строки подстраивается под круг с фото: буква внутри круга — светлая, снаружи — тёмная.
        Положение круга берём из живых значений (сжатие, сдвиг, перетекание), поэтому цвет едет вместе с ним */
