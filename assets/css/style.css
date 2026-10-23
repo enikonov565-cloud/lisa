@@ -2883,3 +2883,40 @@ main > section[hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .desk__item { transition: none; }
 }
+/* «Стол фотографа»: фото целиком, без обрезки */
+.pola img, .desk__focus img { aspect-ratio: auto; object-fit: contain; }
+.desk__item--film { width: max-content; }
+.film__frames { display: flex; gap: 1rem; }
+.film__frames img { width: auto; height: var(--fh, 14rem); aspect-ratio: auto; object-fit: contain; }
+.desk__focus { width: fit-content; max-width: min(56rem, 80vw); cursor: zoom-in; }
+.desk__focus img { width: auto; max-width: 100%; max-height: min(56rem, 58svh); margin: 0 auto; }
+.desk__item img { pointer-events: auto; cursor: zoom-in; }
+.desk { overflow: visible; overflow-x: clip; }
+
+/* стол чуть выглядывает снизу экрана «Привет, я Лисса» (пока остальные страницы не открыты) */
+#genres[hidden] ~ .desk { margin-top: calc(-1 * var(--sec) - 18svh); }
+.about:has(.ab.is-thumb) { position: relative; z-index: 2; pointer-events: none; }
+.about:has(.ab.is-thumb) .ab__intro, .about:has(.ab.is-thumb) .ab__cap { pointer-events: auto; }
+
+/* карточка кадра */
+.dcard { padding: 0; border: 0; background: none; overflow: visible; max-width: none; max-height: none; }
+.dcard::backdrop { background: rgba(24, 15, 1, .5); }
+.dcard[open] { display: flex; align-items: flex-start; gap: 1.6rem; }
+.dcard__pola { margin: 0; padding: 2rem 2rem 0; background: var(--milk); border-radius: var(--radius); rotate: -1.5deg; box-shadow: 0 4rem 8rem -2rem rgba(24, 15, 1, .45); }
+.dcard__img { display: block; width: auto; height: auto; max-width: min(76vw, 110rem); max-height: 68svh; border-radius: 1.2rem; }
+.dcard__pola figcaption { display: flex; flex-direction: column; align-items: center; gap: .8rem; max-width: 52rem; margin: 0 auto; padding: 2.4rem 1rem 2.8rem; text-align: center; }
+.dcard__cat { font-size: max(1.4rem, 12px); letter-spacing: .14em; text-transform: uppercase; color: var(--brick); }
+.dcard__title { margin: 0; font-family: var(--display); font-weight: 400; font-size: 3.6rem; line-height: 1; color: var(--ink); }
+.dcard__text { margin: 0; font-size: var(--t-text); line-height: 1.4; color: var(--ink); text-wrap: balance; }
+.dcard__close {
+  flex: none; width: 4.8rem; height: 4.8rem; border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--milk); color: var(--ink); font-size: 2.8rem; line-height: 1;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+.dcard__close:hover { background: var(--brick); color: var(--milk); }
+.dcard__close:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+@media (max-width: 1023px) {
+  .dcard[open] { flex-direction: column-reverse; align-items: flex-end; }
+  .dcard__img { max-width: 84vw; max-height: 58svh; }
+  .dcard__pola { padding: 1.4rem 1.4rem 0; }
+}
