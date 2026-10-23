@@ -2961,3 +2961,15 @@ main > section[hidden] { display: none !important; }
 }
 /* «Стол фотографа» — только до раскрытия сайта (под «Привет, я Лисса»); после «Давайте сохраним вашу историю» его нет */
 #genres:not([hidden]) ~ .desk { display: none; }
+/* приглашение: ровный ритм без дыр и одна ось по центру.
+   «как проходит съёмка +» — по центру вся группа (надпись вместе с плюсом), без лишней рамки по ширине */
+@media (min-width: 1024px) {
+  .invite--dark .invite__kicker { margin-bottom: 3.2rem; }
+  .invite--dark .invite__title { margin-bottom: 3.2rem; }
+  .invite--dark .invite__process {
+    width: auto; min-height: 0; margin-top: 2rem; justify-content: center;
+    padding: .6rem 1.2rem !important;
+  }
+  .invite--dark .invite__process .extras-btn__plus { position: static; translate: none; }
+  .invite--dark .invite__btn { margin-top: 2rem; }
+}
