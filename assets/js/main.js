@@ -1849,7 +1849,7 @@
       if (!reduced && window.matchMedia('(min-width: 1024px)').matches) {
         const s = slides[cur];
         tilt(s.tiltImgs, [20, -20], (p) => 0.02 * p + 0.02, 0.1);
-        if (!busy) paint();
+        // цвет текстов не пересчитывается каждый кадр (мигал на краях фото) — только когда слайд встал
       }
       requestAnimationFrame(tiltLoop);
     };
@@ -1922,6 +1922,7 @@
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => { onScroll(); paint(); });
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => paint());   // после загрузки шрифта — один раз
     // точка — переход к своей странице: прокручиваем к нужному участку дорожки
     dots.forEach((d, i) => d.addEventListener('click', () => {
       const tr = trackEl.getBoundingClientRect(), span = tr.height - lm.offsetHeight;
