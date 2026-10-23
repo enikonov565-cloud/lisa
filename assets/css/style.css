@@ -2769,3 +2769,7 @@ main > section[hidden] { display: none !important; }
   .services .sv__price { margin-top: auto; }
   .services .sv__actions { margin-top: auto; }
 }
+/* плашка «Выбирайте по душе» — молочная, светлее фона: видна и на прозрачном краю фото */
+@media (min-width: 1024px) {
+  .services .sv__info { background: rgba(250, 245, 238, .94); box-shadow: 0 2rem 4rem -2.4rem rgba(76, 67, 67, .25); }
+}
