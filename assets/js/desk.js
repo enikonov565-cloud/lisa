@@ -44,19 +44,19 @@
 
   // предметы на столе: x, y — левый верхний угол в % стола; r — поворот; w — ширина в rem; m — показывать на телефоне
   const ITEMS = [
-    { t: 'pola', src: 'street-lilac', cap: 'Сирень', x: 2, y: 6, r: -12, w: 32, m: 1 },
-    { t: 'pola', src: 'arch-tower', cap: 'Высотка', x: 17, y: -5, r: 8, w: 29 },
-    { t: 'film', srcs: ['street-crossing', 'studio-bw-face', 'still-elephant'], x: -5, y: 50, r: -16, h: 15, m: 1 },
-    { t: 'pola', src: 'city-taxi', cap: 'Оранжевое такси', x: 7, y: 60, r: 9, w: 30, m: 1 },
-    { t: 'pola', src: 'studio-profile', cap: 'Профиль', x: 22, y: 30, r: -5, w: 25 },
-    { t: 'can', x: 27, y: 76, r: 22, w: 22 },
-    { t: 'pola', src: 'report-wheel', cap: 'Колесо обозрения', x: 63, y: -7, r: 10, w: 30, m: 1 },
-    { t: 'pola', src: 'street-night-park', cap: 'Вечер в парке', x: 80, y: 7, r: -9, w: 32 },
-    { t: 'film', srcs: ['city-boardwalk', 'report-tractor', 'studio-profile'], x: 60, y: 72, r: 11, h: 14, m: 1 },
-    { t: 'pola', src: 'arch-arcade', cap: 'Ритм арок', x: 71, y: 38, r: 14, w: 28 },
-    { t: 'loupe', x: 83, y: 47, r: -28, w: 19 },
-    { t: 'sd', x: 61, y: 30, r: -18, w: 9 },
-    { t: 'pola', src: 'street-grass', cap: 'На траве', x: 87, y: 63, r: -6, w: 28, m: 1 },
+    { t: 'pola', src: 'street-lilac', cap: 'Сирень', x: 2, y: 0, r: -12, w: 32, m: 1 },
+    { t: 'pola', src: 'arch-tower', cap: 'Высотка', x: 17, y: -11, r: 8, w: 29 },
+    { t: 'film', srcs: ['street-crossing', 'studio-bw-face', 'still-elephant'], x: -5, y: 44, r: -16, h: 15, m: 1 },
+    { t: 'pola', src: 'city-taxi', cap: 'Оранжевое такси', x: 7, y: 46, r: 9, w: 30, m: 1 },
+    { t: 'pola', src: 'studio-profile', cap: 'Профиль', x: 22, y: 24, r: -5, w: 25 },
+    { t: 'can', x: 27, y: 64, r: 22, w: 22 },
+    { t: 'pola', src: 'report-wheel', cap: 'Колесо обозрения', x: 63, y: -13, r: 10, w: 30, m: 1 },
+    { t: 'pola', src: 'street-night-park', cap: 'Вечер в парке', x: 80, y: 1, r: -9, w: 32 },
+    { t: 'film', srcs: ['city-boardwalk', 'report-tractor', 'studio-profile'], x: 60, y: 60, r: 11, h: 14, m: 1 },
+    { t: 'pola', src: 'arch-arcade', cap: 'Ритм арок', x: 71, y: 32, r: 14, w: 28 },
+    { t: 'loupe', x: 83, y: 41, r: -28, w: 19 },
+    { t: 'sd', x: 61, y: 24, r: -18, w: 9 },
+    { t: 'pola', src: 'street-grass', cap: 'На траве', x: 87, y: 49, r: -6, w: 28, m: 1 },
   ];
 
   const CAN = `<svg viewBox="0 0 210 92" aria-hidden="true"><path d="M150 26h52l-6 8 6 8-6 8 6 8-6 8 6 8h-52z" fill="#2b211b"/><g fill="#efdcc6" opacity=".75"><rect x="158" y="29" width="6" height="5" rx="1"/><rect x="172" y="29" width="6" height="5" rx="1"/><rect x="186" y="29" width="6" height="5" rx="1"/><rect x="158" y="60" width="6" height="5" rx="1"/><rect x="172" y="60" width="6" height="5" rx="1"/><rect x="186" y="60" width="6" height="5" rx="1"/></g><rect x="4" y="34" width="12" height="24" rx="3" fill="#180f01"/><rect x="14" y="8" width="14" height="76" rx="5" fill="#2b2626"/><rect x="24" y="10" width="112" height="72" rx="6" fill="#df600f"/><rect x="24" y="10" width="112" height="72" rx="6" fill="url(#canShade)"/><rect x="24" y="36" width="112" height="20" fill="#faf5ee"/><text x="80" y="50.5" text-anchor="middle" font-family="Georgia, serif" font-size="12" letter-spacing="2" fill="#4c4343">LM 200 · 36</text><rect x="132" y="8" width="14" height="76" rx="5" fill="#2b2626"/><defs><linearGradient id="canShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient></defs></svg>`;
@@ -142,8 +142,17 @@
   document.body.appendChild(dlg);
   const dImg = dlg.querySelector('.dcard__img');
   const dPola = dlg.querySelector('.dcard__pola');
-  let lastFocus = null;
+  let lastFocus = null, srcIm = null, closing = false;
+  const OPEN_MS = 1100, CLOSE_MS = 850, EASE_OPEN = 'cubic-bezier(.22, 1, .36, 1)', EASE_CLOSE = 'cubic-bezier(.55, 0, .45, 1)';
+  // положение карточки относительно исходного фото (откуда вылетела)
+  const fromPhoto = () => {
+    const a = srcIm.getBoundingClientRect(), b = dPola.getBoundingClientRect();
+    const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top + a.height / 2 - (b.top + b.height / 2);
+    return `translate(${dx}px, ${dy}px) scale(${Math.max(.2, a.width / b.width)})`;
+  };
   function openCard(im) {
+    if (closing) return;
+    srcIm = im;
     const k = im.dataset.k, info = INFO[k] || { t: '', c: '', d: '' };
     dImg.src = P + k + '.jpg'; dImg.alt = info.t;
     dlg.querySelector('.dcard__cat').textContent = info.c;
@@ -153,17 +162,33 @@
     dlg.showModal();
     document.documentElement.style.overflow = 'hidden';
     if (!reduced) {
-      // карточка вылетает из того места, где лежало фото
-      const a = im.getBoundingClientRect(), b = dPola.getBoundingClientRect();
-      const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top + a.height / 2 - (b.top + b.height / 2);
-      const s = Math.max(.2, a.width / b.width);
-      dPola.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${s}) rotate(-6deg)`, opacity: .4 }, { transform: 'none', opacity: 1 }], { duration: 700, easing: 'cubic-bezier(.16,1,.3,1)' });
+      // карточка медленно вылетает из того места, где лежало фото, и встаёт ровно
+      dPola.animate([{ transform: fromPhoto(), opacity: .5 }, { transform: 'none', opacity: 1 }], { duration: OPEN_MS, easing: EASE_OPEN });
+      dlg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: OPEN_MS * .7, easing: 'ease-out', pseudoElement: '::backdrop' });
+      dClose.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: OPEN_MS * .6, easing: 'ease-out', fill: 'backwards' });
     }
     hover = true; plan();
   }
-  const closeCard = () => { if (dlg.open) dlg.close(); };
+  const dClose = dlg.querySelector('.dcard__close');
+  const closeCard = () => {
+    if (!dlg.open || closing) return;
+    if (reduced || !srcIm) { dlg.close(); return; }
+    closing = true;
+    // так же плавно возвращается на своё место на столе
+    dClose.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: 'forwards' });
+    dlg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: CLOSE_MS, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::backdrop' });
+    dPola.animate([{ transform: 'none', opacity: 1 }, { transform: fromPhoto(), opacity: 0 }], { duration: CLOSE_MS, easing: EASE_CLOSE, fill: 'forwards' })
+      .finished.then(() => {
+        dlg.close();
+        dlg.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+        dPola.getAnimations().forEach((a) => a.cancel());
+        dClose.getAnimations().forEach((a) => a.cancel());
+        closing = false;
+      });
+  };
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); closeCard(); });   // Esc — тоже плавно
   dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; hover = false; plan(); if (lastFocus) lastFocus.focus(); });
-  dlg.querySelector('.dcard__close').addEventListener('click', closeCard);
+  dClose.addEventListener('click', closeCard);
   dlg.addEventListener('click', (e) => { if (e.target === dlg) closeCard(); });   // нажатие мимо карточки — закрыть
 
   // главный кадр и точки

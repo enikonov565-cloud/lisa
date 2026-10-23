@@ -1659,6 +1659,7 @@
       const sr = ab.getBoundingClientRect(), ir = intro.getBoundingClientRect();
       const padTop = parseFloat(getComputedStyle(ab).paddingTop);
       shiftY = (sr.top + padTop + (sr.height - padTop) / 2) - (ir.top + ir.height / 2);
+      shiftY -= sr.height * .08;   // чуть выше центра — снизу выглядывает стол фотографа
       intro.style.transform = `translateY(${shiftY}px)`;
       const t = { l: ir.left, t: ir.top + shiftY, w: ir.width, h: ir.height };
       const off = rem() * 1.4;

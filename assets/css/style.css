@@ -2928,3 +2928,6 @@ main > section[hidden] { display: none !important; }
 }
 .desk__arrow:hover { background: var(--brick); color: var(--milk); }
 .desk__arrow:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+/* «Стол фотографа»: центр композиции чуть выше */
+.desk__center { top: calc(50% - 4rem); }
+@media (max-width: 1023px) { .desk { margin-bottom: 4rem; } }   /* на телефоне нижние фото не подходят к футеру вплотную */
