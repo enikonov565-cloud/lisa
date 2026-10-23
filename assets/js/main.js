@@ -419,6 +419,13 @@
       <p class="sv__tname" aria-hidden="true">${(() => { const m = /^(\S+-)(.+)$/.exec(s.title) || /^(\S+)\s+(.+)$/.exec(s.title); return (m ? [m[1], m[2]] : [s.title]).map((p) => '<span>' + [...p].map((ch) => '<span class="gc">' + ch + '</span>').join('') + '</span>').join(''); })()}</p>
     </li>`).join('');
   SERVICES.forEach((s) => { const im = new Image(); im.src = s.img; });   // заранее — смена без пустоты
+  // плашка слева на всю высоту раздела: расстояние от верха раздела до сцены — в переменную
+  const svSec = $('#services'), svStage = $('.sv__stage');
+  const svOff = () => { if (svSec && svStage && !svSec.hidden) svSec.style.setProperty('--sv-off', (svStage.getBoundingClientRect().top - svSec.getBoundingClientRect().top) + 'px'); };
+  window.addEventListener('resize', svOff);
+  if (svSec) new MutationObserver(svOff).observe(svSec, { attributes: true, attributeFilter: ['hidden'] });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(svOff);
+  svOff();
   // названия на маленьких фото: буквы над фото — светлые, над фоном — тёмные (как на карточках «О чём мои кадры»)
   const paintThumbs = () => $$('.sv__thumb', list).forEach((li) => {
     const ir = $('button', li).getBoundingClientRect();

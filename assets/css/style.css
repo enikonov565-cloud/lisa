@@ -2757,3 +2757,15 @@ main > section[hidden] { display: none !important; }
   .services .sv__price { margin-top: 2.8rem; }
   .services .sv__actions { margin-top: 3.2rem; }
 }
+/* «Выбирайте по душе»: плашка слева — на всю высоту раздела (от верхнего края до нижнего), тексты распределены внутри */
+@media (min-width: 1024px) {
+  .services { position: relative; }
+  .services .sec-head { position: relative; z-index: 3; }
+  .services .sv__info {
+    top: calc(-1 * var(--sv-off, 20rem)); bottom: 0; translate: none;
+    padding: calc(var(--sv-off, 20rem) + 7.8rem) 3.6rem 4rem;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .services .sv__price { margin-top: auto; }
+  .services .sv__actions { margin-top: auto; }
+}
