@@ -2920,3 +2920,19 @@ main > section[hidden] { display: none !important; }
   .dcard__img { max-width: 84vw; max-height: 58svh; }
   .dcard__pola { padding: 1.4rem 1.4rem 0; }
 }
+/* карточка кадра — ровно, без наклона */
+.dcard__pola { rotate: none; }
+/* «Стол фотографа»: листание — тонкие стрелки и маленькие точки; текущий кадр — короткая рыжая черта */
+.desk__nav { display: flex; align-items: center; gap: 1.6rem; }
+.desk__dots { gap: .8rem; align-items: center; }
+.desk__dot { width: .6rem; height: .6rem; min-width: 5px; min-height: 5px; background: rgba(76, 67, 67, .3); transition: width .4s var(--ease), background .3s var(--ease); border-radius: 1rem; }
+.desk__dot[aria-current] { width: 2.2rem; transform: none; background: var(--orange); }
+.desk__dot::after { content: ""; position: absolute; inset: -.8rem; }
+.desk__dot { position: relative; }
+.desk__arrow {
+  width: 3.6rem; height: 3.6rem; min-width: 28px; min-height: 28px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--milk); color: var(--ink); font-size: max(1.6rem, 13px); line-height: 1;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+.desk__arrow:hover { background: var(--brick); color: var(--milk); }
+.desk__arrow:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }

@@ -157,7 +157,7 @@
       const a = im.getBoundingClientRect(), b = dPola.getBoundingClientRect();
       const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top + a.height / 2 - (b.top + b.height / 2);
       const s = Math.max(.2, a.width / b.width);
-      dPola.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${s}) rotate(-6deg)`, opacity: .4 }, { transform: 'rotate(-1.5deg)', opacity: 1 }], { duration: 700, easing: 'cubic-bezier(.16,1,.3,1)' });
+      dPola.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${s}) rotate(-6deg)`, opacity: .4 }, { transform: 'none', opacity: 1 }], { duration: 700, easing: 'cubic-bezier(.16,1,.3,1)' });
     }
     hover = true; plan();
   }
@@ -193,6 +193,8 @@
       })
       .then(() => { card.getAnimations().forEach((a) => a.cancel()); busy = false; });
   };
+  // стрелки по бокам от точек — листать кадры
+  sec.querySelectorAll('.desk__arrow').forEach((b) => b.addEventListener('click', () => { show(cur + Number(b.dataset.d)); plan(); }));
   dots.addEventListener('click', (e) => { const d = e.target.closest('.desk__dot'); if (d) { show([...dots.children].indexOf(d)); plan(); } });
   dots.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
