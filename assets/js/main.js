@@ -94,7 +94,8 @@
 
   // точка фокуса каждого кадра (по вертикали, %): при обрезке в кадре остаются лица и главное
   const FOCUS = { 'studio-profile': 30, 'street-night-park': 60, 'street-crossing': 62, 'street-alley': 40, 'report-tractor': 70, 'street-lilac': 18, 'street-grass': 50, 'studio-gaze': 30, 'street-curls': 28, 'report-wheel': 40, 'arch-metro': 45, 'arch-glass': 50, 'arch-tower': 40, 'city-taxi': 62, 'city-boardwalk': 62, 'studio-bw-sit': 25, 'studio-bw-hands': 35, 'arch-arcade': 50, 'still-bottles': 75 };
-  const focusOf = (src) => { const m = /\/w\/([\w-]+)\.jpg/.exec(src || ''); return 'center ' + (m && FOCUS[m[1]] != null ? FOCUS[m[1]] : 50) + '%'; };
+  const mid = (src) => src.replace('/img/w/', '/img/w-m/');   // облегчённая копия кадра (до 1200 px)
+  const focusOf = (src) => { const m = /\/w(?:-m)?\/([\w-]+)\.jpg/.exec(src || ''); return 'center ' + (m && FOCUS[m[1]] != null ? FOCUS[m[1]] : 50) + '%'; };
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -598,7 +599,7 @@
   // телефон: под каждым направлением — маленькая бегущая лента из его кадров (список удвоен для бесшовного круга)
   const miniStrip = (cat, k) => {
     const pics = WORKS.filter((w) => w.cat === cat);
-    const imgs = pics.map((w) => `<img src="${w.src}" alt="" loading="lazy">`).join('');
+    const imgs = pics.map((w) => `<img src="${mid(w.src)}" alt="" loading="lazy" decoding="async">`).join('');
     return `<span class="wmini${k % 2 ? ' wmini--rev' : ''}" aria-hidden="true"><span class="wmini__track" style="--dur:${pics.length * 7}s">${imgs}${imgs}</span></span>`;
   };
   wmenu.innerHTML = WORK_CATS.map((cat, k) => `<button class="wmenu__item" type="button" data-k="${k}">
@@ -611,7 +612,7 @@
     group.className = 'wtiles__group';
     // кадры направления: обложка первой, потом остальные — каждый фрагмент из своего фото
     const pics = WORKS.filter((w) => w.cat === cat).sort((a, b) => (b.src === WCAT[cat].cover) - (a.src === WCAT[cat].cover)).slice(0, 4);
-    group.innerHTML = pics.map((w) => `<div class="wtile" data-w="${WORKS.indexOf(w)}" style="background-image:url('${w.src}');background-position:${focusOf(w.src)}"></div>`).join('');
+    group.innerHTML = pics.map((w) => `<div class="wtile" data-w="${WORKS.indexOf(w)}" style="background-image:url('${mid(w.src)}');background-position:${focusOf(w.src)}"></div>`).join('');
     wtiles.appendChild(group);
     group.style.setProperty('--tw', 'clamp(30rem, 30vw, 54rem)');   /* вдвое крупнее */
     const descEl = $('.wmenu__desc', el);
@@ -680,7 +681,7 @@
   const LUM = new Map();
   const lumOf = (src) => {
     if (LUM.has(src)) return LUM.get(src);
-    const m = /\/w\/([\w-]+)\.jpg/.exec(src || '');
+    const m = /\/w(?:-m)?\/([\w-]+)\.jpg/.exec(src || '');
     const hex = m && LUMDATA[m[1]];
     const rec = { grid: null };
     if (hex) {
@@ -907,7 +908,7 @@
     wstrip.style.setProperty('--arrow-y', (H - S.AH / 2) + 'px');
     wcar.innerHTML = list.map((w, i) => `<div class="wcard" data-idx="${i}">
         <div class="wcard__title"><h4>${w.title}</h4><p>${w.desc || ''}</p></div>
-        <div class="wcard__img"><img src="${w.src}" alt="${w.alt}" loading="lazy"></div></div>`).join('');
+        <div class="wcard__img"><img src="${mid(w.src)}" alt="${w.alt}" loading="lazy" decoding="async"></div></div>`).join('');
     if (window.siteTypograph) window.siteTypograph(wcar);
     const cards = $$('.wcard', wcar);
     const n = list.length;
@@ -915,9 +916,12 @@
     const PITCH = S.RW + S.GAP;
     const relOf = (i, pos) => { let r = ((i - pos) % n + n) % n; if (r > n / 2) r -= n; return r; };
     const xFor = (rel) => { const a = Math.abs(rel); const m = a <= 1 ? a * C1 : C1 + (a - 1) * PITCH; return (rel < 0 ? -1 : 1) * m; };
-    const state = { pos: 0, target: 0, raf: 0, last: null, acc: 0, paused: false };
+    const state = { pos: 0, target: 0, raf: 0, last: null, acc: 0, paused: false, drawn: null, visible: true };
     const render = () => {
-      cards.forEach((cd) => {
+      if (state.drawn === state.pos) return;   // стоим — ничего не перерисовываем
+      state.drawn = state.pos;
+      const th = cards.map((cd) => cd.children[0].offsetHeight);   // замеры — одним проходом
+      cards.forEach((cd, ci) => {
         const i = +cd.dataset.idx;
         const rel = relOf(i, state.pos);
         const a = Math.min(Math.abs(rel), 1);
@@ -934,10 +938,11 @@
         const tt = cd.children[0];
         im.style.height = imgH + 'px';
         im.style.top = imgTop + 'px';
-        tt.style.top = (imgTop - S.TGAP - tt.offsetHeight) + 'px';
+        tt.style.top = (imgTop - S.TGAP - th[ci]) + 'px';
       });
     };
     const tick = (t) => {
+      if (!state.visible || document.hidden) { state.last = null; state.raf = 0; return; }   // вне экрана — цикл спит
       const last = state.last == null ? t : state.last;
       const dt = Math.min((t - last) / 1000, 1 / 30);
       state.last = t;
@@ -957,8 +962,12 @@
     };
     render();
     state.raf = requestAnimationFrame(tick);
+    const wake = () => { if (!state.raf && state.visible && !document.hidden) state.raf = requestAnimationFrame(tick); };
+    const io = new IntersectionObserver(([e]) => { state.visible = e.isIntersecting; wake(); });
+    io.observe(wstrip);
+    document.addEventListener('visibilitychange', wake);
     car = {
-      stop: () => cancelAnimationFrame(state.raf),
+      stop: () => { cancelAnimationFrame(state.raf); state.raf = 0; io.disconnect(); document.removeEventListener('visibilitychange', wake); },
       go: (d) => { state.target += d; state.acc = 0; },
       pause: (v) => { state.paused = v; state.acc = 0; },
       relOf: (i) => relOf(i, state.target),
@@ -1195,7 +1204,7 @@
       m.className = 'wmover';
       Object.assign(m.style, {
         left: (cx - wdt / 2) + 'px', top: (cy - hgt / 2) + 'px', width: wdt + 'px', height: hgt + 'px',
-        backgroundImage: 'url("' + w.src + '")', zIndex: String(61 + s), clipPath: CLIP.from,
+        backgroundImage: 'url("' + mid(w.src) + '")', zIndex: String(61 + s), clipPath: CLIP.from,
       });
       document.body.appendChild(m);
       m.animate([
