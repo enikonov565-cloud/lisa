@@ -2548,15 +2548,9 @@ main > section[hidden] { display: none !important; }
   .genres.is-v .genres__grid { flex: 1; align-items: center; padding-top: 16rem; padding-bottom: calc(var(--sec) + 4rem); }
 }
 /* ==========================================================================
-   «ВЫБИРАЙТЕ ПО ДУШЕ»: тёмный фон как у главного экрана, светлые тексты;
+   «ВЫБИРАЙТЕ ПО ДУШЕ»: светлый фон страницы, тёмные тексты;
    на компьютере раздел ровно в высоту экрана; маленькие фото — явным полукругом
    ========================================================================== */
-.services { background-color: #a8784f; }
-.services .h1, .services .note, .sv__name, .sv__text, .sv__price, .sv__list li { color: var(--milk); }
-.services .note { opacity: .9; }
-.sv__order { --lk: var(--milk); --lk-line: rgba(250, 245, 238, .45); }
-.services .extras-btn { color: var(--milk); background-color: rgba(250, 245, 238, .14); }
-.sv__tname .gc, .sv__tname .gc.on-card { color: var(--milk) !important; }
 @media (min-width: 1024px) {
   .services { height: 100vh; height: 100svh; min-height: 64rem; display: flex; flex-direction: column; }
   .services > .wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; }
