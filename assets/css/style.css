@@ -2830,14 +2830,6 @@ main > section[hidden] { display: none !important; }
 .pola { margin: 0; padding: 1.6rem 1.6rem 0; background: var(--milk); border-radius: var(--radius); }
 .pola img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; border-radius: 1.2rem; }
 .pola figcaption { padding: 1.4rem .4rem 2rem; text-align: center; font-family: var(--display); font-size: 2.4rem; line-height: 1.1; color: var(--ink); }
-/* полоска малярного скотча */
-.desk__item.is-taped::before {
-  content: ""; position: absolute; left: 50%; top: -1.4rem; z-index: 1; width: 9rem; height: 2.8rem;
-  translate: -50% 0; rotate: -4deg; background: rgba(223, 96, 15, .32); border-radius: .3rem;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0 .3rem, #000 .3rem calc(100% - .3rem), transparent calc(100% - .3rem));
-          mask-image: linear-gradient(90deg, transparent 0 .3rem, #000 .3rem calc(100% - .3rem), transparent calc(100% - .3rem));
-}
-
 /* плёнка: перфорация сверху и снизу, надписи по краю, три кадра */
 .film { position: relative; padding: 3.2rem 1.4rem; background: #2b211b; border-radius: .8rem; }
 .film::before, .film::after {

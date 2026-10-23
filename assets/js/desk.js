@@ -44,14 +44,14 @@
 
   // предметы на столе: x, y — левый верхний угол в % стола; r — поворот; w — ширина в rem; m — показывать на телефоне
   const ITEMS = [
-    { t: 'pola', src: 'street-lilac', cap: 'Сирень', x: 2, y: 6, r: -12, w: 32, tape: 1, m: 1 },
+    { t: 'pola', src: 'street-lilac', cap: 'Сирень', x: 2, y: 6, r: -12, w: 32, m: 1 },
     { t: 'pola', src: 'arch-tower', cap: 'Высотка', x: 17, y: -5, r: 8, w: 29 },
     { t: 'film', srcs: ['street-crossing', 'studio-bw-face', 'still-elephant'], x: -5, y: 50, r: -16, h: 15, m: 1 },
     { t: 'pola', src: 'city-taxi', cap: 'Оранжевое такси', x: 7, y: 60, r: 9, w: 30, m: 1 },
-    { t: 'pola', src: 'studio-profile', cap: 'Профиль', x: 22, y: 30, r: -5, w: 25, tape: 1 },
+    { t: 'pola', src: 'studio-profile', cap: 'Профиль', x: 22, y: 30, r: -5, w: 25 },
     { t: 'can', x: 27, y: 76, r: 22, w: 22 },
     { t: 'pola', src: 'report-wheel', cap: 'Колесо обозрения', x: 63, y: -7, r: 10, w: 30, m: 1 },
-    { t: 'pola', src: 'street-night-park', cap: 'Вечер в парке', x: 80, y: 7, r: -9, w: 32, tape: 1 },
+    { t: 'pola', src: 'street-night-park', cap: 'Вечер в парке', x: 80, y: 7, r: -9, w: 32 },
     { t: 'film', srcs: ['city-boardwalk', 'report-tractor', 'studio-profile'], x: 60, y: 72, r: 11, h: 14, m: 1 },
     { t: 'pola', src: 'arch-arcade', cap: 'Ритм арок', x: 71, y: 38, r: 14, w: 28 },
     { t: 'loupe', x: 83, y: 47, r: -28, w: 19 },
@@ -74,7 +74,7 @@
 
   const els = ITEMS.map((it, i) => {
     const el = document.createElement('div');
-    el.className = `desk__item desk__item--${it.t}${it.tape ? ' is-taped' : ''}${it.m ? '' : ' m-hide'}`;
+    el.className = `desk__item desk__item--${it.t}${it.m ? '' : ' m-hide'}`;
     el.style.cssText = `left:${it.x}%;top:${it.y}%;${it.w ? `width:${it.w}rem;` : `--fh:${it.h}rem;`}--r:${it.r}deg;z-index:${i + 1};--i:${i}`;
     el.innerHTML = html(it);
     table.appendChild(el);
