@@ -2789,14 +2789,14 @@ main > section[hidden] { display: none !important; }
     padding-top: 4rem;
   }
 }
-/* плашка «Выбирайте по душе»: средняя часть (цена и список) — выше; лёгкое плавающее поле фирменных цветов под текстами */
-.sv__fx { display: none; }
+/* «Выбирайте по душе»: средняя часть (цена и список) — выше */
 @media (min-width: 1024px) {
   .services .sv__price { margin-top: 8rem; }
   .services .sv__actions { margin-top: auto; }
-  .services .sv__info { overflow: hidden; isolation: isolate; }
-  .services .sv__info > :not(.sv__fx) { position: relative; z-index: 1; }
-  .sv__fx { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+}
+/* «Выбирайте по душе»: без плашки — тексты прямо на фоне */
+@media (min-width: 1024px) {
+  .services .sv__info { background: none; background-image: none; box-shadow: none; }
 }
 /* «Выбирайте по душе»: фото полностью видно сразу от правого края плашки; под плашкой — мягко уходит в прозрачность */
 @media (min-width: 1024px) {
