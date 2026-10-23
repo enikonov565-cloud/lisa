@@ -278,7 +278,10 @@
   /* ---------------- text carousel: «Лисса Миляева — [фотограф]» ----------------
      Буквы по очереди уезжают вверх, пилюля плавно меняет ширину,
      новое слово поднимается снизу. Слова — в data-texts в index.html. */
-  const ROT = { interval: 3800, dur: 450, stagger: 30, ease: 'cubic-bezier(.33, 1, .68, 1)' };
+  // тексты первого экрана в одном такте: слово уходит вместе со строками заголовка (0,35 с),
+  // новое слово и новые строки выезжают одновременно и с одной кривой
+  const TXT = { out: 350, in: 1800, ease: 'cubic-bezier(.215, .61, .355, 1)', outEase: 'cubic-bezier(.55, 0, 1, .45)' };
+  const ROT = { interval: 7600, stagger: 22 };
   let rotNext = null;   // смена слова; вызывается слайдшоу первого экрана — всё в одном ритме
   const rot = $('.rot');
   if (rot) {
@@ -316,7 +319,7 @@
         busy = true;
         await Promise.all(chars.map((ch, i) => ch.animate(
           [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-120%)', opacity: 0 }],
-          { duration: ROT.dur, delay: i * ROT.stagger, easing: ROT.ease, fill: 'forwards' },
+          { duration: TXT.out, easing: TXT.outEase, fill: 'forwards' },
         ).finished));
         idx = (idx + 1) % texts.length;
         chars = render(texts[idx]);
@@ -324,7 +327,7 @@
         fit();
         await Promise.all(chars.map((ch, i) => ch.animate(
           [{ transform: 'translateY(100%)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }],
-          { duration: ROT.dur, delay: i * ROT.stagger, easing: ROT.ease, fill: 'backwards' },
+          { duration: TXT.in, delay: i * ROT.stagger, easing: TXT.ease, fill: 'backwards' },
         ).finished));
         busy = false;
       };
@@ -1543,7 +1546,7 @@
       B.el.style.zIndex = 2; A.el.style.zIndex = 1;
       // уходящий: круг сжимается, текст уезжает
       tw(A.wrap, [{ clipPath: CLIP.initial }, { clipPath: CLIP.final }], { duration: 1000 * K, easing: E.p3 });
-      A.rows.forEach((r) => tw(r, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 160}%)` }], { duration: 1000 * K, easing: E.p3 }));
+      A.rows.forEach((r) => tw(r, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 160}%)` }], { duration: TXT.out, easing: TXT.outEase }));
       A.links.forEach((l) => tw(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 500 * K, easing: E.p3 }));
       // через 0.6 с — уходящий уезжает, приходящий въезжает (картинки — навстречу)
       tw(A.wrap, [{ transform: 'translateY(0)' }, { transform: `translateY(${-up * 100}%)` }], { duration: 1000 * K, delay: 600 * K, easing: E.p2io, composite: 'replace' });
@@ -1553,7 +1556,7 @@
       // круг раскрывается, строки выезжают по очереди, ссылка проявляется
       const open = tw(B.wrap, [{ clipPath: CLIP.final }, { clipPath: CLIP.initial }], { duration: 1500 * K, delay: 900 * K, easing: E.exio });
       const order = up > 0 ? B.rows : [...B.rows].reverse();
-      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: 1300 * K, delay: 150 * K + (i % 2) * 100 * K, easing: E.p3 }));
+      order.forEach((r, i) => tw(r, [{ transform: `translateY(${up * 160}%)` }, { transform: 'translateY(0)' }], { duration: TXT.in, delay: TXT.out + i * ROT.stagger * 3, easing: TXT.ease }));
       B.links.forEach((l) => tw(l, [{ opacity: 0 }, { opacity: 1 }], { duration: 1000 * K, delay: 1000 * K, easing: E.exin }));
       open.finished.then(() => {
         A.el.classList.remove('is-current'); A.el.setAttribute('aria-hidden', 'true');
@@ -1572,7 +1575,6 @@
     const plan = () => {
       clearTimeout(autoT); clearTimeout(midT);
       if (reduced || !heroSeen || document.hidden) return;
-      midT = setTimeout(() => { if (rotNext) rotNext(); }, DWELL / 2);
       autoT = setTimeout(() => navigate(1), DWELL);
     };
     new IntersectionObserver(([e]) => { heroSeen = e.isIntersecting; if (!busy) plan(); }).observe(hero);
