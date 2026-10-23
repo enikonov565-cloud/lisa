@@ -17,7 +17,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610231836">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610231905">
   <script>document.documentElement.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion-wait');setTimeout(function(){document.documentElement.classList.remove('motion-wait')},4000)}</script>
 </head>
 <body>
@@ -443,6 +443,19 @@
       </div>
     </section>
 
+    <!-- ============ СТОЛ ФОТОГРАФА: разбросанные фото, плёнки и фотопринадлежности ============ -->
+    <section class="desk" id="desk" aria-labelledby="desk-title">
+      <h2 class="sr-only" id="desk-title">Со стола фотографа</h2>
+      <div class="desk__table" aria-hidden="true"></div>
+      <div class="desk__center">
+        <figure class="desk__focus">
+          <img src="assets/img/desk/studio-gaze.jpg" width="720" height="1080" alt="Взгляд" decoding="async">
+          <figcaption><span class="desk__ftitle">Взгляд</span><span class="desk__fnote">студийный портрет</span></figcaption>
+        </figure>
+        <div class="desk__dots" role="group" aria-label="Кадры"></div>
+      </div>
+    </section>
+
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -609,11 +622,12 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610231836" defer></script>
+  <script src="assets/js/main.js?v=202610231905" defer></script>
   <!-- анимации появления: GSAP + ScrollTrigger (CDN), настройки — в motion.js; плавный скролл Lenis отключён — давал рывки -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js" defer></script>
-  <script src="assets/js/motion.js?v=202610231836" defer></script>
+  <script src="assets/js/desk.js?v=202610231905" defer></script>
+  <script src="assets/js/motion.js?v=202610231905" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
 </body>
 </html>

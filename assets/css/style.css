@@ -2810,3 +2810,76 @@ main > section[hidden] { display: none !important; }
     -webkit-mask-composite: source-in; mask-composite: intersect;
   }
 }
+/* ==== «Стол фотографа»: разбросанные полароиды, плёнки, кассета, лупа, карта памяти; в центре — главный кадр ==== */
+.desk { position: relative; height: 100vh; height: 100svh; min-height: 64rem; overflow: hidden; }
+.desk__table { position: absolute; inset: 0; }
+.desk__item {
+  position: absolute; cursor: grab; user-select: none; -webkit-user-select: none;
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r)) scale(var(--s, 1));
+  transition: transform .9s var(--ease), opacity .9s var(--ease), filter .4s var(--ease);
+  filter: drop-shadow(0 1.2rem 1.6rem rgba(76, 67, 67, .22));
+}
+.desk.is-entering .desk__item { transition-delay: calc(var(--i) * 70ms); }
+.desk:not(.is-in) .desk__item { opacity: 0; transform: translate(var(--fx, 0px), var(--fy, 0px)) rotate(0deg) scale(.7); }
+.desk__item:hover { --s: 1.03; filter: drop-shadow(0 2rem 2.6rem rgba(76, 67, 67, .3)); }
+.desk__item.is-drag { cursor: grabbing; transition: filter .3s var(--ease); --s: 1.05; filter: drop-shadow(0 3rem 3.4rem rgba(76, 67, 67, .32)); }
+.desk__item svg { display: block; width: 100%; height: auto; }
+.desk__item img { pointer-events: none; }
+
+/* полароид */
+.pola { margin: 0; padding: 1.6rem 1.6rem 0; background: var(--milk); border-radius: var(--radius); }
+.pola img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; border-radius: 1.2rem; }
+.pola figcaption { padding: 1.4rem .4rem 2rem; text-align: center; font-family: var(--display); font-size: 2.4rem; line-height: 1.1; color: var(--ink); }
+/* полоска малярного скотча */
+.desk__item.is-taped::before {
+  content: ""; position: absolute; left: 50%; top: -1.4rem; z-index: 1; width: 9rem; height: 2.8rem;
+  translate: -50% 0; rotate: -4deg; background: rgba(223, 96, 15, .32); border-radius: .3rem;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0 .3rem, #000 .3rem calc(100% - .3rem), transparent calc(100% - .3rem));
+          mask-image: linear-gradient(90deg, transparent 0 .3rem, #000 .3rem calc(100% - .3rem), transparent calc(100% - .3rem));
+}
+
+/* плёнка: перфорация сверху и снизу, надписи по краю, три кадра */
+.film { position: relative; padding: 3.2rem 1.4rem; background: #2b211b; border-radius: .8rem; }
+.film::before, .film::after {
+  content: ""; position: absolute; left: 1rem; right: 1rem; height: 1.2rem;
+  background: repeating-linear-gradient(90deg, rgba(var(--peach-rgb), .85) 0 1.4rem, transparent 1.4rem 2.6rem);
+  border-radius: .2rem;
+}
+.film::before { top: 1rem; }
+.film::after { bottom: 1rem; }
+.film__frames { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.film__frames img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: .4rem; filter: sepia(.25) saturate(.9); }
+.film__edge { position: absolute; left: 2rem; top: 2.25rem; font-size: .9rem; line-height: 1; letter-spacing: .2em; color: rgba(223, 96, 15, .85); white-space: nowrap; }
+.film__edge--b { top: auto; bottom: 2.25rem; left: auto; right: 2rem; }
+
+/* центр: главный кадр и точки */
+.desk__center {
+  position: absolute; left: 50%; top: 50%; z-index: 100; translate: -50% -50%;
+  display: flex; flex-direction: column; align-items: center; gap: 2.4rem;
+}
+.desk__focus {
+  margin: 0; width: min(42rem, 68vw); padding: 1.8rem 1.8rem 0; background: var(--milk); border-radius: var(--radius);
+  box-shadow: 0 3rem 6rem -2rem rgba(76, 67, 67, .38);
+}
+.desk__focus img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; border-radius: 1.2rem; }
+.desk__focus figcaption { display: flex; flex-direction: column; align-items: center; gap: .6rem; padding: 2rem 1rem 2.4rem; text-align: center; }
+.desk__ftitle { font-family: var(--display); font-size: 3rem; line-height: 1; color: var(--ink); }
+.desk__fnote { font-size: max(1.4rem, 12px); letter-spacing: .14em; text-transform: uppercase; color: var(--brick); }
+.desk__dots { display: flex; gap: 1.6rem; }
+.desk__dot {
+  width: 1.4rem; height: 1.4rem; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(76, 67, 67, .28); transition: background .3s var(--ease), transform .3s var(--ease);
+}
+.desk__dot:hover { background: var(--brick); }
+.desk__dot[aria-current] { background: var(--orange); transform: scale(1.3); }
+.desk__dot:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+@media (max-width: 1023px) {
+  .desk { min-height: 0; height: 100svh; max-height: 90rem; }
+  .desk__item.m-hide { display: none; }
+  .desk__item { cursor: default; }
+  .desk__focus { width: min(36rem, 62vw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desk__item { transition: none; }
+}
