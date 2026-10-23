@@ -2746,3 +2746,14 @@ main > section[hidden] { display: none !important; }
 .cdlg__text { font-size: max(1.6rem, 12.5px); line-height: 1.45; }
 .cdlg__text > span { display: block; white-space: nowrap; }
 @media (max-width: 420px) { .cdlg__text > span { white-space: normal; display: inline; } }
+/* «Выбирайте по душе»: блок слева целиком — светлая плашка поверх фото; внутри обычный ритм,
+   плашка стоит по центру высоты между заголовком и низом раздела */
+@media (min-width: 1024px) {
+  .services .sv__info {
+    top: 50%; bottom: auto; translate: 0 calc(-50% - 3.1rem);
+    padding: 3.2rem 3.6rem 3.6rem; box-sizing: border-box;
+    border-radius: var(--radius); background: rgba(var(--peach-rgb), .86);
+  }
+  .services .sv__price { margin-top: 2.8rem; }
+  .services .sv__actions { margin-top: 3.2rem; }
+}
