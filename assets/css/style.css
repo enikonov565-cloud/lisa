@@ -2742,3 +2742,7 @@ main > section[hidden] { display: none !important; }
   .services .sv__price { margin-top: auto; }
   .services .sv__actions { margin-top: auto; }
 }
+/* окно заявки: вводный текст мельче, ровно в две строки */
+.cdlg__text { font-size: max(1.6rem, 12.5px); line-height: 1.45; }
+.cdlg__text > span { display: block; white-space: nowrap; }
+@media (max-width: 420px) { .cdlg__text > span { white-space: normal; display: inline; } }
