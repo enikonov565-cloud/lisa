@@ -17,7 +17,7 @@
   <link rel="icon" href="assets/img/logo-mark.png" type="image/png">
   <link rel="preload" href="assets/fonts/Wulkan-Display-Regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/InterLight.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=202610231647">
+  <link rel="stylesheet" href="assets/css/style.css?v=202610231719">
   <script>document.documentElement.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion-wait');setTimeout(function(){document.documentElement.classList.remove('motion-wait')},4000)}</script>
 </head>
 <body>
@@ -376,9 +376,6 @@
                 <li>готовые файлы за 5 дней</li>
               </ul>
               <div class="sv__actions">
-                <button class="extras-btn" type="button" aria-haspopup="dialog" aria-controls="extras-dialog">
-                  можно добавить <span class="extras-btn__plus" aria-hidden="true">+</span>
-                </button>
                 <a class="shapes__link sv__order" href="#contact" id="svc-order">заказать съёмку <span class="lk-arrow" aria-hidden="true">→</span></a>
               </div>
             </div>
@@ -386,19 +383,6 @@
           </div>
         </div>
 
-        <dialog class="extras-dialog" id="extras-dialog" aria-labelledby="extras-title">
-          <div class="extras-dialog__card">
-            <button class="extras-dialog__close" type="button" aria-label="Закрыть">×</button>
-            <p class="extras-dialog__title" id="extras-title">Можно добавить</p>
-            <ul class="extras__list">
-            <li><span>Срочная обработка за 48 часов</span><b>+30%</b></li>
-            <li><span>Дополнительный кадр в ретуши</span><b>500 ₽</b></li>
-            <li><span>Печать фото на хлопковой бумаге, А4</span><b>от 1 500 ₽</b></li>
-            <li><span>Лицензия на коммерческое использование</span><b>по запросу</b></li>
-          </ul>
-            <a class="btn-cta btn-cta--wide extras-dialog__cta" href="#contact"><span>обсудить детали</span> <span class="extras-dialog__arrow" aria-hidden="true">→</span></a>
-          </div>
-        </dialog>
       </div>
     </section>
 
@@ -504,6 +488,7 @@
       </div>
       <div class="footer__bottom">
         <span>© <span id="year">2026</span> Лисса Миляева</span>
+        <a class="footer__legal" href="privacy.html">Политика обработки персональных данных</a>
       </div>
     </div>
   </footer>
@@ -556,8 +541,17 @@
     <div class="extras-dialog__card cdlg">
       <button class="extras-dialog__close" type="button" aria-label="Закрыть">×</button>
       <p class="extras-dialog__title" id="cdlg-title">Давайте знакомиться</p>
-      <p class="cdlg__text">Напишите, как вам удобнее,<br> и я отвечу в течение дня.</p>
+      <p class="cdlg__text">Расскажите, какую съёмку хотите, — подберу формат, дату и&nbsp;пришлю точную смету. Отвечаю в&nbsp;течение дня.</p>
       <p class="cdlg__type" hidden></p>
+      <div class="cdlg__extras">
+        <p class="cdlg__extras-title">к съёмке можно добавить</p>
+        <ul class="extras__list">
+          <li><span>Срочная обработка за&nbsp;48 часов</span><b>+30%</b></li>
+          <li><span>Дополнительный кадр в&nbsp;ретуши</span><b>500 ₽</b></li>
+          <li><span>Печать фото на&nbsp;хлопковой бумаге, А4</span><b>от 1 500 ₽</b></li>
+          <li><span>Лицензия на&nbsp;коммерческое использование</span><b>по&nbsp;запросу</b></li>
+        </ul>
+      </div>
       <ul class="cdlg__links" id="cdlg-links"></ul>
       <p class="cdlg__or">или оставьте заявку</p>
       <form class="cdlg__form" id="cdlg-form" novalidate>
@@ -576,7 +570,7 @@
         </label>
         <label class="cdlg__consent">
           <input type="checkbox" name="consent" required>
-          <span>Соглашаюсь на обработку персональных данных для ответа на заявку</span>
+          <span>Соглашаюсь на&nbsp;обработку персональных данных согласно <a href="privacy.html" target="_blank" rel="noopener">политике обработки персональных данных</a></span>
         </label>
         <button class="btn-cta btn-cta--wide extras-dialog__cta" type="submit"><span>отправить</span> <span class="extras-dialog__arrow" aria-hidden="true">→</span></button>
         <p class="cdlg__status" role="status"></p>
@@ -615,11 +609,11 @@
     </button>
   </div>
 
-  <script src="assets/js/main.js?v=202610231647" defer></script>
+  <script src="assets/js/main.js?v=202610231719" defer></script>
   <!-- анимации появления: GSAP + ScrollTrigger (CDN), настройки — в motion.js; плавный скролл Lenis отключён — давал рывки -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js" defer></script>
-  <script src="assets/js/motion.js?v=202610231647" defer></script>
+  <script src="assets/js/motion.js?v=202610231719" defer></script>
   <!-- обычные (не модульные) скрипты: работают и на хостинге, и при открытии index.html файлом -->
 </body>
 </html>

@@ -1299,7 +1299,8 @@
   /* ---------------- «связаться с фотографом» → всплывающее окно ---------------- */
   const cDlg = $('#contact-dialog');
   if (cta && cDlg && typeof cDlg.showModal === 'function') {
-    $('#cdlg-links').innerHTML = linksHTML;
+    // в окне заявки — только Telegram (звонки и почту не используем), без значка
+    $('#cdlg-links').innerHTML = `<li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener">написать в telegram</a></li>`;
     const cForm = $('#cdlg-form');
     const cStatus = $('.cdlg__status', cDlg);
     const cType = $('.cdlg__type', cDlg);

@@ -2723,3 +2723,16 @@ main > section[hidden] { display: none !important; }
   .genres.is-v .genres__grid { padding-left: calc(var(--pad) + 2.9vw) !important; padding-right: var(--pad) !important; justify-content: space-between; }
   .genres.is-v .genre { margin-left: 0 !important; margin-right: 0 !important; }
 }
+/* окно заявки: «к съёмке можно добавить» — спокойный список с ценами; Telegram — одна кнопка без значка */
+.cdlg__extras { margin-top: 2.4rem; padding: 1.6rem 2rem; border-radius: var(--radius); background: rgba(var(--peach-rgb), .55); }
+.cdlg__extras-title { margin: 0 0 1rem; font-size: max(1.3rem, 11px); letter-spacing: .14em; text-transform: uppercase; color: var(--brick); }
+.cdlg__extras .extras__list { margin: 0; }
+.cdlg__extras .extras__list li { font-size: max(1.6rem, 13px); }
+.cdlg__links { margin-top: 2rem; }
+/* согласие: ссылка на документ */
+.cdlg__consent a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
+.cdlg__consent a:hover { color: var(--brick); }
+/* футер: ссылка на политику */
+.footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .8rem 2.4rem; }
+.footer__legal { color: inherit; text-decoration: underline; text-underline-offset: .2em; opacity: .8; }
+.footer__legal:hover { opacity: 1; color: var(--brick); }
