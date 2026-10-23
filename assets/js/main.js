@@ -421,7 +421,13 @@
   SERVICES.forEach((s) => { const im = new Image(); im.src = s.img; });   // заранее — смена без пустоты
   // плашка слева на всю высоту раздела: расстояние от верха раздела до сцены — в переменную
   const svSec = $('#services'), svStage = $('.sv__stage');
-  const svOff = () => { if (svSec && svStage && !svSec.hidden) svSec.style.setProperty('--sv-off', (svStage.getBoundingClientRect().top - svSec.getBoundingClientRect().top) + 'px'); };
+  const svHead = $('#services .sec-head');
+  const svOff = () => {
+    if (!svSec || !svStage || svSec.hidden) return;
+    const top = svSec.getBoundingClientRect().top;
+    svSec.style.setProperty('--sv-off', (svStage.getBoundingClientRect().top - top) + 'px');
+    if (svHead) svSec.style.setProperty('--sv-head', (svHead.getBoundingClientRect().bottom - top) + 'px');   // низ заголовка от верха раздела
+  };
   window.addEventListener('resize', svOff);
   if (svSec) new MutationObserver(svOff).observe(svSec, { attributes: true, attributeFilter: ['hidden'] });
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(svOff);
