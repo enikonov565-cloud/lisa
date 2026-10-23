@@ -2746,5 +2746,3 @@ main > section[hidden] { display: none !important; }
 .cdlg__text { font-size: max(1.6rem, 12.5px); line-height: 1.45; }
 .cdlg__text > span { display: block; white-space: nowrap; }
 @media (max-width: 420px) { .cdlg__text > span { white-space: normal; display: inline; } }
-/* окно заявки: вводный текст — в плашке, как блок «к съёмке можно добавить» */
-.cdlg__text { margin-top: 1.6rem; padding: 1.4rem 1.6rem; border-radius: var(--radius); background: rgba(var(--peach-rgb), .55); color: var(--ink); font-size: max(1.5rem, 12px) !important; }
