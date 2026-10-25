@@ -236,6 +236,15 @@ body::before {
   background: rgba(var(--peach-rgb), .28);
 }
 .header__left { display: flex; align-items: center; gap: 5rem; }
+.header__right { display: flex; align-items: center; gap: 1.6rem; }
+/* «бриф на съёмку» — светлая кнопка в пару к рыжей «связаться»: молочная плашка, тёмный текст;
+   при наведении, как у остальных светлых кнопок, проявляется кирпичный фон с молочным текстом */
+.cta3d--light .cta3d__cap { background-color: var(--milk); outline: 1px solid rgba(76, 67, 67, .22); outline-offset: -1px; }   /* тонкий контур — кнопку видно и на светлом фоне */
+.cta3d--light .cta3d__icon { color: var(--orange); }
+.cta3d--light .cta3d__reveal { background: var(--brick); color: var(--milk) !important; transition: clip-path .6s var(--ease), -webkit-clip-path .6s var(--ease); }
+.cta3d--light .cta3d__reveal .cta3d__icon { color: inherit; }
+.cta3d--light:hover .cta3d__reveal, .cta3d--light:focus-visible .cta3d__reveal { clip-path: circle(150% at 100% 100%); -webkit-clip-path: circle(150% at 100% 100%); }
+.header.on-hero .cta3d--light .cta3d__face { color: var(--ink); }
 
 .burger {
   position: relative; z-index: 2;
@@ -2684,6 +2693,14 @@ main > section[hidden] { display: none !important; }
 }
 @media (max-width: 360px) {
   .cta3d__more { display: none; }   /* на самых узких экранах в шапке — «связаться →» */
+}
+/* телефон: рядом с кнопкой брифа места мало — обе кнопки короткие: «бриф ✎» и «связаться →» */
+@media (max-width: 599px) {
+  .header .cta3d__more { display: none; }
+  .header__right { gap: .8rem; }
+}
+@media (max-width: 360px) {
+  .cta3d--light .cta3d__icon { display: none; }   /* самые узкие экраны: «бриф» без значка, чтобы не прижиматься к логотипу */
 }
 /* «Выбирайте по душе»: все тексты одного тёмного цвета; там, где они лежат на фото, —
    мягкая светлая дымка в цвет фона (сверху — под заголовком и подписью, снизу — под подписями маленьких фото),
