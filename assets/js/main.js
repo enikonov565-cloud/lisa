@@ -1329,8 +1329,9 @@
   /* ---------------- «связаться с фотографом» → всплывающее окно ---------------- */
   const cDlg = $('#contact-dialog');
   if (cta && cDlg && typeof cDlg.showModal === 'function') {
-    // в окне заявки — только Telegram (звонки и почту не используем), без значка
-    $('#cdlg-links').innerHTML = `<li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener">написать в telegram</a></li>`;
+    // в окне заявки — Telegram и подробный бриф (звонки и почту не используем), без значка
+    $('#cdlg-links').innerHTML = `<li><a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener">написать в telegram</a></li>
+      <li><a href="https://enikonov565-cloud.github.io/brif-lis/">заполнить бриф</a></li>`;
     const cForm = $('#cdlg-form');
     const cStatus = $('.cdlg__status', cDlg);
     const cType = $('.cdlg__type', cDlg);

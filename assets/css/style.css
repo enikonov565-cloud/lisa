@@ -887,6 +887,8 @@ body::before {
   background: var(--milk); box-shadow: inset 0 0 0 1.5px var(--orange), 0 0 0 .5rem var(--milk);
 }
 .pdlg__step:last-child::before { background: var(--brick); box-shadow: inset 0 0 0 1.5px var(--brick), 0 0 0 .5rem var(--milk); }
+.pdlg__link { color: var(--brick); text-decoration: underline; text-decoration-color: rgba(180, 83, 42, .4); text-underline-offset: .3em; transition: color .3s var(--ease), text-decoration-color .3s var(--ease); }
+.pdlg__link:hover { color: var(--orange); text-decoration-color: currentColor; }
 .pdlg__name { font-family: var(--display); font-size: 3rem; line-height: 1.1; letter-spacing: .02em; margin-bottom: .6rem; }
 .pdlg__step p:not(.pdlg__name) { font-size: max(1.9rem, 14px); line-height: 1.4; color: rgba(76, 67, 67, .85); }
 .process-dialog[open] .pdlg__step::after { animation: pdlgLine .8s cubic-bezier(.22, 1, .36, 1) both; animation-delay: inherit; }
