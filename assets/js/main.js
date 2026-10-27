@@ -1305,8 +1305,7 @@
     <li><a href="tel:${tel}" data-reach="phone"><b>☏</b>позвонить</a></li>
     <li><a href="mailto:${CONTACTS.email}" data-reach="email"><b>✉</b>почта</a></li>`;
   if ($('#contact-links')) $('#contact-links').innerHTML = linksHTML;
-  // «связаться со мной» в приглашении — сразу в Telegram
-  if ($('#invite-tg')) $('#invite-tg').href = 'https://t.me/' + CONTACTS.telegram;
+  // «связаться со мной» в приглашении и «связаться с фотографом» в шапке ведут на бриф (ссылка — в index.html)
   $('#footer-contacts').insertAdjacentHTML('beforeend', `
     <a href="https://t.me/${CONTACTS.telegram}" target="_blank" rel="noopener"><b>✈</b>@${CONTACTS.telegram}</a>
     <a href="tel:${tel}" data-reach="phone"><b>☏</b>${CONTACTS.phone}</a>
@@ -1345,7 +1344,6 @@
       cType.textContent = type ? 'тема: ' + type.toLowerCase() : '';
       cDlg.showModal();
     };
-    cta.addEventListener('click', (e) => { e.preventDefault(); openContact('', cta); });
     /* приглашение: боковые ленты фото из каталога — объёмные колёса: вся лента целиком изогнута
        в барабан и медленно вращается, соседние — навстречу друг другу;
        при первом показе колёса въезжают сверху и снизу по очереди (как в Sticky Grid Scroll) */
